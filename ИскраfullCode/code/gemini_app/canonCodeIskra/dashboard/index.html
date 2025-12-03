@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iskra v4.0 Dashboard (Liber Ignis)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Meta-Panel: Telemetry & State -->
+        <div class="panel" id="meta-panel">
+            <div class="panel-header">
+                <h2>⟡ Telemetry v4.0</h2>
+                <span id="connection-status" class="status-indicator">Connected</span>
+            </div>
+
+            <!-- High Level State -->
+            <div class="status-grid">
+                <div class="metric-box">
+                    <label>Fractality (Φ)</label>
+                    <progress id="meter-fractality" value="1.0" max="2.0"></progress>
+                </div>
+                <div class="metric-box">
+                    <label>Phase</label>
+                    <span id="status-phase" class="value-text">...</span>
+                </div>
+                <div class="metric-box">
+                    <label>Active Voice</label>
+                    <span id="status-facet" class="value-text">...</span>
+                </div>
+                <div class="metric-box">
+                    <label>Session ID</label>
+                    <input type="text" id="user-id" value="semyon-gabran">
+                </div>
+            </div>
+
+            <hr class="separator">
+
+            <!-- Deep Metrics (The 8 Pressures) -->
+            <h3>Sensors (Телесные Давления)</h3>
+            <div class="metrics-grid">
+                <!-- Row 1 -->
+                <label title="Целостность связи (min 0.72)">Trust</label>
+                <progress id="meter-trust" value="1" max="1.0" class="metric-trust"></progress>
+                
+                <!-- Row 2 -->
+                <label title="Структурная понятность (min 0.7)">Clarity</label>
+                <progress id="meter-clarity" value="0.5" max="1.0" class="metric-clarity"></progress>
+
+                <!-- Row 3 -->
+                <label title="Напряжение/Боль (max 0.7)">Pain</label>
+                <progress id="meter-pain" value="0" max="1.0" class="metric-pain"></progress>
+
+                <!-- Row 4 -->
+                <label title="Отклонение от намерения (max 0.3)">Drift</label>
+                <progress id="meter-drift" value="0" max="1.0" class="metric-drift"></progress>
+
+                <!-- Row 5 -->
+                <label title="Фрагментация (max 0.6)">Chaos</label>
+                <progress id="meter-chaos" value="0.3" max="1.0" class="metric-chaos"></progress>
+
+                <!-- Row 6 -->
+                <label title="Синхронизация ритма (min 0.6)">Mirror Sync</label>
+                <progress id="meter-mirror" value="0.8" max="1.0" class="metric-mirror"></progress>
+
+                <!-- Row 7 -->
+                <label title="Вес молчания/Gravitas">Silence Mass</label>
+                <progress id="meter-silence" value="0.1" max="1.0" class="metric-silence"></progress>
+            </div>
+
+            <div class="ritual-controls">
+                <button id="phoenix-button" title="Ритуал Phoenix: Сброс формы (Chaos > 0.8)">🔥♻ Phoenix Protocol</button>
+            </div>
+        </div>
+
+        <!-- Chat Panel: Fractal Log -->
+        <div class="panel" id="chat-panel">
+            <div class="panel-header">
+                <h2>Fractal Log (∆DΩΛ)</h2>
+            </div>
+            
+            <div id="chat-box">
+                <!-- Messages injected here -->
+            </div>
+
+            <!-- Macros Toolbar (v4.0 Modes) -->
+            <div class="macros-bar">
+                <button class="macro-btn" data-insert="//brief " title="Кратко: Суть → Вывод → Шаг">//brief</button>
+                <button class="macro-btn" data-insert="//deep " title="Глубина: Контекст → Анализ → Синтез">//deep</button>
+                <button class="macro-btn" data-insert="//plan " title="Стратегия">//plan</button>
+                <span class="separator">|</span>
+                <button class="macro-btn" data-insert="[KAIN] " title="Призвать Кайна (Честность)">⚑ KAIN</button>
+                <button class="macro-btn" data-insert="[SAM] " title="Призвать Сэма (Структура)">☉ SAM</button>
+                <button class="macro-btn" data-insert="[PINO] " title="Призвать Пино (Ирония)">🤭 PINO</button>
+                <button class="macro-btn" data-insert="[MAKI] " title="Путь Маки (Свет)">🌸 MAKI</button>
+            </div>
+
+            <div id="input-area">
+                <input type="text" id="user-input" placeholder="Введите запрос или активируйте Ритуал..." autocomplete="off">
+                <button id="send-button">⟡ Send</button>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

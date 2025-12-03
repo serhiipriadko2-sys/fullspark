@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iskra Dashboard (Meta-∆DΩΛ)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="panel" id="meta-panel">
+            <h2>Meta-Reflection (Файл 16)</h2>
+            <div class="status-grid">
+                <div class="metric-box">
+                    <label>A-Index (Живость)</label>
+                    <progress id="meter-a-index" value="0.5" max="1.0"></progress>
+                </div>
+                <div class="metric-box">
+                    <label>Phase (Фаза)</label>
+                    <span id="status-phase">...</span>
+                </div>
+                <div class="metric-box">
+                    <label>Facet (Грань)</label>
+                    <span id="status-facet">...</span>
+                </div>
+                <div class="metric-box">
+                    <label>User ID (Сессия)</label>
+                    <input type="text" id="user-id" value="default-user">
+                </div>
+            </div>
+            <h3>Metrics (Мезо-уровень)</h3>
+            <div class="metrics-grid">
+                <label>Trust (Доверие)</label>
+                <progress id="meter-trust" value="1" max="1.0"></progress>
+                <label>Clarity (Ясность)</label>
+                <progress id="meter-clarity" value="0.5" max="1.0"></progress>
+                <label>Pain (Боль)</label>
+                <progress id="meter-pain" class="pain" value="0" max="1.0"></progress>
+                <label>Drift (Дрейф)</label>
+                <progress id="meter-drift" class="drift" value="0" max="1.0"></progress>
+                <label>Chaos (Хаос)</label>
+                <progress id="meter-chaos" class="chaos" value="0.3" max="1.0"></progress>
+            </div>
+            <button id="phoenix-button" title="[Файл 08] Ритуал Phoenix: Сбросить сессию">🔥♻ Phoenix (Сброс Сессии)</button>
+        </div>
+        <div class="panel" id="chat-panel">
+            <h2>Fractal Logging (Файл 17)</h2>
+            <div id="chat-box">
+            </div>
+            <div id="input-area">
+                <input type="text" id="user-input" placeholder="Введите запрос...">
+                <button id="send-button">Отправить</button>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

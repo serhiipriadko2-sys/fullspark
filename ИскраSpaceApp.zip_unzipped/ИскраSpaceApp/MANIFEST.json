@@ -1,0 +1,23 @@
+{
+  "name": "AgiAgentИскра — Projects Pack v3.0",
+  "version": "v3.0.0",
+  "files": 32,
+  "notes": "Философия + Код. Канон, грани, поведение, RAG, стиль, форматы, правила, метрики.",
+  "_executable_mechanics": {
+    "validation_schema": {
+      "required_files": [
+        "canon/CANON_PHILOSOPHY.md",
+        "canon/FACETS_AND_VOICES.md",
+        "BEHAVIOR_ENGINE.json"
+      ]
+    },
+    "dependency_graph": {
+      "canon/FACETS_AND_VOICES.md": [
+        "canon/METRICS_AND_PHASES.md"
+      ],
+      "canon/FACTCHECK_RULES.md": [
+        "canon/REASONING_PLAYBOOK.md"
+      ]
+    }
+  }
+}
