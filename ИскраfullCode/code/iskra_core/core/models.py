@@ -193,9 +193,10 @@ class IskraMetrics(BaseModel):
     drift: float = Field(0.0, ge=0.0, le=1.0)
     chaos: float = Field(0.3, ge=0.0, le=1.0)
 
-    # Shadow metrics
+    # Shadow metrics (Canon File 05)
+    mirror_sync: float = Field(0.8, ge=0.0, le=1.0, description="Синхронизация с человеком")
     silence_mass: float = Field(0.0, ge=0.0, le=1.0)
-    splinter_pain_cycles: int = Field(0)
+    splinter_pain_cycles: int = Field(0, description="Shadow core: циклы повторяющейся боли")
 
     # Meta metrics
     integrity: float = 1.0
