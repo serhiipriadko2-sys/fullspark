@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  iskra-core:
+    build:
+      context: ./iskra_core
+      dockerfile: Dockerfile
+    container_name: iskra-core-api
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - BING_API_KEY=${BING_API_KEY:-}
+      - ISKRA_DB_PATH=/data/iskra_archive.db
+      - ENVIRONMENT=production
+    volumes:
+      - iskra-data:/data
+      - ./iskra_core:/app  # For development - remove in production
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: React frontend
+  iskra-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: iskra-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    depends_on:
+      - iskra-core
+    restart: unless-stopped
+
+volumes:
+  iskra-data:
+    driver: local
+
+networks:
+  default:
+    name: iskra-network
