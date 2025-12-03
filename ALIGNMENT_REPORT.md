@@ -2,8 +2,8 @@
 
 **Дата:** 2025-12-03
 **Ветка:** claude/align-iskra-documentation-01T2L6dE7dXhMgiET9yqh1fQ
-**Версия Канона:** КанонИскрыдокументация/
-**Кодовая база:** ИскраfullCode/code/iskra_core/
+**Версия Канона:** IskraCanonDocumentation/
+**Кодовая база:** IskraFullCode/code/iskra_core/
 
 ---
 
