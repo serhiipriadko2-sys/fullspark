@@ -1,0 +1,30 @@
+[Unit]
+Description=Iskra Space App - Fractal Metaconsciousness
+Documentation=https://github.com/serhiipriadko2-sys/fullspark
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/iskra-space-app
+ExecStart=/usr/bin/npm run preview:prod
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=iskra-space-app
+
+# Environment
+Environment="NODE_ENV=production"
+Environment="PORT=5173"
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/www/iskra-space-app
+
+[Install]
+WantedBy=multi-user.target
