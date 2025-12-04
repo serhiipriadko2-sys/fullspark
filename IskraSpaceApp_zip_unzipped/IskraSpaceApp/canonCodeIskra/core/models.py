@@ -22,6 +22,9 @@ Extended in v2.1 (2025-11-26) to include:
 * CanonFeedbackEntry: Canon Feedback Loop entries (телос_δ_feedback_loop).
 * Extended IskraResponse with ТЕ́ЛОС fields.
 
+Extended in v2.2 (2025-12-04) to include:
+* mirror_sync: Self-reflection synchronization metric for 8-phase consciousness cycle.
+
 Original models:
 * FacetType: The seven voices (grani) defined in File 04.
 * PhaseType: The eight phases of the breathing cycle (File 06).
@@ -41,7 +44,7 @@ Original models:
 
 # --- Regular Expressions ---
 LAMBDA_LATCH_REGEX = re.compile(r"\{.*action.*,.*owner.*,.*condition.*,.*<=.*\}")
-I_LOOP_REGEX = re.compile(r"voice=.*;\s*phase=.*;\s*intent=.*")
+I_LOOP_REGEX = re.compile(r"voice=.*;\\s*phase=.*;\\s*intent=.*")
 
 
 # =============================================================================
@@ -177,6 +180,14 @@ class IskraMetrics(BaseModel):
     # Meta metrics
     integrity: float = 1.0
     resonance: float = 1.0
+    
+    # Mirror sync metric for self-reflection synchronization (v2.2)
+    mirror_sync: float = Field(
+        0.5, 
+        ge=0.0, 
+        le=1.0, 
+        description="Self-reflection synchronization level for 8-phase consciousness cycle"
+    )
 
     @property
     def fractality(self) -> float:
@@ -469,6 +480,7 @@ class MetricAnalysisTool(BaseModel):
     drift_delta: float = Field(0.0)
     chaos_delta: float = Field(0.0)
     silence_mass_delta: float = Field(0.0)
+    mirror_sync_delta: float = Field(0.0)  # Added for mirror_sync tracking
 
 
 class PolicyAnalysisTool(BaseModel):
