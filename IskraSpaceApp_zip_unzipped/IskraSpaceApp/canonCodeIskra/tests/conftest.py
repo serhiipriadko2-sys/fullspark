@@ -7,26 +7,30 @@ from asgi_lifespan import LifespanManager
 from main import app, get_session, persistence
 
 
-@pytest.fixture(scope="session")
-def event_loop():
-    """Create an asyncio event loop for pytest-asyncio."""
+@pytest.fixture(scope="function", autouse=True)
+def reset_dynamic_thresholds():
+    """Reset dynamic thresholds to base values before each test."""
     try:
-        loop = asyncio.get_running_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-    yield loop
-    loop.close()
+        from services.dynamic_thresholds import dynamic_thresholds
+        # Reset to base thresholds
+        dynamic_thresholds._dynamic = dynamic_thresholds._base.copy()
+        dynamic_thresholds._pain_history._history.clear()
+        dynamic_thresholds._drift_history.clear()
+        dynamic_thresholds._clarity_history.clear()
+    except Exception:
+        pass  # dynamic_thresholds not available
+    yield
 
 
-@pytest.fixture(scope="session", autouse=True)
-def test_db(tmp_path_factory):
+@pytest.fixture(scope="function", autouse=True)
+def test_db(tmp_path):
     """
-    Use a temporary database for the duration of the tests. This fixture
+    Use a temporary database for the duration of each test. This fixture
     overrides the ISKRA_DB_PATH environment variable and reinitialises
     persistence to point at the test database. After tests complete the
     database file is removed.
     """
-    test_db_path = tmp_path_factory.mktemp("iskra_test") / "iskra_archive_test.db"
+    test_db_path = tmp_path / "iskra_archive_test.db"
     os.environ["ISKRA_DB_PATH"] = str(test_db_path)
     # Reinitialise persistence service with the new path
     persistence.__init__(db_path=str(test_db_path))
@@ -36,7 +40,7 @@ def test_db(tmp_path_factory):
         os.remove(test_db_path)
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 async def test_client():
     """
     Create an AsyncClient that uses the FastAPI app for tests.

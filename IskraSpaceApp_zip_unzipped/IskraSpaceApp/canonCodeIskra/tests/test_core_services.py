@@ -11,32 +11,46 @@ class TestCoreEngines:
     """Unit tests for core engine components: facet selection, A-index and phase transitions."""
 
     def test_facet_engine_triggers(self):
-        metrics = IskraMetrics()
+        # Test each facet trigger independently with fresh metrics each time
+
         # High pain activates Kain
+        metrics = IskraMetrics()
         metrics.pain = THRESHOLDS["pain_high"]
         assert FacetEngine.determine_facet(metrics) == FacetType.KAIN
-        metrics.pain = 0.0
+
         # Low clarity activates Sam
+        metrics = IskraMetrics()
         metrics.clarity = THRESHOLDS["clarity_low"] - 0.1
         assert FacetEngine.determine_facet(metrics) == FacetType.SAM
-        metrics.clarity = 0.5
+
         # High drift activates Iskriv
+        metrics = IskraMetrics()
         metrics.drift = THRESHOLDS["drift_high"] + 0.1
         assert FacetEngine.determine_facet(metrics) == FacetType.ISKRIV
-        metrics.drift = 0.0
+
         # High chaos activates Huyndun
+        metrics = IskraMetrics()
         metrics.chaos = THRESHOLDS["chaos_high"] + 0.1
         assert FacetEngine.determine_facet(metrics) == FacetType.HUYNDUN
-        metrics.chaos = 0.3
+
         # Low trust activates Anhantra
+        metrics = IskraMetrics()
         metrics.trust = THRESHOLDS["trust_low"] - 0.1
         assert FacetEngine.determine_facet(metrics) == FacetType.ANHANTRA
-        metrics.trust = 1.0
-        # Medium pain activates Pino
+
+        # Medium pain activates Pino (clarity must be high enough to not trigger SAM)
+        metrics = IskraMetrics()
+        metrics.clarity = 0.8
         metrics.pain = THRESHOLDS["pain_medium"] + 0.1
         assert FacetEngine.determine_facet(metrics) == FacetType.PINO
-        metrics.pain = 0.0
-        # Balanced metrics activates Iskra
+
+        # Balanced metrics activates Iskra (all metrics in safe range)
+        metrics = IskraMetrics()
+        metrics.clarity = 0.8  # Above clarity_low threshold
+        metrics.pain = 0.3  # Between low and medium
+        metrics.trust = 1.0  # High
+        metrics.drift = 0.1  # Low
+        metrics.chaos = 0.3  # Low
         assert FacetEngine.determine_facet(metrics) == FacetType.ISKRA
 
     def test_a_index_calculation(self):
@@ -51,10 +65,13 @@ class TestCoreEngines:
 
     def test_phase_transition_rules(self):
         metrics = IskraMetrics()
+        # Set clarity high to avoid triggering clarity_low transitions
+        metrics.clarity = 0.8
         current_phase = PhaseType.PHASE_3_TRANSITION
         # High pain forces darkness
         metrics.pain = 0.9
         assert PhaseEngine.transition(current_phase, metrics, 0.5) == PhaseType.PHASE_1_DARKNESS
-        # After pain subsides, exit to echo
+        # After pain subsides, exit to echo (clarity must be high enough)
         metrics.pain = 0.3
+        metrics.clarity = 0.8
         assert PhaseEngine.transition(PhaseType.PHASE_1_DARKNESS, metrics, 0.5) == PhaseType.PHASE_2_ECHO
