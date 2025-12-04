@@ -1,0 +1,28 @@
+version: '3.8'
+
+# Development docker-compose override
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+services:
+  iskra-space-app-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: iskra-space-app-dev
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=development
+      - VITE_DEV_SERVER_PORT=5173
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    command: npm run dev
+    restart: unless-stopped
+    networks:
+      - iskra-network
+
+networks:
+  iskra-network:
+    driver: bridge
+    name: iskra-dev-network
