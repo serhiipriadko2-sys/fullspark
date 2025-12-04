@@ -15,13 +15,20 @@ from __future__ import annotations
 import json
 from typing import Optional
 
-from pydantic import PydanticToolsParser
-
 from core.models import PolicyAnalysis, ImportanceLevel, UncertaintyLevel, PolicyAnalysisTool
 from services.llm import client
 
 
-policy_parser = PydanticToolsParser(tools=[PolicyAnalysisTool])
+def get_policy_tool_schema():
+    """Generate OpenAI tool schema from PolicyAnalysisTool model."""
+    return {
+        "type": "function",
+        "function": {
+            "name": "PolicyAnalysisTool",
+            "description": "Analyze query importance and uncertainty",
+            "parameters": PolicyAnalysisTool.model_json_schema()
+        }
+    }
 
 
 class PolicyEngine:
@@ -54,7 +61,7 @@ class PolicyEngine:
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": query},
                 ],
-                tools=policy_parser.tools,
+                tools=[get_policy_tool_schema()],
                 tool_choice={"type": "function", "function": {"name": "PolicyAnalysisTool"}},
             )
             tool_call = response.choices[0].message.tool_calls[0]
