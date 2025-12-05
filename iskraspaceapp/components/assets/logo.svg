@@ -1,0 +1,25 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Triangle -->
+  <path d="M100 30 L170 150 H30 Z" fill="none" stroke="#FF7A00" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)" />
+  <!-- Spiral -->
+  <path d="M100 115 
+           a 5 5 0 0 1 5 -5 
+           a 10 10 0 0 1 10 10 
+           a 15 15 0 0 1 -15 15 
+           a 20 20 0 0 1 -20 -20 
+           a 25 25 0 0 1 25 -25
+           a 30 30 0 0 1 35 20" 
+        fill="none" stroke="#FF7A00" stroke-width="4" stroke-linecap="round" filter="url(#glow)" transform="translate(0, -5)" />
+  <!-- Text -->
+  <text x="100" y="185" font-family="'Cormorant Garamond', serif" font-size="24" fill="#FF7A00" text-anchor="middle" letter-spacing="2" filter="url(#glow)">ИСКРА SPACE</text>
+</svg>
