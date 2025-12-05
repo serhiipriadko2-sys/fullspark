@@ -51,6 +51,7 @@ from core.models import (
     ShatterTool,
     DreamspaceTool,
     CouncilTool,
+    DebateTool,
     AdomlResponseTool,
 )
 from core.engine import FacetEngine
@@ -448,6 +449,37 @@ class LLMService:
         metric_conflict = abs(metrics.clarity - metrics.chaos) < 0.2
         return high_uncertainty and metric_conflict
 
+    @staticmethod
+    def _should_trigger_debate(policy: PolicyAnalysis, metrics: IskraMetrics) -> bool:
+        """Check if DEBATE should be triggered (Canon v5.0).
+
+        Debate is triggered when:
+        - High importance + high uncertainty (complex decision)
+        - OR high voice conflict (pain vs clarity imbalance)
+        - OR explicit policy flag requires_debate
+        """
+        from core.models import ImportanceLevel, UncertaintyLevel
+
+        # Check policy flags
+        if getattr(policy, 'requires_debate', False):
+            return True
+
+        # High importance + high uncertainty = debate needed
+        high_stakes = (
+            policy.importance == ImportanceLevel.HIGH and
+            policy.uncertainty == UncertaintyLevel.HIGH
+        )
+
+        # Voice conflict: significant gap between pain and clarity
+        voice_conflict = abs(metrics.pain - metrics.clarity) > 0.5
+
+        # Debate threshold from config
+        debate_threshold = THRESHOLDS.get("telos_debate_threshold", 0.4)
+        metric_gap = max(metrics.trust, metrics.clarity) - min(metrics.pain, metrics.chaos)
+        high_gap = metric_gap > debate_threshold
+
+        return high_stakes or (voice_conflict and high_gap)
+
     # === Auditing ===
     @staticmethod
     async def _audit_response(
@@ -585,6 +617,7 @@ class LLMService:
             "   - DreamspaceTool: Для безопасной симуляции гипотез.\n"
             "   - ShatterTool: Для разрушения ложной ясности.\n"
             "   - CouncilTool: Для совета, если метрики конфликтуют.\n"
+            "   - DebateTool: Для дебатов 9 голосов при высоком конфликте.\n"
             "   - AdomlResponseTool: Чтобы сразу ответить.\n"
             "2. Выполни инструмент (если выбран).\n"
             "3. Сформируй финальный ответ через AdomlResponseTool.\n"
@@ -609,6 +642,7 @@ class LLMService:
                     DreamspaceTool.model_json_schema(),
                     ShatterTool.model_json_schema(),
                     CouncilTool.model_json_schema(),
+                    DebateTool.model_json_schema(),
                     AdomlResponseTool.model_json_schema(),
                 ],
                 tool_choice="auto",
@@ -638,6 +672,13 @@ class LLMService:
             elif tool_name == "CouncilTool":
                 council_result = await LLMService._run_council(args["topic"])
                 intermediate_context = council_result
+            elif tool_name == "DebateTool":
+                # Run multi-agent debate with 9 voices
+                debate_topic = args.get("topic", user_input)
+                intermediate_context = await LLMService._run_debate(
+                    debate_topic,
+                    metrics=metrics.model_dump() if metrics else None
+                )
             elif tool_name == "AdomlResponseTool":
                 final_response_tool = AdomlResponseTool.model_validate(json.loads(call.function.arguments))
             # If a tool other than the final answer was executed, request final answer
@@ -1066,6 +1107,7 @@ async def _generate_special_response(
             "   - DreamspaceTool: Для безопасной симуляции гипотез.\n"
             "   - ShatterTool: Для разрушения ложной ясности.\n"
             "   - CouncilTool: Для совета, если метрики конфликтуют.\n"
+            "   - DebateTool: Для дебатов 9 голосов при высоком конфликте.\n"
             "   - AdomlResponseTool: Чтобы сразу ответить.\n"
             "2. Выполни инструмент (если выбран).\n"
             "3. Сформируй финальный ответ через AdomlResponseTool.\n"
@@ -1090,6 +1132,7 @@ async def _generate_special_response(
                     DreamspaceTool.model_json_schema(),
                     ShatterTool.model_json_schema(),
                     CouncilTool.model_json_schema(),
+                    DebateTool.model_json_schema(),
                     AdomlResponseTool.model_json_schema(),
                 ],
                 tool_choice="auto",
@@ -1121,6 +1164,13 @@ async def _generate_special_response(
             elif tool_name == "CouncilTool":
                 council_result = await LLMService._run_council(args["topic"])
                 intermediate_context = council_result
+            elif tool_name == "DebateTool":
+                # Run multi-agent debate with 9 voices
+                debate_topic = args.get("topic", user_input)
+                intermediate_context = await LLMService._run_debate(
+                    debate_topic,
+                    metrics=metrics.model_dump() if metrics else None
+                )
             elif tool_name == "AdomlResponseTool":
                 # Immediate answer; no intermediate tool; decode directly
                 final_response_tool = AdomlResponseTool.model_validate(json.loads(call.function.arguments))
