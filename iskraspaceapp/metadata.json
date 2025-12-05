@@ -1,0 +1,7 @@
+{
+  "name": "Iskra Space",
+  "description": "An offline-first life-rhythm OS with a local AI companion ('Iskra') to provide gentle, explainable insights into your daily pulse.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

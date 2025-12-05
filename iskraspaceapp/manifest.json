@@ -1,0 +1,24 @@
+{
+  "short_name": "Iskra",
+  "name": "Iskra Space",
+  "description": "Фрактальная операционная система жизнеритма.",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2698/2698194.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2698/2698194.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#05080A",
+  "background_color": "#05080A"
+}
