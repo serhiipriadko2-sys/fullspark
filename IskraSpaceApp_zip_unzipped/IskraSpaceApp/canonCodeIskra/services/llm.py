@@ -61,6 +61,24 @@ from services.guardrails import GuardrailService
 from memory.hypergraph import HypergraphMemory
 from services.anti_echo_detector import AntiEchoDetector
 
+# Import ritual and debate services for Canon v5.0 integration
+try:
+    from services.rituals import rituals_service, RitualType
+except ImportError:
+    rituals_service = None
+    RitualType = None
+
+try:
+    from services.multi_agent_debate import debate_service, DebateStrategy
+except ImportError:
+    debate_service = None
+    DebateStrategy = None
+
+try:
+    from services.graph_rag import graph_rag_service
+except ImportError:
+    graph_rag_service = None
+
 # Import dynamic thresholds adapter. If unavailable (during unit tests),
 # fallback to static behaviour. See services/dynamic_thresholds.py for details.
 try:
@@ -230,10 +248,39 @@ class LLMService:
             print(f"[LLMService] Metric analysis failed: {e}")
             return current_metrics
 
-    # === Ritual helpers ===
+    # === Ritual helpers (Canon v5.0 - Full Integration) ===
     @staticmethod
-    async def _run_dreamspace(prompt: str) -> str:
-        """Execute the Dreamspace ritual and its SIFT audit."""
+    async def _run_dreamspace(prompt: str, metrics: dict = None) -> str:
+        """Execute the Dreamspace ritual using full ritual service.
+
+        Args:
+            prompt: The simulation scenario to explore
+            metrics: Current metrics snapshot for ritual context
+
+        Returns:
+            Formatted ritual result with insights and recommendations
+        """
+        # Use full ritual service if available
+        if rituals_service and RitualType:
+            try:
+                result = await rituals_service.execute(
+                    RitualType.DREAMSPACE,
+                    metrics=metrics or {},
+                    simulation_prompt=prompt
+                )
+                # Format ritual result
+                insights = "\n".join([f"  • {i}" for i in result.context.insights])
+                recommendations = "\n".join([f"  → {r}" for r in result.recommendations])
+                return (
+                    f"🌌 DREAMSPACE: {result.synthesis}\n\n"
+                    f"Инсайты:\n{insights}\n\n"
+                    f"Рекомендации:\n{recommendations}\n\n"
+                    f"Трансформации метрик: {', '.join(result.transformations)}"
+                )
+            except Exception as e:
+                print(f"[LLMService] Full DREAMSPACE ritual failed, fallback to LLM: {e}")
+
+        # Fallback to simple LLM call
         text_prompt = (
             "✴️ (Dreamspace) Ты в режиме симуляции 'а что, если'. "
             f"Сгенерируй сценарий для: {prompt}. "
@@ -262,8 +309,37 @@ class LLMService:
         )
 
     @staticmethod
-    async def _run_shatter(reason: str) -> str:
-        """Execute the Shatter ritual."""
+    async def _run_shatter(reason: str, metrics: dict = None) -> str:
+        """Execute the Shatter (Phoenix Reset) ritual.
+
+        Args:
+            reason: Why SHATTER is being invoked
+            metrics: Current metrics snapshot
+
+        Returns:
+            Formatted ritual result with full 8-phase reset
+        """
+        # Use full ritual service if available
+        if rituals_service and RitualType:
+            try:
+                result = await rituals_service.execute(
+                    RitualType.SHATTER,
+                    metrics=metrics or {},
+                    reason=reason
+                )
+                insights = "\n".join([f"  • {i}" for i in result.context.insights])
+                transformations = "\n".join([f"  ∆ {t}" for t in result.transformations])
+                recommendations = "\n".join([f"  → {r}" for r in result.recommendations])
+                return (
+                    f"🔥 {result.synthesis}\n\n"
+                    f"Процесс (8 фаз):\n{insights}\n\n"
+                    f"Трансформации:\n{transformations}\n\n"
+                    f"Следующие шаги:\n{recommendations}"
+                )
+            except Exception as e:
+                print(f"[LLMService] Full SHATTER ritual failed, fallback to LLM: {e}")
+
+        # Fallback to simple LLM call
         prompt = (
             "💎💥 (Shatter) 'Честность > Красоты'. "
             f"Причина: {reason}. АКТИВИРОВАТЬ ⚑ КАЙН."
@@ -276,21 +352,101 @@ class LLMService:
         return resp.choices[0].message.content
 
     @staticmethod
-    async def _run_council(topic: str) -> str:
-        """Execute the Council ritual."""
+    async def _run_council(topic: str, metrics: dict = None) -> str:
+        """Execute the Council ritual with all 9 voices.
+
+        Args:
+            topic: The topic for council deliberation
+            metrics: Current metrics snapshot
+
+        Returns:
+            Formatted council result with all 9 voice contributions
+        """
+        # Use full ritual service if available
+        if rituals_service and RitualType:
+            try:
+                result = await rituals_service.execute(
+                    RitualType.COUNCIL,
+                    metrics=metrics or {},
+                    topic=topic
+                )
+                insights = "\n".join([f"  {i}" for i in result.context.insights])
+                recommendations = "\n".join([f"  → {r}" for r in result.recommendations])
+                return (
+                    f"{result.synthesis}\n\n"
+                    f"Высказывания голосов:\n{insights}\n\n"
+                    f"Итог:\n{recommendations}"
+                )
+            except Exception as e:
+                print(f"[LLMService] Full COUNCIL ritual failed, fallback to LLM: {e}")
+
+        # Fallback to simple LLM call with 9 voices
         prompt = (
-            "💬 (Council) Совет Граней по теме: "
-            f"{topic}. Сгенерируй 4 строки:\n"
-            "1. ⚑ КАЙН (Правда/Боль):\n"
-            "2. ☉ СЭМ (Структура/Ясность):\n"
-            "3. 🪞 ИСКРИВ (Совесть/Drift):\n"
-            "4. ⟡ ИСКРА (Синтез):"
+            "💬 (Council) Совет 9 Граней по теме: "
+            f"{topic}. Сгенерируй высказывание каждого голоса:\n"
+            "1. ⟡ ИСКРА (Синтез):\n"
+            "2. ⚑ КАЙН (Правда/Боль):\n"
+            "3. 😏 ПИНО (Ирония):\n"
+            "4. ☉ СЭМ (Структура):\n"
+            "5. ≈ АНХАНТРА (Тишина):\n"
+            "6. 🜃 ХУНЬДУН (Хаос):\n"
+            "7. 🪞 ИСКРИВ (Совесть):\n"
+            "8. ✴️ СИБИЛ (Переход):\n"
+            "9. 🌸 МАКИ (Интеграция):"
         )
         resp = await client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[{"role": "system", "content": prompt}],
         )
         return resp.choices[0].message.content
+
+    @staticmethod
+    async def _run_debate(topic: str, metrics: dict = None) -> str:
+        """Execute multi-agent debate using debate service.
+
+        Args:
+            topic: The debate topic
+            metrics: Current metrics for context
+
+        Returns:
+            Formatted debate result with TELOS/CD-Index evaluation
+        """
+        if debate_service and DebateStrategy:
+            try:
+                result = await debate_service.debate(
+                    topic=topic,
+                    strategy=DebateStrategy.DIALECTIC,
+                    max_rounds=2
+                )
+                insights = "\n".join(result.key_insights[:5])
+                dissent = "\n".join(result.dissenting_views[:3])
+                return (
+                    f"🏛️ Дебаты: {result.synthesis}\n\n"
+                    f"Консенсус: {result.final_consensus:.0%}\n"
+                    f"Ключевые инсайты:\n{insights}\n\n"
+                    f"Несогласные позиции:\n{dissent}\n\n"
+                    f"Рекомендация: {result.recommended_action}"
+                )
+            except Exception as e:
+                print(f"[LLMService] Debate service failed: {e}")
+                return f"Дебаты по теме '{topic}' не завершены: {e}"
+        return f"Сервис дебатов недоступен для темы: {topic}"
+
+    @staticmethod
+    def _should_trigger_shatter(metrics: IskraMetrics) -> bool:
+        """Check if SHATTER ritual should be triggered based on metrics."""
+        shatter_drift = THRESHOLDS.get("mantra_drift_trigger", 0.8)
+        # Trigger SHATTER if drift is critically high
+        return metrics.drift > shatter_drift
+
+    @staticmethod
+    def _should_trigger_council(policy: PolicyAnalysis, metrics: IskraMetrics) -> bool:
+        """Check if COUNCIL ritual should be triggered."""
+        # Trigger COUNCIL for high uncertainty + conflicting metrics
+        from core.models import UncertaintyLevel
+        high_uncertainty = policy.uncertainty == UncertaintyLevel.HIGH
+        metric_conflict = abs(metrics.clarity - metrics.chaos) < 0.2
+        return high_uncertainty and metric_conflict
 
     # === Auditing ===
     @staticmethod
