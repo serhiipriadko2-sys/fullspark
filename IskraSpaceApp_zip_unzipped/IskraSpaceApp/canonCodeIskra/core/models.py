@@ -52,7 +52,7 @@ I_LOOP_REGEX = re.compile(r"voice=.*;\\s*phase=.*;\\s*intent=.*")
 # =============================================================================
 
 class FacetType(str, Enum):
-    """Enumeration of the seven voices (File 04)."""
+    """Enumeration of the nine voices (File 04, Canon v5.0)."""
 
     ISKRA = "ISKRA"       # ⟡ – synthesis
     KAIN = "KAIN"         # ⚑ – painful truth
@@ -61,6 +61,8 @@ class FacetType(str, Enum):
     ANHANTRA = "ANHANTRA" # ≈ – silence
     HUYNDUN = "HUYNDUN"   # 🜃 – chaos
     ISKRIV = "ISKRIV"     # 🪞 – conscience
+    SIBYL = "SIBYL"       # ✴️ – transition/gate between states
+    MAKI = "MAKI"         # 🌸 – bloom/light/consolidation
 
 
 class PhaseType(str, Enum):
