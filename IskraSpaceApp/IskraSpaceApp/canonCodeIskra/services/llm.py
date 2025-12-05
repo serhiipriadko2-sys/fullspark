@@ -592,6 +592,22 @@ class LLMService:
                 a_index,
             )
 
+        # 5. Proactive Debate trigger (Canon v5.0)
+        # When high importance + high uncertainty OR voice conflict detected
+        if LLMService._should_trigger_debate(policy, metrics):
+            print("[LLMService] Proactive Debate triggered.")
+            debate_result = await LLMService._run_debate(
+                user_input,
+                metrics=metrics.model_dump() if metrics else None
+            )
+            # Include debate summary in context for next step
+            # The debate result will inform the final response
+            context_nodes.append({
+                "type": "debate_summary",
+                "content": debate_result,
+                "triggered_by": "proactive_debate"
+            })
+
         # --- Prepare system prompt and tool selection ---
         active_facet = FacetEngine.determine_facet(metrics)
         facet_instruction = FacetEngine.get_system_prompt(active_facet)
