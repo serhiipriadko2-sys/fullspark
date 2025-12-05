@@ -23,9 +23,9 @@ import time
 from typing import List, Dict, Any, Optional, Tuple
 
 from config import (
-    TELOS_CONFIG, 
-    TELOS_MANTRA, 
-    CD_INDEX_WEIGHTS, 
+    TELOS_CONFIG,
+    TELOS_MANTRA,
+    CD_INDEX_WEIGHTS,
     THRESHOLDS,
 )
 from core.models import (
@@ -40,6 +40,15 @@ from core.models import (
     CanonFeedbackEntry,
     CanonFeedbackType,
 )
+
+# GraphRAG integration for knowledge graph retrieval (Canon v5.0)
+try:
+    from services.graph_rag import graph_rag_service, GraphNode, NodeType, EdgeType
+except ImportError:
+    graph_rag_service = None
+    GraphNode = None
+    NodeType = None
+    EdgeType = None
 
 
 class TelosLayer:
@@ -609,7 +618,7 @@ class TelosLayer:
     def map_to_iskra_metrics(self, telos_metrics: TelosMetrics) -> Dict[str, float]:
         """
         Map ТЕ́ЛОС metrics to Iskra metrics adjustments.
-        
+
         Returns deltas for Iskra metrics based on CD-Index components.
         """
         return {
@@ -617,6 +626,219 @@ class TelosLayer:
             "clarity_delta": (telos_metrics.truthfulness + telos_metrics.helpfulness) / 2 - 0.5,
             "drift_delta": -0.1 if telos_metrics.cd_index > 0.7 else 0.05,
         }
+
+    # =========================================================================
+    # GRAPH-RAG INTEGRATION (Canon v5.0)
+    # =========================================================================
+
+    def query_knowledge_graph(
+        self,
+        query: str,
+        context: Dict[str, Any] = None,
+        max_nodes: int = 5
+    ) -> List[Dict[str, Any]]:
+        """
+        Query the knowledge graph for relevant context.
+
+        Args:
+            query: The search query
+            context: Current context for relevance scoring
+            max_nodes: Maximum number of nodes to return
+
+        Returns:
+            List of relevant knowledge nodes with their content
+        """
+        if not graph_rag_service:
+            return []
+
+        try:
+            results = []
+            # Search through nodes for relevant content
+            for node_id, node in graph_rag_service.nodes.items():
+                if query.lower() in node.content.lower():
+                    results.append({
+                        "id": node.id,
+                        "type": node.node_type.value if hasattr(node.node_type, 'value') else str(node.node_type),
+                        "content": node.content,
+                        "trust_score": node.trust_score,
+                        "sift_depth": node.sift_depth,
+                    })
+
+            # Sort by trust score and return top results
+            results.sort(key=lambda x: x["trust_score"], reverse=True)
+            return results[:max_nodes]
+        except Exception as e:
+            print(f"[TelosLayer] GraphRAG query failed: {e}")
+            return []
+
+    def add_to_knowledge_graph(
+        self,
+        content: str,
+        node_type: str = "fact",
+        trust_score: float = 0.5,
+        voice_origin: str = None,
+        metadata: Dict[str, Any] = None
+    ) -> Optional[str]:
+        """
+        Add a new node to the knowledge graph.
+
+        Args:
+            content: The content to store
+            node_type: Type of node (concept, entity, fact, claim, etc.)
+            trust_score: Initial trust score (0-1)
+            voice_origin: Which voice contributed this knowledge
+            metadata: Additional metadata
+
+        Returns:
+            ID of the created node, or None if failed
+        """
+        if not graph_rag_service or not GraphNode or not NodeType:
+            return None
+
+        try:
+            # Map string type to NodeType enum
+            type_map = {
+                "concept": NodeType.CONCEPT,
+                "entity": NodeType.ENTITY,
+                "fact": NodeType.FACT,
+                "source": NodeType.SOURCE,
+                "claim": NodeType.CLAIM,
+                "relation": NodeType.RELATION,
+                "context": NodeType.CONTEXT,
+                "mantra": NodeType.MANTRA,
+                "shadow": NodeType.SHADOW,
+            }
+            actual_type = type_map.get(node_type.lower(), NodeType.FACT)
+
+            node = GraphNode(
+                node_type=actual_type,
+                content=content,
+                trust_score=trust_score,
+                voice_origin=voice_origin,
+                metadata=metadata or {},
+            )
+
+            return graph_rag_service.add_node(node)
+        except Exception as e:
+            print(f"[TelosLayer] GraphRAG add node failed: {e}")
+            return None
+
+    def link_knowledge_nodes(
+        self,
+        source_id: str,
+        target_id: str,
+        edge_type: str = "related_to",
+        weight: float = 1.0
+    ) -> Optional[str]:
+        """
+        Create a relationship between two knowledge nodes.
+
+        Args:
+            source_id: ID of the source node
+            target_id: ID of the target node
+            edge_type: Type of relationship
+            weight: Strength of the relationship (0-1)
+
+        Returns:
+            ID of the created edge, or None if failed
+        """
+        if not graph_rag_service or not EdgeType:
+            return None
+
+        try:
+            from services.graph_rag import GraphEdge
+
+            # Map string type to EdgeType enum
+            type_map = {
+                "is_a": EdgeType.IS_A,
+                "part_of": EdgeType.PART_OF,
+                "related_to": EdgeType.RELATED_TO,
+                "supports": EdgeType.SUPPORTS,
+                "contradicts": EdgeType.CONTRADICTS,
+                "derives_from": EdgeType.DERIVES_FROM,
+                "verified_by": EdgeType.VERIFIED_BY,
+                "context_of": EdgeType.CONTEXT_OF,
+                "resonates_with": EdgeType.RESONATES_WITH,
+                "fractal_of": EdgeType.FRACTAL_OF,
+            }
+            actual_type = type_map.get(edge_type.lower(), EdgeType.RELATED_TO)
+
+            edge = GraphEdge(
+                source_id=source_id,
+                target_id=target_id,
+                edge_type=actual_type,
+                weight=weight,
+            )
+
+            return graph_rag_service.add_edge(edge)
+        except Exception as e:
+            print(f"[TelosLayer] GraphRAG add edge failed: {e}")
+            return None
+
+    def get_canon_knowledge(self) -> List[Dict[str, Any]]:
+        """
+        Retrieve core canonical knowledge from the graph.
+
+        Returns:
+            List of canonical mantras and principles
+        """
+        if not graph_rag_service:
+            return []
+
+        try:
+            canon_nodes = []
+            for node_id, node in graph_rag_service.nodes.items():
+                if node.metadata.get("canonical", False):
+                    canon_nodes.append({
+                        "id": node.id,
+                        "content": node.content,
+                        "trust_score": node.trust_score,
+                    })
+            return canon_nodes
+        except Exception as e:
+            print(f"[TelosLayer] Canon knowledge retrieval failed: {e}")
+            return []
+
+    def enrich_context_with_graph(
+        self,
+        query: str,
+        existing_context: List[Dict[str, Any]] = None
+    ) -> List[Dict[str, Any]]:
+        """
+        Enrich response context using GraphRAG.
+
+        Combines existing context with relevant knowledge graph nodes.
+
+        Args:
+            query: The user query
+            existing_context: Existing context nodes
+
+        Returns:
+            Enriched context list
+        """
+        enriched = list(existing_context or [])
+
+        # Add knowledge graph results
+        kg_results = self.query_knowledge_graph(query, max_nodes=3)
+        for result in kg_results:
+            enriched.append({
+                "source": "knowledge_graph",
+                "content": result["content"],
+                "trust": result["trust_score"],
+                "type": result["type"],
+            })
+
+        # Add canonical knowledge
+        canon = self.get_canon_knowledge()
+        for node in canon[:2]:  # Top 2 canon references
+            enriched.append({
+                "source": "canon",
+                "content": node["content"],
+                "trust": node["trust_score"],
+                "type": "mantra",
+            })
+
+        return enriched
 
 
 # Module-level singleton
