@@ -15,6 +15,7 @@ import SettingsView from './components/SettingsView';
 import Onboarding from './components/Onboarding';
 import BeaconView from './components/BeaconView';
 import FocusSession from './components/FocusSession';
+import CouncilView from './components/CouncilView';
 import OnboardingTour, { TourStep } from './components/OnboardingTour';
 import Ambience from './components/Ambience';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -25,8 +26,9 @@ import { memoryService } from './services/memoryService';
 import { metricsService } from './services/metricsService';
 import { canonService } from './services/canonService';
 import { storageService } from './services/storageService';
+import { checkRitualTriggers, executePhoenix, executeShatter, getPhaseAfterRitual } from './services/ritualService';
 
-export type AppView = 'PULSE' | 'PLANNER' | 'JOURNAL' | 'BEACON' | 'DUO' | 'CHAT' | 'LIVE' | 'RUNES' | 'RESEARCH' | 'MEMORY' | 'METRICS' | 'DESIGN' | 'SETTINGS' | 'FOCUS';
+export type AppView = 'PULSE' | 'PLANNER' | 'JOURNAL' | 'BEACON' | 'DUO' | 'CHAT' | 'LIVE' | 'RUNES' | 'RESEARCH' | 'MEMORY' | 'METRICS' | 'COUNCIL' | 'DESIGN' | 'SETTINGS' | 'FOCUS';
 
 const NEUTRAL_METRICS_TARGET: Partial<IskraMetrics> = {
     trust: 0.8, clarity: 0.7, pain: 0.1, drift: 0.2, chaos: 0.3, echo: 0.5, silence_mass: 0.1
@@ -79,6 +81,15 @@ export default function App() {
         interrupt: 0, ctxSwitch: 0
     });
     const [phase, setPhase] = useState<IskraPhase>('CLARITY');
+    const [ritualAlert, setRitualAlert] = useState<{ ritual: string; reason: string } | null>(null);
+
+    // Auto-trigger rituals based on metrics
+    useEffect(() => {
+        const trigger = checkRitualTriggers(metrics);
+        if (trigger.shouldTrigger && trigger.ritual) {
+            setRitualAlert({ ritual: trigger.ritual, reason: trigger.reason });
+        }
+    }, [metrics]);
 
     useEffect(() => {
         const complete = storageService.isOnboardingComplete();
@@ -113,8 +124,28 @@ export default function App() {
     };
 
     const handleShatter = () => {
-        setMetrics(prev => ({ ...prev, pain: 0.8, clarity: 0.2, chaos: 0.7 }));
-        setPhase('DARKNESS');
+        const newMetrics = executeShatter(metrics);
+        setMetrics(newMetrics);
+        setPhase(getPhaseAfterRitual('SHATTER'));
+        setRitualAlert(null);
+    };
+
+    const handlePhoenix = () => {
+        const newMetrics = executePhoenix(metrics);
+        setMetrics(newMetrics);
+        setPhase(getPhaseAfterRitual('PHOENIX'));
+        setRitualAlert(null);
+    };
+
+    const handleRitualConfirm = () => {
+        if (ritualAlert?.ritual === 'PHOENIX') {
+            handlePhoenix();
+        } else if (ritualAlert?.ritual === 'SHATTER') {
+            handleShatter();
+        } else if (ritualAlert?.ritual === 'COUNCIL') {
+            setView('COUNCIL');
+            setRitualAlert(null);
+        }
     };
 
     const handleUserInput = (text: string) => {
@@ -158,6 +189,7 @@ export default function App() {
                         {view === 'RESEARCH' && <DeepResearchView metrics={metrics} />}
                         {view === 'MEMORY' && <MemoryView />}
                         {view === 'METRICS' && <IskraStateView metrics={metrics} phase={phase} onShatter={handleShatter} />}
+                        {view === 'COUNCIL' && <CouncilView onClose={() => setView('METRICS')} />}
                         {view === 'DESIGN' && <DesignSystem />}
                         {view === 'SETTINGS' && <SettingsView />}
                         {view === 'FOCUS' && <FocusSession onClose={() => setView('PULSE')} />}
@@ -184,11 +216,42 @@ export default function App() {
                 )}
                 
                 {showTour && view !== 'FOCUS' && (
-                    <OnboardingTour 
-                        steps={TOUR_STEPS} 
-                        onComplete={handleTourComplete} 
-                        onSkip={handleTourComplete} 
+                    <OnboardingTour
+                        steps={TOUR_STEPS}
+                        onComplete={handleTourComplete}
+                        onSkip={handleTourComplete}
                     />
+                )}
+
+                {/* Ritual Alert Dialog */}
+                {ritualAlert && (
+                    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                        <div className="bg-surface border border-white/10 rounded-2xl p-6 max-w-md w-full shadow-2xl animate-fade-in">
+                            <div className="flex items-center gap-3 mb-4">
+                                <span className="text-3xl">
+                                    {ritualAlert.ritual === 'PHOENIX' ? '🔥♻' : ritualAlert.ritual === 'SHATTER' ? '💎💥' : '👥'}
+                                </span>
+                                <h3 className="font-serif text-xl text-text">
+                                    Рекомендация: {ritualAlert.ritual}
+                                </h3>
+                            </div>
+                            <p className="text-text-muted mb-6">{ritualAlert.reason}</p>
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={handleRitualConfirm}
+                                    className="flex-1 py-3 rounded-xl bg-primary text-white font-medium hover:bg-primary/90 transition-colors"
+                                >
+                                    Выполнить
+                                </button>
+                                <button
+                                    onClick={() => setRitualAlert(null)}
+                                    className="flex-1 py-3 rounded-xl border border-white/10 text-text-muted hover:text-text transition-colors"
+                                >
+                                    Отложить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 )}
             </div>
         </ErrorBoundary>

@@ -27,6 +27,7 @@ const SECONDARY_ITEMS = [
     { id: 'RESEARCH', name: 'Поиск', icon: FileSearchIcon },
     { id: 'MEMORY', name: 'Память', icon: DatabaseIcon },
     { id: 'METRICS', name: 'Ядро', icon: BrainCircuitIcon },
+    { id: 'COUNCIL', name: 'Совет', icon: UsersIcon },
     { id: 'SETTINGS', name: 'Настройки', icon: LayersIcon },
 ] as const;
 
