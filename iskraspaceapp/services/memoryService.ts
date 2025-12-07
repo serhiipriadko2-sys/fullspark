@@ -271,13 +271,13 @@ export const memoryService = {
         tags: [],
         ...partialNode,
     };
-    
+
     // Pre-save Validation
     if (!validateMemoryNode(fullNode, 'shadow')) {
          console.error("Attempted to save invalid Shadow node", fullNode);
          throw new Error("Memory Integrity Violation: Node schema invalid");
     }
-    
+
     try {
       const shadow = this.getShadow(false);
       const updatedShadow = [fullNode, ...shadow];
@@ -286,6 +286,54 @@ export const memoryService = {
       console.error("Error adding to shadow in localStorage", error);
     }
     return fullNode;
+  },
+
+  deleteShadowNode(nodeId: string): boolean {
+    try {
+      const shadow = this.getShadow(false);
+      const updatedShadow = shadow.filter(n => n.id !== nodeId);
+
+      if (updatedShadow.length === shadow.length) {
+        return false; // Node not found
+      }
+
+      localStorage.setItem(SHADOW_KEY, JSON.stringify(updatedShadow));
+      return true;
+    } catch (error) {
+      console.error("Error deleting shadow node", error);
+      return false;
+    }
+  },
+
+  promoteToArchive(shadowNodeId: string): MemoryNode | null {
+    try {
+      const shadow = this.getShadow(false);
+      const nodeToPromote = shadow.find(n => n.id === shadowNodeId);
+
+      if (!nodeToPromote) {
+        return null;
+      }
+
+      // Create archive version
+      const archiveNode: MemoryNode = {
+        ...nodeToPromote,
+        id: generateId('ARC'),
+        layer: 'archive',
+        timestamp: new Date().toISOString(),
+        tags: [...(nodeToPromote.tags || []).filter(t => t !== 'uncertain'), 'promoted_from_shadow'],
+      };
+
+      // Add to archive
+      this.addArchiveEntry(archiveNode);
+
+      // Remove from shadow
+      this.deleteShadowNode(shadowNodeId);
+
+      return archiveNode;
+    } catch (error) {
+      console.error("Error promoting shadow to archive", error);
+      return null;
+    }
   },
 
   // Basic sanitization to prevent simple injection attacks from memory content
