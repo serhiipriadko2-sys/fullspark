@@ -28,6 +28,7 @@ import { metricsService } from './services/metricsService';
 import { canonService } from './services/canonService';
 import { storageService } from './services/storageService';
 import { checkRitualTriggers, executePhoenix, executeShatter, getPhaseAfterRitual } from './services/ritualService';
+import { hydrateMetricsState } from './services/metricsHydration';
 
 export type AppView = 'PULSE' | 'PLANNER' | 'JOURNAL' | 'BEACON' | 'DUO' | 'CHAT' | 'LIVE' | 'RUNES' | 'RESEARCH' | 'MEMORY' | 'METRICS' | 'COUNCIL' | 'DESIGN' | 'SETTINGS' | 'FOCUS';
 
@@ -71,35 +72,10 @@ const BASE_METRICS: IskraMetrics = {
     interrupt: 0, ctxSwitch: 0
 };
 
-type HydratedState = { state: { metrics: IskraMetrics; phase: IskraPhase }; hasSnapshot: boolean };
-
-function hydrateInitialState(): HydratedState {
-    const snapshot = storageService.loadMetricsSnapshot();
-    if (snapshot) {
-        const derived = calculateDerivedMetrics(snapshot.metrics);
-        return {
-            state: {
-                metrics: { ...snapshot.metrics, mirror_sync: derived.mirror_sync },
-                phase: snapshot.phase
-            },
-            hasSnapshot: true
-        };
-    }
-
-    const derived = calculateDerivedMetrics(BASE_METRICS);
-    return {
-        state: {
-            metrics: { ...BASE_METRICS, mirror_sync: derived.mirror_sync },
-            phase: 'CLARITY' as IskraPhase,
-        },
-        hasSnapshot: false
-    };
-}
-
 type MetricsUpdater = Partial<IskraMetrics> | ((prev: IskraMetrics) => Partial<IskraMetrics>);
 
 export default function App() {
-    const initialStateRef = useRef(hydrateInitialState());
+    const initialStateRef = useRef(hydrateMetricsState(BASE_METRICS, 'CLARITY'));
     const [view, setView] = useState<AppView>('PULSE');
     const [isOnboarding, setIsOnboarding] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -156,12 +132,6 @@ export default function App() {
             setShowTour(true);
         }
         canonService.seedCanon();
-    }, []);
-
-    useEffect(() => {
-        if (!initialStateRef.current.hasSnapshot) {
-            storageService.saveMetricsSnapshot(initialStateRef.current.state.metrics, initialStateRef.current.state.phase);
-        }
     }, []);
 
     useEffect(() => {
