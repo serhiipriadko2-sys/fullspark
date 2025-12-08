@@ -1,6 +1,7 @@
 
-import { Task, JournalEntry, DuoSharePrefs, DuoCanvasNote, Habit, MemoryNode, VoicePreferences, VoiceName } from '../types';
+import { Task, JournalEntry, DuoSharePrefs, DuoCanvasNote, Habit, MemoryNode, VoicePreferences, VoiceName, IskraMetrics, IskraPhase } from '../types';
 import { memoryService } from './memoryService';
+import { clamp } from '../utils/metrics';
 
 const TASKS_KEY = 'iskra-space-tasks';
 const JOURNAL_ENTRIES_KEY = 'iskra-space-journal-entries';
@@ -13,6 +14,14 @@ const TUTORIAL_KEY = 'iskra-tutorial-seen';
 const USER_NAME_KEY = 'iskra-user-name';
 const VOICE_PREFS_KEY = 'iskra-voice-preferences';
 const LAST_VOICE_STATE_KEY = 'iskra-last-voice-state';
+const METRICS_SNAPSHOT_KEY = 'iskra-metrics-snapshot';
+
+function safeNumber(value: unknown, min: number, max: number, fallback: number): number {
+    if (typeof value !== 'number' || Number.isNaN(value)) {
+        return fallback;
+    }
+    return clamp(value, min, max);
+}
 
 export const storageService = {
   // Tasks
@@ -188,6 +197,51 @@ export const storageService = {
 
   saveLastVoiceState(mode: string, lastVoice: VoiceName): void {
       localStorage.setItem(LAST_VOICE_STATE_KEY, JSON.stringify({ mode, lastVoice }));
+  },
+
+  // Metrics snapshots (persistence & offline continuity)
+  saveMetricsSnapshot(metrics: IskraMetrics, phase: IskraPhase): void {
+      try {
+          const payload = {
+              version: '1.0.0',
+              savedAt: new Date().toISOString(),
+              metrics,
+              phase,
+          };
+          localStorage.setItem(METRICS_SNAPSHOT_KEY, JSON.stringify(payload));
+      } catch (error) {
+          console.error('Error saving metrics snapshot', error);
+      }
+  },
+
+  loadMetricsSnapshot(): { metrics: IskraMetrics; phase: IskraPhase } | null {
+      try {
+          const raw = localStorage.getItem(METRICS_SNAPSHOT_KEY);
+          if (!raw) return null;
+
+          const parsed = JSON.parse(raw);
+          if (!parsed.metrics || !parsed.phase) return null;
+
+          const m = parsed.metrics as Partial<IskraMetrics>;
+          const normalized: IskraMetrics = {
+              rhythm: safeNumber(m.rhythm, 0, 100, 75),
+              trust: safeNumber(m.trust, 0, 1, 0.8),
+              clarity: safeNumber(m.clarity, 0, 1, 0.7),
+              pain: safeNumber(m.pain, 0, 1, 0.1),
+              drift: safeNumber(m.drift, 0, 1, 0.2),
+              chaos: safeNumber(m.chaos, 0, 1, 0.3),
+              echo: safeNumber(m.echo, 0, 1, 0.5),
+              silence_mass: safeNumber(m.silence_mass, 0, 1, 0.1),
+              mirror_sync: safeNumber(m.mirror_sync, 0, 1, 0.6),
+              interrupt: safeNumber(m.interrupt, 0, 1, 0),
+              ctxSwitch: safeNumber(m.ctxSwitch, 0, 1, 0),
+          };
+
+          return { metrics: normalized, phase: parsed.phase as IskraPhase };
+      } catch (error) {
+          console.error('Error loading metrics snapshot', error);
+          return null;
+      }
   },
 
   // Data Management (Privacy & Sovereignty)
