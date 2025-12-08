@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Sidebar, { MobileMenu } from './components/Sidebar';
 import DayPulse from './components/DayPulse';
 import Planner from './components/Planner';
@@ -22,6 +22,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { SparkleIcon } from './components/icons';
 import { IskraMetrics, IskraPhase } from './types';
 import { calculateRhythmIndex, clamp, calculateDerivedMetrics } from './utils/metrics';
+import { deltaConfig } from './config/deltaConfig';
 import { memoryService } from './services/memoryService';
 import { metricsService } from './services/metricsService';
 import { canonService } from './services/canonService';
@@ -29,10 +30,6 @@ import { storageService } from './services/storageService';
 import { checkRitualTriggers, executePhoenix, executeShatter, getPhaseAfterRitual } from './services/ritualService';
 
 export type AppView = 'PULSE' | 'PLANNER' | 'JOURNAL' | 'BEACON' | 'DUO' | 'CHAT' | 'LIVE' | 'RUNES' | 'RESEARCH' | 'MEMORY' | 'METRICS' | 'COUNCIL' | 'DESIGN' | 'SETTINGS' | 'FOCUS';
-
-const NEUTRAL_METRICS_TARGET: Partial<IskraMetrics> = {
-    trust: 0.8, clarity: 0.7, pain: 0.1, drift: 0.2, chaos: 0.3, echo: 0.5, silence_mass: 0.1
-};
 
 const TOUR_STEPS: TourStep[] = [
     {
@@ -67,21 +64,59 @@ const TOUR_STEPS: TourStep[] = [
     }
 ];
 
+const BASE_METRICS: IskraMetrics = {
+    rhythm: 75, trust: 0.8, clarity: 0.7, pain: 0.1,
+    drift: 0.2, chaos: 0.3, echo: 0.5, silence_mass: 0.1,
+    mirror_sync: 0.6,
+    interrupt: 0, ctxSwitch: 0
+};
+
+const INITIAL_METRICS: IskraMetrics = {
+    ...BASE_METRICS,
+    mirror_sync: calculateDerivedMetrics(BASE_METRICS).mirror_sync,
+};
+
+type MetricsUpdater = Partial<IskraMetrics> | ((prev: IskraMetrics) => Partial<IskraMetrics>);
+
 export default function App() {
     const [view, setView] = useState<AppView>('PULSE');
     const [isOnboarding, setIsOnboarding] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [showTour, setShowTour] = useState(false);
-    
+
     // Core State
-    const [metrics, setMetrics] = useState<IskraMetrics>({
-        rhythm: 75, trust: 0.8, clarity: 0.7, pain: 0.1, 
-        drift: 0.2, chaos: 0.3, echo: 0.5, silence_mass: 0.1,
-        mirror_sync: 0.6,
-        interrupt: 0, ctxSwitch: 0
-    });
+    const [metrics, setMetrics] = useState<IskraMetrics>(() => INITIAL_METRICS);
     const [phase, setPhase] = useState<IskraPhase>('CLARITY');
     const [ritualAlert, setRitualAlert] = useState<{ ritual: string; reason: string } | null>(null);
+    const phaseRef = useRef<IskraPhase>('CLARITY');
+    const emaRef = useRef({ chaos: INITIAL_METRICS.chaos, drift: INITIAL_METRICS.drift });
+
+    useEffect(() => {
+        phaseRef.current = phase;
+    }, [phase]);
+
+    const updateMetrics = useCallback((updates: MetricsUpdater) => {
+        setMetrics(prev => {
+            const patch = typeof updates === 'function' ? updates(prev) : updates;
+            const merged = { ...prev, ...patch };
+
+            const beta = deltaConfig.ema.beta;
+            const chaosEma = beta * merged.chaos + (1 - beta) * emaRef.current.chaos;
+            const driftEma = beta * merged.drift + (1 - beta) * emaRef.current.drift;
+            emaRef.current = { chaos: chaosEma, drift: driftEma };
+
+            const newRhythm = calculateRhythmIndex(merged, prev.rhythm, emaRef.current);
+            const derived = calculateDerivedMetrics({ ...merged, rhythm: newRhythm });
+            const next: IskraMetrics = { ...merged, rhythm: newRhythm, mirror_sync: derived.mirror_sync };
+
+            const newPhase = metricsService.getPhaseFromMetrics(next);
+            if (newPhase !== phaseRef.current) {
+                setPhase(newPhase);
+            }
+
+            return next;
+        });
+    }, []);
 
     // Auto-trigger rituals based on metrics
     useEffect(() => {
@@ -102,15 +137,15 @@ export default function App() {
     }, []);
 
     useEffect(() => {
-        // Simplified Rhythm Simulation
+        // Simplified Rhythm Simulation - gently nudges chaos/drift to keep rhythm responsive
         const interval = setInterval(() => {
-             setMetrics(prev => {
-                 const newRhythm = clamp(prev.rhythm + (Math.random() - 0.5) * 2, 0, 100);
-                 return { ...prev, rhythm: newRhythm };
-             });
+            updateMetrics(prev => ({
+                chaos: clamp(prev.chaos + (Math.random() - 0.5) * 0.02, 0, 1),
+                drift: clamp(prev.drift + (Math.random() - 0.5) * 0.02, 0, 1),
+            }));
         }, 5000);
         return () => clearInterval(interval);
-    }, []);
+    }, [updateMetrics]);
 
     const handleOnboardingComplete = (name: string) => {
         storageService.completeOnboarding(name);
@@ -124,15 +159,13 @@ export default function App() {
     };
 
     const handleShatter = () => {
-        const newMetrics = executeShatter(metrics);
-        setMetrics(newMetrics);
+        updateMetrics(prev => executeShatter(prev));
         setPhase(getPhaseAfterRitual('SHATTER'));
         setRitualAlert(null);
     };
 
     const handlePhoenix = () => {
-        const newMetrics = executePhoenix(metrics);
-        setMetrics(newMetrics);
+        updateMetrics(prev => executePhoenix(prev));
         setPhase(getPhaseAfterRitual('PHOENIX'));
         setRitualAlert(null);
     };
@@ -150,12 +183,7 @@ export default function App() {
 
     const handleUserInput = (text: string) => {
          const updates = metricsService.calculateMetricsUpdate(text);
-         setMetrics(prev => {
-             const next = { ...prev, ...updates };
-             const newPhase = metricsService.getPhaseFromMetrics(next);
-             if (newPhase !== phase) setPhase(newPhase);
-             return next;
-         });
+         updateMetrics(updates);
     };
     
     if (isOnboarding) {
