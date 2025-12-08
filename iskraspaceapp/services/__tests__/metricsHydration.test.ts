@@ -79,4 +79,17 @@ describe('hydrateMetricsState', () => {
     expect(result.state.phase).toBe('CLARITY');
     expect(result.state.metrics.rhythm).toBe(baseMetrics.rhythm);
   });
+
+  it('returns seeded defaults when storage is unavailable', () => {
+    const original = globalThis.localStorage;
+    // @ts-ignore - simulate non-browser runtime
+    delete globalThis.localStorage;
+
+    const result = hydrateMetricsState(baseMetrics, 'CLARITY');
+
+    expect(result.seeded).toBe(true);
+    expect(result.state.metrics.rhythm).toBe(baseMetrics.rhythm);
+
+    globalThis.localStorage = original;
+  });
 });

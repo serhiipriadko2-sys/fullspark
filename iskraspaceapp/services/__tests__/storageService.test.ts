@@ -68,4 +68,16 @@ describe('storageService metrics snapshot', () => {
 
     expect(storageService.loadMetricsSnapshot()).toBeNull();
   });
+
+  it('gracefully no-ops when localStorage is unavailable', () => {
+    // @ts-ignore - simulate non-browser runtime
+    const originalStorage = globalThis.localStorage;
+    // @ts-ignore
+    delete globalThis.localStorage;
+
+    expect(() => storageService.saveMetricsSnapshot(baseMetrics, 'CLARITY')).not.toThrow();
+    expect(storageService.loadMetricsSnapshot()).toBeNull();
+
+    globalThis.localStorage = originalStorage as Storage;
+  });
 });

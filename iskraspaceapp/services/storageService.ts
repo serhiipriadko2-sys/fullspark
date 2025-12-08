@@ -16,6 +16,10 @@ const VOICE_PREFS_KEY = 'iskra-voice-preferences';
 const LAST_VOICE_STATE_KEY = 'iskra-last-voice-state';
 const METRICS_SNAPSHOT_KEY = 'iskra-metrics-snapshot';
 
+function hasStorage(): boolean {
+  return typeof localStorage !== 'undefined';
+}
+
 function safeNumber(value: unknown, min: number, max: number, fallback: number): number {
     if (typeof value !== 'number' || Number.isNaN(value)) {
         return fallback;
@@ -201,6 +205,7 @@ export const storageService = {
 
   // Metrics snapshots (persistence & offline continuity)
   saveMetricsSnapshot(metrics: IskraMetrics, phase: IskraPhase): void {
+      if (!hasStorage()) return;
       try {
           const payload = {
               version: '1.0.0',
@@ -215,6 +220,7 @@ export const storageService = {
   },
 
   loadMetricsSnapshot(): { metrics: IskraMetrics; phase: IskraPhase } | null {
+      if (!hasStorage()) return null;
       try {
           const raw = localStorage.getItem(METRICS_SNAPSHOT_KEY);
           if (!raw) return null;
