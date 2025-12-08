@@ -71,20 +71,28 @@ const BASE_METRICS: IskraMetrics = {
     interrupt: 0, ctxSwitch: 0
 };
 
-function hydrateInitialState() {
+type HydratedState = { state: { metrics: IskraMetrics; phase: IskraPhase }; hasSnapshot: boolean };
+
+function hydrateInitialState(): HydratedState {
     const snapshot = storageService.loadMetricsSnapshot();
     if (snapshot) {
         const derived = calculateDerivedMetrics(snapshot.metrics);
         return {
-            metrics: { ...snapshot.metrics, mirror_sync: derived.mirror_sync },
-            phase: snapshot.phase
+            state: {
+                metrics: { ...snapshot.metrics, mirror_sync: derived.mirror_sync },
+                phase: snapshot.phase
+            },
+            hasSnapshot: true
         };
     }
 
     const derived = calculateDerivedMetrics(BASE_METRICS);
     return {
-        metrics: { ...BASE_METRICS, mirror_sync: derived.mirror_sync },
-        phase: 'CLARITY' as IskraPhase,
+        state: {
+            metrics: { ...BASE_METRICS, mirror_sync: derived.mirror_sync },
+            phase: 'CLARITY' as IskraPhase,
+        },
+        hasSnapshot: false
     };
 }
 
@@ -98,11 +106,11 @@ export default function App() {
     const [showTour, setShowTour] = useState(false);
 
     // Core State
-    const [metrics, setMetrics] = useState<IskraMetrics>(() => initialStateRef.current.metrics);
-    const [phase, setPhase] = useState<IskraPhase>(() => initialStateRef.current.phase);
+    const [metrics, setMetrics] = useState<IskraMetrics>(() => initialStateRef.current.state.metrics);
+    const [phase, setPhase] = useState<IskraPhase>(() => initialStateRef.current.state.phase);
     const [ritualAlert, setRitualAlert] = useState<{ ritual: string; reason: string } | null>(null);
-    const phaseRef = useRef<IskraPhase>(initialStateRef.current.phase);
-    const emaRef = useRef({ chaos: initialStateRef.current.metrics.chaos, drift: initialStateRef.current.metrics.drift });
+    const phaseRef = useRef<IskraPhase>(initialStateRef.current.state.phase);
+    const emaRef = useRef({ chaos: initialStateRef.current.state.metrics.chaos, drift: initialStateRef.current.state.metrics.drift });
 
     useEffect(() => {
         phaseRef.current = phase;
@@ -151,6 +159,12 @@ export default function App() {
     }, []);
 
     useEffect(() => {
+        if (!initialStateRef.current.hasSnapshot) {
+            storageService.saveMetricsSnapshot(initialStateRef.current.state.metrics, initialStateRef.current.state.phase);
+        }
+    }, []);
+
+    useEffect(() => {
         // Simplified Rhythm Simulation - gently nudges chaos/drift to keep rhythm responsive
         const interval = setInterval(() => {
             updateMetrics(prev => ({
@@ -175,14 +189,12 @@ export default function App() {
     const handleShatter = () => {
         const ritualPhase = getPhaseAfterRitual('SHATTER');
         updateMetrics(prev => executeShatter(prev), ritualPhase);
-        setPhase(ritualPhase);
         setRitualAlert(null);
     };
 
     const handlePhoenix = () => {
         const ritualPhase = getPhaseAfterRitual('PHOENIX');
         updateMetrics(prev => executePhoenix(prev), ritualPhase);
-        setPhase(ritualPhase);
         setRitualAlert(null);
     };
 
