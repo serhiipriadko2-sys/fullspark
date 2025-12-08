@@ -66,16 +66,31 @@ const TOUR_STEPS: TourStep[] = [
 ];
 
 const BASE_METRICS: IskraMetrics = {
-    rhythm: 75, trust: 0.8, clarity: 0.7, pain: 0.1,
-    drift: 0.2, chaos: 0.3, echo: 0.5, silence_mass: 0.1,
+    rhythm: 75,
+    trust: 0.8,
+    clarity: 0.7,
+    pain: 0.1,
+    drift: 0.2,
+    chaos: 0.3,
+    echo: 0.5,
+    silence_mass: 0.1,
     mirror_sync: 0.6,
-    interrupt: 0, ctxSwitch: 0
+    interrupt: 0,
+    ctxSwitch: 0,
 };
+
+// Предварительная гидрация метрик: пытаемся загрузить снапшот, иначе — базовые значения
+const hydratedInitialState = hydrateMetricsState(BASE_METRICS, 'CLARITY');
 
 type MetricsUpdater = Partial<IskraMetrics> | ((prev: IskraMetrics) => Partial<IskraMetrics>);
 
 export default function App() {
-    const initialStateRef = useRef(hydrateMetricsState(BASE_METRICS, 'CLARITY'));
+    /**
+     * initialStateRef содержит объект { state: { metrics, phase }, seeded }
+     * Если в localStorage есть снапшот, state берётся из него;
+     * если нет — используется BASE_METRICS + фаза CLARITY и снапшот сохраняется для последующих сессий.
+     */
+    const initialStateRef = useRef(hydratedInitialState);
     const [view, setView] = useState<AppView>('PULSE');
     const [isOnboarding, setIsOnboarding] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -92,29 +107,32 @@ export default function App() {
         phaseRef.current = phase;
     }, [phase]);
 
-    const updateMetrics = useCallback((updates: MetricsUpdater, overridePhase?: IskraPhase) => {
-        setMetrics(prev => {
-            const patch = typeof updates === 'function' ? updates(prev) : updates;
-            const merged = { ...prev, ...patch };
+    const updateMetrics = useCallback(
+        (updates: MetricsUpdater, overridePhase?: IskraPhase) => {
+            setMetrics(prev => {
+                const patch = typeof updates === 'function' ? updates(prev) : updates;
+                const merged = { ...prev, ...patch };
 
-            const beta = deltaConfig.ema.beta;
-            const chaosEma = beta * merged.chaos + (1 - beta) * emaRef.current.chaos;
-            const driftEma = beta * merged.drift + (1 - beta) * emaRef.current.drift;
-            emaRef.current = { chaos: chaosEma, drift: driftEma };
+                const beta = deltaConfig.ema.beta;
+                const chaosEma = beta * merged.chaos + (1 - beta) * emaRef.current.chaos;
+                const driftEma = beta * merged.drift + (1 - beta) * emaRef.current.drift;
+                emaRef.current = { chaos: chaosEma, drift: driftEma };
 
-            const newRhythm = calculateRhythmIndex(merged, prev.rhythm, emaRef.current);
-            const derived = calculateDerivedMetrics({ ...merged, rhythm: newRhythm });
-            const next: IskraMetrics = { ...merged, rhythm: newRhythm, mirror_sync: derived.mirror_sync };
+                const newRhythm = calculateRhythmIndex(merged, prev.rhythm, emaRef.current);
+                const derived = calculateDerivedMetrics({ ...merged, rhythm: newRhythm });
+                const next: IskraMetrics = { ...merged, rhythm: newRhythm, mirror_sync: derived.mirror_sync };
 
-            const newPhase = overridePhase ?? metricsService.getPhaseFromMetrics(next);
-            if (newPhase !== phaseRef.current) {
-                setPhase(newPhase);
-            }
-            storageService.saveMetricsSnapshot(next, newPhase);
+                const newPhase = overridePhase ?? metricsService.getPhaseFromMetrics(next);
+                if (newPhase !== phaseRef.current) {
+                    setPhase(newPhase);
+                }
 
-            return next;
-        });
-    }, []);
+                storageService.saveMetricsSnapshot(next, newPhase);
+                return next;
+            });
+        },
+        []
+    );
 
     // Auto-trigger rituals based on metrics
     useEffect(() => {
@@ -135,7 +153,8 @@ export default function App() {
     }, []);
 
     useEffect(() => {
-        // Simplified Rhythm Simulation - gently nudges chaos/drift to keep rhythm responsive
+        // Симуляция ∆‑ритма: каждые 5 секунд плавно меняем хаос/дрейф,
+        // чтобы индекс ритма реагировал даже без пользовательских событий
         const interval = setInterval(() => {
             updateMetrics(prev => ({
                 chaos: clamp(prev.chaos + (Math.random() - 0.5) * 0.02, 0, 1),
@@ -180,8 +199,8 @@ export default function App() {
     };
 
     const handleUserInput = (text: string) => {
-         const updates = metricsService.calculateMetricsUpdate(text);
-         updateMetrics(updates);
+        const updates = metricsService.calculateMetricsUpdate(text);
+        updateMetrics(updates);
     };
     
     if (isOnboarding) {
