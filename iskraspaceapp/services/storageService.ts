@@ -30,6 +30,7 @@ function safeNumber(value: unknown, min: number, max: number, fallback: number):
 export const storageService = {
   // Tasks
   getTasks(): Task[] {
+    if (!hasStorage()) return [];
     try {
       const tasksJson = localStorage.getItem(TASKS_KEY);
       return tasksJson ? JSON.parse(tasksJson) : [];
@@ -40,6 +41,7 @@ export const storageService = {
   },
 
   saveTasks(tasks: Task[]): void {
+    if (!hasStorage()) return;
     try {
       localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
     } catch (error) {
@@ -49,6 +51,7 @@ export const storageService = {
 
   // Habits
   getHabits(): Habit[] {
+    if (!hasStorage()) return [];
     try {
       const habitsJson = localStorage.getItem(HABITS_KEY);
       if (habitsJson) {
@@ -68,6 +71,7 @@ export const storageService = {
   },
 
   saveHabits(habits: Habit[]): void {
+      if (!hasStorage()) return;
       try {
           localStorage.setItem(HABITS_KEY, JSON.stringify(habits));
       } catch (error) {
@@ -77,6 +81,7 @@ export const storageService = {
 
   // Journal Entries
   getJournalEntries(): JournalEntry[] {
+    if (!hasStorage()) return [];
     try {
       const entriesJson = localStorage.getItem(JOURNAL_ENTRIES_KEY);
       const entries: JournalEntry[] = entriesJson ? JSON.parse(entriesJson) : [];
@@ -87,8 +92,9 @@ export const storageService = {
       return [];
     }
   },
-  
+
   addJournalEntry(entry: JournalEntry): void {
+    if (!hasStorage()) return;
     try {
       const entries = this.getJournalEntries();
       // Prepend the new entry to maintain sort order
@@ -101,15 +107,24 @@ export const storageService = {
 
   // Journal Security
   getJournalPin(): string | null {
+    if (!hasStorage()) return null;
     return localStorage.getItem(JOURNAL_PIN_KEY);
   },
 
   saveJournalPin(pin: string): void {
+    if (!hasStorage()) return;
     localStorage.setItem(JOURNAL_PIN_KEY, pin);
   },
 
   // Duo Preferences
   getDuoPrefs(): DuoSharePrefs {
+    if (!hasStorage()) {
+      return {
+        sleep: 'weekly_mean',
+        focus: 'daily_score',
+        habits: 'hidden',
+      };
+    }
     try {
       const prefsJson = localStorage.getItem(DUO_PREFS_KEY);
       if (prefsJson) {
@@ -127,6 +142,7 @@ export const storageService = {
   },
 
   saveDuoPrefs(prefs: DuoSharePrefs): void {
+    if (!hasStorage()) return;
     try {
       localStorage.setItem(DUO_PREFS_KEY, JSON.stringify(prefs));
     } catch (error) {
@@ -136,6 +152,7 @@ export const storageService = {
 
   // Duo Canvas Notes
   getDuoCanvasNotes(): DuoCanvasNote[] {
+    if (!hasStorage()) return [];
     try {
       const notesJson = localStorage.getItem(DUO_CANVAS_NOTES_KEY);
       return notesJson ? JSON.parse(notesJson) : [];
@@ -146,6 +163,7 @@ export const storageService = {
   },
 
   saveDuoCanvasNotes(notes: DuoCanvasNote[]): void {
+    if (!hasStorage()) return;
     try {
       localStorage.setItem(DUO_CANVAS_NOTES_KEY, JSON.stringify(notes));
     } catch (error) {
@@ -155,29 +173,35 @@ export const storageService = {
 
   // User Identity & Onboarding
   isOnboardingComplete(): boolean {
+    if (!hasStorage()) return false;
     return localStorage.getItem(ONBOARDING_KEY) === 'true';
   },
 
   completeOnboarding(userName: string): void {
+    if (!hasStorage()) return;
     localStorage.setItem(ONBOARDING_KEY, 'true');
     localStorage.setItem(USER_NAME_KEY, userName);
   },
 
   getUserName(): string {
+    if (!hasStorage()) return 'Спутник';
     return localStorage.getItem(USER_NAME_KEY) || 'Спутник';
   },
 
   // Tutorial / Onboarding Tour
   hasSeenTutorial(): boolean {
+    if (!hasStorage()) return false;
     return localStorage.getItem(TUTORIAL_KEY) === 'true';
   },
 
   completeTutorial(): void {
+    if (!hasStorage()) return;
     localStorage.setItem(TUTORIAL_KEY, 'true');
   },
 
   // Voice Preferences & State
   getVoicePreferences(): VoicePreferences {
+      if (!hasStorage()) return {};
       try {
           const raw = localStorage.getItem(VOICE_PREFS_KEY);
           return raw ? JSON.parse(raw) : {};
@@ -187,11 +211,13 @@ export const storageService = {
   },
 
   saveVoicePreferences(prefs: VoicePreferences): void {
+      if (!hasStorage()) return;
       localStorage.setItem(VOICE_PREFS_KEY, JSON.stringify(prefs));
   },
 
   // Returns { mode: 'AUTO' | VoiceName, lastVoice: VoiceName }
   getLastVoiceState(): { mode: string, lastVoice: VoiceName } {
+      if (!hasStorage()) return { mode: 'AUTO', lastVoice: 'ISKRA' };
       try {
           const raw = localStorage.getItem(LAST_VOICE_STATE_KEY);
           if (raw) return JSON.parse(raw);
@@ -200,6 +226,7 @@ export const storageService = {
   },
 
   saveLastVoiceState(mode: string, lastVoice: VoiceName): void {
+      if (!hasStorage()) return;
       localStorage.setItem(LAST_VOICE_STATE_KEY, JSON.stringify({ mode, lastVoice }));
   },
 

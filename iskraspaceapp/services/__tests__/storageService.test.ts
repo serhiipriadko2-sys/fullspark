@@ -80,4 +80,20 @@ describe('storageService metrics snapshot', () => {
 
     globalThis.localStorage = originalStorage as Storage;
   });
+
+  it('returns safe defaults for onboarding/tour when storage is missing', () => {
+    // @ts-ignore - simulate non-browser runtime
+    const originalStorage = globalThis.localStorage;
+    // @ts-ignore
+    delete globalThis.localStorage;
+
+    expect(storageService.isOnboardingComplete()).toBe(false);
+    expect(storageService.hasSeenTutorial()).toBe(false);
+    expect(storageService.getUserName()).toBe('Спутник');
+
+    expect(() => storageService.completeOnboarding('Test User')).not.toThrow();
+    expect(() => storageService.completeTutorial()).not.toThrow();
+
+    globalThis.localStorage = originalStorage as Storage;
+  });
 });
