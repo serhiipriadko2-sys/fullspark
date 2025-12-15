@@ -25,7 +25,8 @@ export type AuditEventType =
   | 'drift_detected'
   | 'trust_change'
   | 'user_action'
-  | 'system_event';
+  | 'system_event'
+  | 'eval_result';
 
 export type AuditSeverity = 'info' | 'warning' | 'critical' | 'audit';
 
@@ -236,6 +237,37 @@ class AuditService {
     }, {
       severity: 'warning',
       context: 'Response missing required ∆DΩΛ signature',
+    });
+  }
+
+  /**
+   * Log eval result from evalService
+   */
+  logEvalResult(
+    evalResult: {
+      overall: number;
+      grade: string;
+      flags: { type: string; code: string; message: string }[];
+      metrics: Record<string, { score: number; signals: string[] }>;
+    },
+    responseId?: string
+  ): AuditEntry {
+    const severity = evalResult.overall < 0.5 ? 'warning' :
+                     evalResult.overall < 0.3 ? 'critical' : 'info';
+
+    return this.log('eval_result', {
+      overall: evalResult.overall.toFixed(3),
+      grade: evalResult.grade,
+      flagCount: evalResult.flags.length,
+      criticalFlags: evalResult.flags.filter(f => f.type === 'critical').map(f => f.code),
+      metricScores: Object.fromEntries(
+        Object.entries(evalResult.metrics).map(([k, v]) => [k, v.score.toFixed(2)])
+      ),
+      responseId,
+    }, {
+      severity,
+      actor: 'system',
+      context: 'Response quality evaluation',
     });
   }
 
