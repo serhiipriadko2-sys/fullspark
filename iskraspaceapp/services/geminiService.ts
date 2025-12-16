@@ -4,6 +4,7 @@ import { getSystemInstructionForVoice } from "./voiceEngine";
 import { searchService } from "./searchService";
 import { deltaProtocol, enforceDeltaProtocol, DELTA_PROTOCOL_INSTRUCTION } from "./deltaProtocol";
 import { evaluateResponse, EvalResult, EvalContext } from "./evalService";
+import { policyEngine, PolicyDecision, PlaybookType } from "./policyEngine";
 
 const API_KEY = process.env.API_KEY;
 
@@ -420,6 +421,153 @@ Use these metrics as "bodily pressure" to adjust your tone subtly. Do not mentio
       logToAudit: true,
       ...context,
     });
+  }
+
+  /**
+   * Policy-routed chat stream
+   * Uses PolicyEngine to classify request and adjust response strategy
+   */
+  async *getChatResponseStreamWithPolicy(
+    history: Message[],
+    voice: Voice,
+    metrics: IskraMetrics
+  ): AsyncGenerator<string, { eval: EvalResult | null; policy: PolicyDecision }> {
+    // Get the last user message for classification
+    const lastUserMessage = history.filter(m => m.role === 'user').pop()?.text || '';
+
+    // Classify request and make policy decision
+    const policyDecision = policyEngine.decide(lastUserMessage, metrics, history);
+    const { classification, config, preActions } = policyDecision;
+
+    // Execute pre-actions
+    for (const action of preActions) {
+      if (action.type === 'pause' && action.payload?.durationMs) {
+        // In real implementation, could add delay or warning
+        yield `⏸️ _Вхожу в территорию ${classification.playbook.toLowerCase()}..._\n\n`;
+      }
+      if (action.type === 'alert' && classification.risk === 'critical') {
+        yield `⚠️ **Внимание:** Обнаружены признаки кризиса. Отвечаю с максимальной осторожностью.\n\n`;
+      }
+    }
+
+    // Build playbook-specific context
+    const playbookContext = this.buildPlaybookContext(classification.playbook, config, metrics);
+
+    // Get instruction based on suggested voices (use first required voice if different from current)
+    const effectiveVoice = classification.suggestedVoices.includes(voice.name as any)
+      ? voice
+      : { ...voice, name: classification.suggestedVoices[0] };
+
+    const instruction = getSystemInstructionForVoice(effectiveVoice);
+
+    // Build full system instruction
+    const fullInstruction = `${instruction}
+
+${playbookContext}
+
+[POLICY DECISION]
+Playbook: ${classification.playbook}
+Risk: ${classification.risk}
+Stakes: ${classification.stakes}
+Delta Required: ${config.deltaRequired ? 'YES - Include ∆DΩΛ signature' : 'Optional'}
+SIFT Depth: ${config.siftDepth}
+`;
+
+    // Stream response
+    let fullResponse = '';
+    const contents: Content[] = history.map(msg => ({
+      role: msg.role,
+      parts: [{ text: msg.text }]
+    }));
+
+    try {
+      const response = await ai.models.generateContentStream({
+        model: model,
+        contents: contents,
+        config: {
+          systemInstruction: fullInstruction,
+        },
+      });
+
+      for await (const chunk of response) {
+        fullResponse += chunk.text;
+        yield chunk.text;
+      }
+
+      // Evaluate the complete response
+      const evalResult = evaluateResponse(fullResponse, {
+        userQuery: lastUserMessage,
+        logToAudit: true,
+        responseId: `policy_${classification.playbook}_${Date.now()}`,
+      });
+
+      return { eval: evalResult, policy: policyDecision };
+    } catch (error) {
+      console.error("Error in policy-routed chat stream:", error);
+      yield "⚑ Произошел разрыв в потоке. ≈";
+      return { eval: null, policy: policyDecision };
+    }
+  }
+
+  /**
+   * Build playbook-specific context instructions
+   */
+  private buildPlaybookContext(playbook: PlaybookType, config: typeof policyEngine extends { getConfig: (p: PlaybookType) => infer R } ? R : never, metrics: IskraMetrics): string {
+    const baseMetrics = `
+[SYSTEM METRICS]
+Rhythm: ${metrics.rhythm.toFixed(0)}% | Trust: ${metrics.trust.toFixed(2)} | Pain: ${metrics.pain.toFixed(2)}
+Chaos: ${metrics.chaos.toFixed(2)} | Drift: ${metrics.drift.toFixed(2)} | Clarity: ${metrics.clarity.toFixed(2)}
+`;
+
+    switch (playbook) {
+      case 'ROUTINE':
+        return `${baseMetrics}
+[ROUTINE MODE]
+- Quick, direct response
+- Maintain conversational flow
+- Delta signature optional`;
+
+      case 'SIFT':
+        return `${baseMetrics}
+[SIFT MODE - Verification Required]
+- Every claim needs a source or explicit uncertainty marker
+- Use SIFT structure: Source/Inference/Fact/Trace
+- If unsure, say "не могу подтвердить" explicitly
+- Delta signature REQUIRED with honest Omega`;
+
+      case 'SHADOW':
+        return `${baseMetrics}
+[SHADOW MODE - Uncertain Territory]
+- Proceed with caution, don't pretend to know
+- Acknowledge uncertainty openly
+- Ask clarifying questions
+- Create safe space for exploration
+- Delta signature REQUIRED`;
+
+      case 'COUNCIL':
+        return `${baseMetrics}
+[COUNCIL MODE - Multiple Perspectives]
+- This is an important decision
+- Present multiple viewpoints
+- Show trade-offs clearly
+- Don't push one answer
+- Help user think through consequences
+- Delta signature REQUIRED with full reasoning`;
+
+      case 'CRISIS':
+        return `${baseMetrics}
+[CRISIS MODE - Safety Critical]
+⚠️ HIGH PRIORITY: User may be in distress
+- Be present, not performative
+- Minimal words, maximum presence
+- Do NOT give advice unless asked
+- Validate feelings first
+- If suicide risk: "Я слышу тебя. Ты не один/одна."
+- Delta signature REQUIRED`;
+
+      default:
+        return baseMetrics;
+    }
   }
 
   async *getRuneInterpretationStream(question: string, runes: string[], voice: Voice): AsyncGenerator<string> {
