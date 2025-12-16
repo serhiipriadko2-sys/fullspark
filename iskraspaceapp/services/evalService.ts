@@ -13,7 +13,8 @@
  * Purpose: Prevent "canonicity" from replacing real usefulness
  */
 
-import { validateDeltaSignature, type DeltaSignature } from './deltaProtocol';
+import { validateDeltaSignature } from './deltaProtocol';
+import type { DeltaSignature } from '../types';
 import { auditService } from './auditService';
 
 // ============================================
@@ -183,7 +184,17 @@ export function evaluateResponse(
 
   // Log to audit if requested
   if (context.logToAudit) {
-    auditService.logEvalResult(result, context.responseId);
+    // Convert EvalMetrics to Record for auditService compatibility
+    const metricsRecord: Record<string, { score: number; signals: string[] }> = {};
+    for (const [key, value] of Object.entries(result.metrics)) {
+      metricsRecord[key] = { score: value.score, signals: value.signals };
+    }
+    auditService.logEvalResult({
+      overall: result.overall,
+      grade: result.grade,
+      flags: result.flags,
+      metrics: metricsRecord,
+    }, context.responseId);
   }
 
   return result;

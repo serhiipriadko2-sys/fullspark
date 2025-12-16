@@ -103,22 +103,21 @@ export async function buildRAGContext(
   // Always check Mantra for core principles
   if (RAG_CONFIG.includeMantra) {
     const mantra = memoryService.getMantra();
-    const relevantMantra = mantra.filter(m => {
-      const text = `${m.title || ''} ${JSON.stringify(m.content)}`.toLowerCase();
+    // MantraNode is single entity, not array - check if relevant
+    if (mantra && mantra.isActive) {
       const queryWords = query.toLowerCase().split(/\s+/);
-      return queryWords.some(w => text.includes(w));
-    });
+      const mantraText = mantra.text.toLowerCase();
+      const isRelevant = queryWords.some(w => mantraText.includes(w));
 
-    for (const m of relevantMantra.slice(0, 2)) {
-      if (!relevantMemories.some(rm => rm.id === m.id)) {
+      if (isRelevant && !relevantMemories.some(rm => rm.id === mantra.id)) {
         relevantMemories.unshift({
-          id: m.id,
-          title: m.title,
-          content: typeof m.content === 'string' ? m.content : JSON.stringify(m.content).substring(0, 200),
+          id: mantra.id,
+          title: 'Mantra Core',
+          content: mantra.text.substring(0, 200),
           type: 'mantra',
           layer: 'mantra',
           score: 1.0, // Mantra always highest priority
-          tags: m.tags,
+          tags: [],
         });
       }
     }

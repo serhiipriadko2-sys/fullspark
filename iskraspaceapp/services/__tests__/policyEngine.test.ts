@@ -25,6 +25,8 @@ const defaultMetrics: IskraMetrics = {
   clarity: 0.7,
   silence_mass: 0.4,
   mirror_sync: 0.8,
+  interrupt: 0.2,
+  ctxSwitch: 0.3,
 };
 
 describe('PolicyEngine', () => {
