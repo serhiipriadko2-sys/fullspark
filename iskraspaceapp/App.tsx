@@ -16,6 +16,9 @@ import Onboarding from './components/Onboarding';
 import BeaconView from './components/BeaconView';
 import FocusSession from './components/FocusSession';
 import CouncilView from './components/CouncilView';
+import EvalDashboard from './components/EvalDashboard';
+import GlossaryView from './components/GlossaryView';
+import ShadowView from './components/ShadowView';
 import OnboardingTour, { TourStep } from './components/OnboardingTour';
 import Ambience from './components/Ambience';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -28,7 +31,7 @@ import { canonService } from './services/canonService';
 import { storageService } from './services/storageService';
 import { checkRitualTriggers, executePhoenix, executeShatter, getPhaseAfterRitual } from './services/ritualService';
 
-export type AppView = 'PULSE' | 'PLANNER' | 'JOURNAL' | 'BEACON' | 'DUO' | 'CHAT' | 'LIVE' | 'RUNES' | 'RESEARCH' | 'MEMORY' | 'METRICS' | 'COUNCIL' | 'DESIGN' | 'SETTINGS' | 'FOCUS';
+export type AppView = 'PULSE' | 'PLANNER' | 'JOURNAL' | 'BEACON' | 'DUO' | 'CHAT' | 'LIVE' | 'RUNES' | 'RESEARCH' | 'MEMORY' | 'METRICS' | 'COUNCIL' | 'EVAL' | 'GLOSSARY' | 'SHADOW' | 'DESIGN' | 'SETTINGS' | 'FOCUS';
 
 const NEUTRAL_METRICS_TARGET: Partial<IskraMetrics> = {
     trust: 0.8, clarity: 0.7, pain: 0.1, drift: 0.2, chaos: 0.3, echo: 0.5, silence_mass: 0.1
@@ -190,6 +193,9 @@ export default function App() {
                         {view === 'MEMORY' && <MemoryView />}
                         {view === 'METRICS' && <IskraStateView metrics={metrics} phase={phase} onShatter={handleShatter} />}
                         {view === 'COUNCIL' && <CouncilView onClose={() => setView('METRICS')} />}
+                        {view === 'EVAL' && <EvalDashboard />}
+                        {view === 'GLOSSARY' && <GlossaryView />}
+                        {view === 'SHADOW' && <ShadowView />}
                         {view === 'DESIGN' && <DesignSystem />}
                         {view === 'SETTINGS' && <SettingsView />}
                         {view === 'FOCUS' && <FocusSession onClose={() => setView('PULSE')} />}

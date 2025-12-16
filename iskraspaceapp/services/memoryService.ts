@@ -177,7 +177,6 @@ export const memoryService = {
           const newNodes = data.archive.filter(n => validateMemoryNode(n, 'archive') && !currentIds.has(n.id));
           const merged = [...newNodes, ...currentArchive];
           localStorage.setItem(ARCHIVE_KEY, JSON.stringify(merged));
-          console.log(`Imported ${newNodes.length} archive nodes.`);
       }
 
       if (data.shadow && Array.isArray(data.shadow)) {
@@ -187,7 +186,6 @@ export const memoryService = {
           const newNodes = data.shadow.filter(n => validateMemoryNode(n, 'shadow') && !currentIds.has(n.id));
           const merged = [...newNodes, ...currentShadow];
           localStorage.setItem(SHADOW_KEY, JSON.stringify(merged));
-          console.log(`Imported ${newNodes.length} shadow nodes.`);
       }
   },
 

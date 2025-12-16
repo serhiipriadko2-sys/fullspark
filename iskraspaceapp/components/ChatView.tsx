@@ -242,12 +242,19 @@ const ChatView: React.FC<ChatViewProps> = ({ metrics, onUserInput }) => {
     setHistory(prev => [...prev, { role: 'model', text: '', voice: responseVoice }]);
 
     try {
-      // Pass current metrics AND voice to the service
-      const stream = service.getChatResponseStream(currentHistory, responseVoice, metrics);
+      // Use policy-routed stream with eval
+      const stream = service.getChatResponseStreamWithPolicy(currentHistory, responseVoice, metrics);
       let fullResponse = '';
+      let streamResult: { eval: any; policy: any } | null = null;
 
-      for await (const chunk of stream) {
-        fullResponse += chunk;
+      // Iterate manually to capture return value
+      while (true) {
+        const { value, done } = await stream.next();
+        if (done) {
+          streamResult = value; // Capture eval/policy result
+          break;
+        }
+        fullResponse += value;
         setHistory(prev => {
           const newHistory = [...prev];
           const lastMessage = newHistory[newHistory.length - 1];
@@ -255,14 +262,23 @@ const ChatView: React.FC<ChatViewProps> = ({ metrics, onUserInput }) => {
           return newHistory;
         });
       }
-       if (isTtsEnabled && fullResponse.trim().length > 0) {
-          const speechText = fullResponse
-             .replace(/I-Loop:.*?(?:\n|$)/i, '')
-             .replace(/⚑ KAIN-Slice:.*?(?:\n\n|$)/i, '')
-             .replace(/∆DΩΛ[\s\S]*$/, '');
-          
-          await processSentenceForSpeech(speechText.trim());
-       }
+
+      // Log eval result for debugging (can be shown in UI later)
+      if (streamResult?.eval) {
+        console.debug('[Eval]', streamResult.eval.grade, streamResult.eval.overall.toFixed(2));
+      }
+      if (streamResult?.policy) {
+        console.debug('[Policy]', streamResult.policy.classification.playbook);
+      }
+
+      if (isTtsEnabled && fullResponse.trim().length > 0) {
+        const speechText = fullResponse
+           .replace(/I-Loop:.*?(?:\n|$)/i, '')
+           .replace(/⚑ KAIN-Slice:.*?(?:\n\n|$)/i, '')
+           .replace(/∆DΩΛ[\s\S]*$/, '');
+
+        await processSentenceForSpeech(speechText.trim());
+      }
 
     } catch (e) {
       const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred';

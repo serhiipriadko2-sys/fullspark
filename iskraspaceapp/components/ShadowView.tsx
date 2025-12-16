@@ -46,12 +46,7 @@ const ShadowView: React.FC<ShadowViewProps> = ({ onClose }) => {
 
   const promoteToArchive = useCallback((node: MemoryNode) => {
     // Use memoryService to promote shadow to archive
-    const promoted = memoryService.promoteToArchive(node.id);
-
-    if (promoted) {
-      console.log('Successfully promoted to archive:', promoted.id);
-    }
-
+    memoryService.promoteToArchive(node.id);
     loadShadowNodes();
     setSelectedNode(null);
     setShowPromoteDialog(false);
