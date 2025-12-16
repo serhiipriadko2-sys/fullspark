@@ -3,6 +3,7 @@ import { DailyAdvice, PlanTop3, JournalPrompt, RitualTag, TranscriptionMessage, 
 import { getSystemInstructionForVoice } from "./voiceEngine";
 import { searchService } from "./searchService";
 import { deltaProtocol, enforceDeltaProtocol, DELTA_PROTOCOL_INSTRUCTION } from "./deltaProtocol";
+import { evaluateResponse, EvalResult, EvalContext } from "./evalService";
 
 const API_KEY = process.env.API_KEY;
 export const ai: GoogleGenAI | null = API_KEY ? new GoogleGenAI({ apiKey: API_KEY }) : null;
@@ -415,6 +416,49 @@ Use these metrics as "bodily pressure" to adjust your tone subtly. Do not mentio
       console.error("Error in chat stream from Gemini:", error);
       yield "⚑ Произошел разрыв в потоке. Проверьте соединение или попробуйте позже. Тишина тоже может быть ответом. ≈";
     }
+  }
+
+  /**
+   * Wrapper that streams response AND returns eval result
+   * Collects full response while streaming, then evaluates
+   */
+  async *getChatResponseStreamWithEval(
+    history: Message[],
+    voice: Voice,
+    metrics: IskraMetrics,
+    evalOptions?: { logToAudit?: boolean; responseId?: string }
+  ): AsyncGenerator<string, EvalResult | null> {
+    let fullResponse = '';
+
+    try {
+      for await (const chunk of this.getChatResponseStream(history, voice, metrics)) {
+        fullResponse += chunk;
+        yield chunk;
+      }
+
+      // Evaluate the complete response
+      const userQuery = history.filter(m => m.role === 'user').pop()?.text;
+      const evalContext: EvalContext = {
+        userQuery,
+        logToAudit: evalOptions?.logToAudit ?? true,
+        responseId: evalOptions?.responseId ?? `chat_${Date.now()}`,
+      };
+
+      return evaluateResponse(fullResponse, evalContext);
+    } catch (error) {
+      console.error("Error in chat stream with eval:", error);
+      return null;
+    }
+  }
+
+  /**
+   * Evaluate a pre-generated response (for batch evaluation)
+   */
+  evaluateAIResponse(response: string, context?: EvalContext): EvalResult {
+    return evaluateResponse(response, {
+      logToAudit: true,
+      ...context,
+    });
   }
 
   async *getRuneInterpretationStream(question: string, runes: string[], voice: Voice): AsyncGenerator<string> {
