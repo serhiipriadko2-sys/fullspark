@@ -16,6 +16,9 @@ import Onboarding from './components/Onboarding';
 import BeaconView from './components/BeaconView';
 import FocusSession from './components/FocusSession';
 import CouncilView from './components/CouncilView';
+import EvalDashboard from './components/EvalDashboard';
+import GlossaryView from './components/GlossaryView';
+import ShadowView from './components/ShadowView';
 import OnboardingTour, { TourStep } from './components/OnboardingTour';
 import Ambience from './components/Ambience';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -29,7 +32,7 @@ import { canonService } from './services/canonService';
 import { storageService } from './services/storageService';
 import { checkRitualTriggers, executePhoenix, executeShatter, getPhaseAfterRitual } from './services/ritualService';
 
-export type AppView = 'PULSE' | 'PLANNER' | 'JOURNAL' | 'BEACON' | 'DUO' | 'CHAT' | 'LIVE' | 'RUNES' | 'RESEARCH' | 'MEMORY' | 'METRICS' | 'COUNCIL' | 'DESIGN' | 'SETTINGS' | 'FOCUS';
+export type AppView = 'PULSE' | 'PLANNER' | 'JOURNAL' | 'BEACON' | 'DUO' | 'CHAT' | 'LIVE' | 'RUNES' | 'RESEARCH' | 'MEMORY' | 'METRICS' | 'COUNCIL' | 'EVAL' | 'GLOSSARY' | 'SHADOW' | 'DESIGN' | 'SETTINGS' | 'FOCUS';
 
 const TOUR_STEPS: TourStep[] = [
     {
@@ -218,6 +221,9 @@ export default function App() {
                         {view === 'MEMORY' && <MemoryView />}
                         {view === 'METRICS' && <IskraStateView metrics={metrics} phase={phase} onShatter={handleShatter} />}
                         {view === 'COUNCIL' && <CouncilView onClose={() => setView('METRICS')} />}
+                        {view === 'EVAL' && <EvalDashboard />}
+                        {view === 'GLOSSARY' && <GlossaryView />}
+                        {view === 'SHADOW' && <ShadowView />}
                         {view === 'DESIGN' && <DesignSystem />}
                         {view === 'SETTINGS' && <SettingsView />}
                         {view === 'FOCUS' && <FocusSession onClose={() => setView('PULSE')} />}

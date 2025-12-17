@@ -13,8 +13,7 @@ class CanonService {
                 return;
             }
 
-            console.log('Seeding canon knowledge base...');
-            
+            // Seed canon knowledge base
             canonData.forEach(doc => {
                 const nodeType = 'artifact';
                 const node: Partial<MemoryNode> = {
@@ -35,7 +34,6 @@ class CanonService {
             });
 
             localStorage.setItem(CANON_SEEDED_KEY, 'true');
-            console.log('Canon knowledge base seeded.');
         } catch (error) {
             console.error("Error seeding canon data:", error);
             // If seeding fails (e.g. localStorage is full), don't try again on next load

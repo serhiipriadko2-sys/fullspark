@@ -236,8 +236,7 @@ export const storageService = {
           if (data.memory) {
               memoryService.importMemory(data.memory);
           }
-          
-          console.log("Import successful");
+
           // Force refresh to reload state
           window.location.reload();
       } catch (error) {
