@@ -178,6 +178,7 @@ describe('memoryService', () => {
             timestamp: new Date().toISOString(),
             type: 'insight' as const,
             layer: 'archive' as const,
+            content: { text: 'test content' },
             evidence: [{
               source: 'import',
               inference: 'test',
@@ -202,6 +203,7 @@ describe('memoryService', () => {
             timestamp: new Date().toISOString(),
             type: 'insight' as const,
             layer: 'shadow' as const,
+            content: { text: 'shadow content' },
             evidence: [{
               source: 'import',
               inference: 'test',
