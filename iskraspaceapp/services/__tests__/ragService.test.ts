@@ -90,7 +90,7 @@ describe('ragService', () => {
     it('works with message history', async () => {
       const history = [
         { role: 'user' as const, text: 'previous question' },
-        { role: 'assistant' as const, text: 'previous answer' },
+        { role: 'model' as const, text: 'previous answer' },
       ];
       const result = await enhanceMessageWithRAG('new question', history);
 
