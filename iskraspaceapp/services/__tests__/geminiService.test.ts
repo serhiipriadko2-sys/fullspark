@@ -108,7 +108,7 @@ const createVoice = (): Voice => ({
   name: 'ISKRA',
   description: 'Test voice',
   symbol: '⟡',
-  color: '#fff',
+  activation: () => 1.0,
 });
 
 describe('IskraAIService', () => {
@@ -129,7 +129,7 @@ describe('IskraAIService', () => {
       });
 
       const advice = await service.getDailyAdvice([
-        { id: '1', title: 'Test task', completed: false, ritualTag: 'FIRE' },
+        { id: '1', title: 'Test task', done: false, ritualTag: 'FIRE' },
       ]);
 
       expect(advice).toHaveProperty('deltaScore');
