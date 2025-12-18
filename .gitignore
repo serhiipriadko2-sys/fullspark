@@ -48,3 +48,8 @@ dist/
 out/
 *.db
 debug_*.py
+
+# Playwright
+playwright-report/
+test-results/
+playwright/.cache/
