@@ -31,6 +31,7 @@
     "iskra-spaceapp",
     "e2e",
     "playwright-report",
-    "test-results"
+    "test-results",
+    "supabase"
   ]
 }
