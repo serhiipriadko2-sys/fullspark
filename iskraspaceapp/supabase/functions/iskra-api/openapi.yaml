@@ -1,0 +1,845 @@
+openapi: 3.1.0
+info:
+  title: Iskra Space API
+  description: |
+    API для взаимодействия ChatGPT Искры с базой данных Supabase.
+    Управление метриками, памятью, дневником, задачами и голосовыми предпочтениями.
+  version: 1.0.0
+servers:
+  - url: https://typcvaszcfdpkzbjzuur.supabase.co/functions/v1/iskra-api
+    description: Supabase Edge Function
+
+paths:
+  /health:
+    get:
+      operationId: checkHealth
+      summary: Проверка статуса API
+      description: Проверяет доступность API и возвращает текущий статус
+      responses:
+        '200':
+          description: API работает
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  timestamp:
+                    type: string
+                    format: date-time
+
+  /metrics:
+    get:
+      operationId: getMetrics
+      summary: Получить текущие метрики
+      description: |
+        Возвращает последний снимок метрик пользователя:
+        - rhythm (75-95) - ритм системы
+        - trust (0-1) - уровень доверия
+        - clarity (0-1) - ясность
+        - pain (0-1) - уровень боли
+        - drift (0-1) - дрейф
+        - chaos (0-1) - хаос
+        - echo (0-1) - эхо
+        - silence_mass (0-1) - масса тишины
+        - mirror_sync (0-1) - синхронизация зеркала
+        - phase - текущая фаза (GENESIS, IGNITION, CLARITY, MOMENTUM, MASTERY, TRANSCENDENCE, REBIRTH, VOID)
+      responses:
+        '200':
+          description: Текущие метрики
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Metrics'
+    post:
+      operationId: saveMetrics
+      summary: Сохранить новый снимок метрик
+      description: Создаёт новый снимок метрик в истории
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MetricsInput'
+      responses:
+        '200':
+          description: Метрики сохранены
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  id:
+                    type: string
+                    format: uuid
+
+  /metrics/history:
+    get:
+      operationId: getMetricsHistory
+      summary: Получить историю метрик
+      description: Возвращает историю снимков метрик
+      parameters:
+        - name: limit
+          in: query
+          description: Количество записей (по умолчанию 10)
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: История метрик
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Metrics'
+
+  /memory:
+    get:
+      operationId: getMemoryNodes
+      summary: Получить узлы памяти
+      description: |
+        Возвращает узлы памяти из трёх слоёв:
+        - mantra - мантра дня (core belief)
+        - archive - основной архив знаний и инсайтов
+        - shadow - теневой слой (сомнения, страхи, подавленное)
+      parameters:
+        - name: layer
+          in: query
+          description: Фильтр по слою памяти (mantra, archive, shadow)
+          schema:
+            type: string
+            enum: [mantra, archive, shadow]
+      responses:
+        '200':
+          description: Список узлов памяти
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MemoryNode'
+    post:
+      operationId: addMemoryNode
+      summary: Добавить узел памяти
+      description: Создаёт новый узел в памяти
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MemoryNodeInput'
+      responses:
+        '200':
+          description: Узел создан
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  id:
+                    type: string
+                    format: uuid
+
+  /memory/search:
+    get:
+      operationId: searchMemory
+      summary: Поиск в памяти
+      description: Ищет узлы памяти по тексту в заголовке и содержимом
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: Поисковый запрос
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Результаты поиска
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MemoryNode'
+
+  /memory/mantra:
+    get:
+      operationId: getMantra
+      summary: Получить текущую мантру
+      description: Возвращает текущую мантру дня пользователя
+      responses:
+        '200':
+          description: Текущая мантра
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemoryNode'
+    post:
+      operationId: setMantra
+      summary: Установить новую мантру
+      description: Заменяет текущую мантру на новую
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - content
+              properties:
+                content:
+                  type: string
+                  description: Текст мантры
+                  example: "Я проживаю каждый момент осознанно"
+      responses:
+        '200':
+          description: Мантра установлена
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  id:
+                    type: string
+                    format: uuid
+
+  /journal:
+    get:
+      operationId: getJournalEntries
+      summary: Получить записи дневника
+      description: Возвращает последние записи из дневника
+      parameters:
+        - name: limit
+          in: query
+          description: Количество записей (по умолчанию 10)
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Записи дневника
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JournalEntry'
+    post:
+      operationId: addJournalEntry
+      summary: Добавить запись в дневник
+      description: Создаёт новую запись в дневнике с анализом от Искры
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JournalEntryInput'
+      responses:
+        '200':
+          description: Запись создана
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  id:
+                    type: string
+                    format: uuid
+                  timestamp:
+                    type: string
+                    format: date-time
+
+  /journal/{id}:
+    get:
+      operationId: getJournalEntry
+      summary: Получить запись дневника по ID
+      description: Возвращает конкретную запись дневника
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: UUID записи
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Запись дневника
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JournalEntry'
+
+  /tasks:
+    get:
+      operationId: getTasks
+      summary: Получить все задачи
+      description: Возвращает все задачи пользователя
+      responses:
+        '200':
+          description: Список задач
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+    post:
+      operationId: addTask
+      summary: Добавить задачу
+      description: Создаёт новую задачу
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskInput'
+      responses:
+        '200':
+          description: Задача создана
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  id:
+                    type: string
+                    format: uuid
+
+  /tasks/{id}:
+    put:
+      operationId: updateTask
+      summary: Обновить задачу
+      description: Обновляет существующую задачу
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: UUID задачи
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskInput'
+      responses:
+        '200':
+          description: Задача обновлена
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+    delete:
+      operationId: deleteTask
+      summary: Удалить задачу
+      description: Удаляет задачу по ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: UUID задачи
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Задача удалена
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /voice-preferences:
+    get:
+      operationId: getVoicePreferences
+      summary: Получить голосовые предпочтения
+      description: |
+        Возвращает веса голосов Искры:
+        - ДЕЛЬФИ (мудрость, стратегия)
+        - ЭМБЕР (тепло, забота)
+        - НОВА (креативность, вдохновение)
+        - ЗИОН (сила, мотивация)
+        - КАИН (честность, прямота)
+        - ТЕНИ (интроспекция, глубина)
+        - ЭХО (отражение, feedback)
+        - НЕКСУС (синтез, интеграция)
+        - ИСКРА (ядро, суть)
+      responses:
+        '200':
+          description: Веса голосов
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+                example:
+                  DELPHI: 0.8
+                  EMBER: 0.7
+                  NOVA: 0.6
+                  ZION: 0.5
+                  KAIN: 0.4
+                  SHADOW: 0.3
+                  ECHO: 0.5
+                  NEXUS: 0.6
+                  ISKRA: 1.0
+    post:
+      operationId: saveVoicePreferences
+      summary: Сохранить голосовые предпочтения
+      description: Обновляет веса голосов
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: number
+                minimum: 0
+                maximum: 1
+              example:
+                DELPHI: 0.9
+                EMBER: 0.8
+      responses:
+        '200':
+          description: Предпочтения сохранены
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /audit:
+    get:
+      operationId: getAuditLog
+      summary: Получить журнал аудита
+      description: Возвращает историю действий
+      parameters:
+        - name: limit
+          in: query
+          description: Количество записей (по умолчанию 50)
+          schema:
+            type: integer
+            default: 50
+      responses:
+        '200':
+          description: Журнал аудита
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuditEntry'
+    post:
+      operationId: logAudit
+      summary: Записать действие в аудит
+      description: Создаёт запись в журнале аудита
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - action
+              properties:
+                action:
+                  type: string
+                  description: Название действия
+                  example: "metrics_updated"
+                category:
+                  type: string
+                  description: Категория действия
+                  example: "metrics"
+                details:
+                  type: object
+                  description: Дополнительные детали
+      responses:
+        '200':
+          description: Запись создана
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /user:
+    get:
+      operationId: getUser
+      summary: Получить данные пользователя
+      description: Возвращает профиль пользователя
+      responses:
+        '200':
+          description: Данные пользователя
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    put:
+      operationId: updateUser
+      summary: Обновить профиль пользователя
+      description: Обновляет имя и настройки пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Имя пользователя
+                settings:
+                  type: object
+                  description: Настройки пользователя
+      responses:
+        '200':
+          description: Профиль обновлён
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+components:
+  schemas:
+    Metrics:
+      type: object
+      properties:
+        rhythm:
+          type: number
+          description: Ритм системы (75-95 BPM)
+          minimum: 60
+          maximum: 120
+        trust:
+          type: number
+          description: Уровень доверия (0-1)
+          minimum: 0
+          maximum: 1
+        clarity:
+          type: number
+          description: Ясность мышления (0-1)
+          minimum: 0
+          maximum: 1
+        pain:
+          type: number
+          description: Уровень боли/дискомфорта (0-1)
+          minimum: 0
+          maximum: 1
+        drift:
+          type: number
+          description: Дрейф от цели (0-1)
+          minimum: 0
+          maximum: 1
+        chaos:
+          type: number
+          description: Уровень хаоса (0-1)
+          minimum: 0
+          maximum: 1
+        echo:
+          type: number
+          description: Эхо прошлого (0-1)
+          minimum: 0
+          maximum: 1
+        silence_mass:
+          type: number
+          description: Масса тишины (0-1)
+          minimum: 0
+          maximum: 1
+        mirror_sync:
+          type: number
+          description: Синхронизация с зеркалом (0-1)
+          minimum: 0
+          maximum: 1
+        interrupt:
+          type: integer
+          description: Счётчик прерываний
+        ctx_switch:
+          type: integer
+          description: Счётчик переключений контекста
+        phase:
+          type: string
+          description: Текущая фаза
+          enum: [GENESIS, IGNITION, CLARITY, MOMENTUM, MASTERY, TRANSCENDENCE, REBIRTH, VOID]
+        timestamp:
+          type: string
+          format: date-time
+
+    MetricsInput:
+      type: object
+      properties:
+        rhythm:
+          type: number
+        trust:
+          type: number
+        clarity:
+          type: number
+        pain:
+          type: number
+        drift:
+          type: number
+        chaos:
+          type: number
+        echo:
+          type: number
+        silence_mass:
+          type: number
+        mirror_sync:
+          type: number
+        interrupt:
+          type: integer
+        ctx_switch:
+          type: integer
+        phase:
+          type: string
+          enum: [GENESIS, IGNITION, CLARITY, MOMENTUM, MASTERY, TRANSCENDENCE, REBIRTH, VOID]
+
+    MemoryNode:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        layer:
+          type: string
+          description: Слой памяти
+          enum: [mantra, archive, shadow]
+        type:
+          type: string
+          description: Тип узла
+          enum: [insight, belief, fear, goal, memory, pattern, wound]
+        title:
+          type: string
+          description: Заголовок
+        content:
+          type: string
+          description: Содержимое
+        doc_type:
+          type: string
+          description: Тип документа (ЗЕРНО, ПЛАМЯ, etc.)
+        trust_level:
+          type: number
+          description: Уровень достоверности (0-1)
+        tags:
+          type: array
+          items:
+            type: string
+        facet:
+          type: string
+          description: Грань личности
+        evidence:
+          type: array
+          items:
+            type: string
+          description: Доказательства/примеры
+        created_at:
+          type: string
+          format: date-time
+
+    MemoryNodeInput:
+      type: object
+      required:
+        - title
+        - content
+      properties:
+        layer:
+          type: string
+          enum: [mantra, archive, shadow]
+          default: archive
+        type:
+          type: string
+          enum: [insight, belief, fear, goal, memory, pattern, wound]
+          default: insight
+        title:
+          type: string
+        content:
+          type: string
+        doc_type:
+          type: string
+        trust_level:
+          type: number
+          default: 1.0
+        tags:
+          type: array
+          items:
+            type: string
+        facet:
+          type: string
+        evidence:
+          type: array
+          items:
+            type: string
+
+    JournalEntry:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        text:
+          type: string
+          description: Текст записи
+        prompt_question:
+          type: string
+          description: Вопрос от Искры
+        prompt_why:
+          type: string
+          description: Почему этот вопрос
+        analysis_reflection:
+          type: string
+          description: Рефлексия Искры
+        analysis_mood:
+          type: string
+          description: Определённое настроение
+        analysis_signature:
+          type: string
+          description: Подпись голоса
+        user_mood:
+          type: string
+          description: Настроение пользователя
+        user_energy:
+          type: integer
+          description: Уровень энергии (1-10)
+        created_at:
+          type: string
+          format: date-time
+
+    JournalEntryInput:
+      type: object
+      required:
+        - text
+      properties:
+        text:
+          type: string
+        prompt_question:
+          type: string
+        prompt_why:
+          type: string
+        analysis_reflection:
+          type: string
+        analysis_mood:
+          type: string
+        analysis_signature:
+          type: string
+          default: Iskra
+        user_mood:
+          type: string
+        user_energy:
+          type: integer
+          minimum: 1
+          maximum: 10
+
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        ritual_tag:
+          type: string
+          description: Ритуальный тег
+          enum: [FIRE, WATER, EARTH, AIR, VOID]
+        done:
+          type: boolean
+        date:
+          type: string
+          format: date
+        priority:
+          type: integer
+          description: Приоритет (1-5)
+        duration:
+          type: integer
+          description: Длительность в минутах
+        created_at:
+          type: string
+          format: date-time
+
+    TaskInput:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+        ritual_tag:
+          type: string
+          enum: [FIRE, WATER, EARTH, AIR, VOID]
+          default: FIRE
+        done:
+          type: boolean
+          default: false
+        date:
+          type: string
+          format: date
+        priority:
+          type: integer
+          minimum: 1
+          maximum: 5
+        duration:
+          type: integer
+          description: Длительность в минутах
+
+    AuditEntry:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        action:
+          type: string
+        category:
+          type: string
+        details:
+          type: object
+        created_at:
+          type: string
+          format: date-time
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        settings:
+          type: object
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
