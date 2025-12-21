@@ -1,0 +1,32 @@
+{
+  "schema": "iskra_dialogs_clean_manifest_v1",
+  "total_chapters": 433,
+  "total_messages": 19478,
+  "parts": [
+    {
+      "file": "dialogs_clean_part_01.json",
+      "chapters": 32,
+      "messages": 3980
+    },
+    {
+      "file": "dialogs_clean_part_02.json",
+      "chapters": 51,
+      "messages": 3817
+    },
+    {
+      "file": "dialogs_clean_part_03.json",
+      "chapters": 96,
+      "messages": 3952
+    },
+    {
+      "file": "dialogs_clean_part_04.json",
+      "chapters": 104,
+      "messages": 3851
+    },
+    {
+      "file": "dialogs_clean_part_05.json",
+      "chapters": 150,
+      "messages": 3878
+    }
+  ]
+}
