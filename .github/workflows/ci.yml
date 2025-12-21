@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: iskraspaceapp
+        working-directory: apps/iskraspaceappMain
 
     steps:
       - uses: actions/checkout@v4
@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: iskraspaceapp/package-lock.json
+          cache-dependency-path: apps/iskraspaceappMain/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -40,7 +40,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dist
-          path: iskraspaceapp/dist
+          path: apps/iskraspaceappMain/dist
           retention-days: 7
 
   # =============================================================================
@@ -52,7 +52,7 @@ jobs:
     needs: build
     defaults:
       run:
-        working-directory: iskraspaceapp
+        working-directory: apps/iskraspaceappMain
 
     steps:
       - uses: actions/checkout@v4
@@ -62,7 +62,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: iskraspaceapp/package-lock.json
+          cache-dependency-path: apps/iskraspaceappMain/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -75,7 +75,7 @@ jobs:
         if: always()
         with:
           name: coverage
-          path: iskraspaceapp/coverage
+          path: apps/iskraspaceappMain/coverage
           retention-days: 7
 
   # =============================================================================
@@ -87,7 +87,7 @@ jobs:
     needs: build
     defaults:
       run:
-        working-directory: iskraspaceapp
+        working-directory: apps/iskraspaceappMain
 
     steps:
       - uses: actions/checkout@v4
@@ -97,7 +97,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: iskraspaceapp/package-lock.json
+          cache-dependency-path: apps/iskraspaceappMain/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -113,7 +113,7 @@ jobs:
         if: always()
         with:
           name: playwright-report
-          path: iskraspaceapp/playwright-report
+          path: apps/iskraspaceappMain/playwright-report
           retention-days: 7
 
       - name: Upload test screenshots
@@ -121,7 +121,7 @@ jobs:
         if: failure()
         with:
           name: test-screenshots
-          path: iskraspaceapp/test-results
+          path: apps/iskraspaceappMain/test-results
           retention-days: 7
 
   # =============================================================================
@@ -132,7 +132,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: iskraspaceapp
+        working-directory: apps/iskraspaceappMain
 
     steps:
       - uses: actions/checkout@v4
@@ -142,7 +142,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: iskraspaceapp/package-lock.json
+          cache-dependency-path: apps/iskraspaceappMain/package-lock.json
 
       - name: Install dependencies
         run: npm ci
