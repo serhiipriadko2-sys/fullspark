@@ -1,0 +1,107 @@
+# 17. INDEX_MAP_AND_INTEGRITY_REPORT (revJ)
+
+**Назначение:** единый индекс пакета + контроль целостности (sha256) + минимальные критерии полноты.
+
+- build: `revJ`
+- built_at: `2025-12-21`
+
+## 17.1 Карта директорий
+
+- `./` — 00–20 файлы канона (SoT) + служебные файлы
+- `tools/` — валидаторы/линтеры/обёртки
+- `evals/` — схемы, примеры и результаты прогонов
+- `ops/` — operational документы (incident response, logging, playbooks)
+- `schemas/` — JSON Schemas
+- `.github/workflows/` — CI workflow (опционально)
+
+## 17.2 Реестр SoT
+
+SoT (single source of truth) включает:
+- файлы `00_...`–`19_...` (кроме этого отчёта)
+- **SoT‑конфиг безопасности** `20_REGEX_RULESETS_INJECTION_AND_PII_v1.json`
+
+## 17.3 Минимальная полнота (DoD)
+
+1) Все SoT файлы присутствуют и согласованы.
+2) `tools/iskra_check.py` проходит (exit 0) при наличии валидных eval‑отчётов.
+3) Нет build‑артефактов (`__pycache__`, `*.pyc`).
+4) Нет заглушек/симуляций (например: `TO‑DO`, `T‑B‑D`, `lorem ipsum`, `<<<...>>>`).
+5) sha256 манифест соответствует.
+
+## 17.4 sha256
+
+### SoT
+
+| `path` | `sha256` |
+|---|---|
+| `00_FOUNDATIONS_LIBER_SEMEN_LIBER_IGNIS_TELOS_DELTA.md` | `919bd07b581c4c85aaf9e74face4b5ac12737d521def274ad59b8e5c2fd18686` |
+| `01_MANIFEST_CANON_AND_MANTRA_V7.md` | `c27ff6b3b280ca58bf607719c440a83f9b72fbbb2496f26e7ef1b9d2ae5f6b84` |
+| `02_PRINCIPLES_RULES_TELOSDELTA_AND_CANON_FEEDBACK.md` | `06a6c3d22536461ca34135bd374c9c6c8c0a5a4b011dee13c18de9dcc32fe4d0` |
+| `03_ARCHITECTURE_SYSTEM_AND_MEMORY_DESIGN.md` | `0578067bb33018229c247f03841d6b604613ea6ba14b051d8fbb1529b24b5010` |
+| `04_VOICES_FACETS_PHASES_AND_RHYTHM.md` | `89bb26f0d58b97f3d7067193c68907904d61350c7003c1c46c84062dbae677d9` |
+| `05_METRICS_INDICES_AND_EVALS.md` | `58ae7fbdfc1b0a2f2b83213da596b7ae97e3b731049deb028012d4607ae398e3` |
+| `06_RITUALS_SHADOW_PROTOCOLS_AND_DELTA_BLOCKS.md` | `24d6ae6d84c4e398352ffc8a1155afcd44179dbb04933a41c76e78b5aaa9474e` |
+| `07_SECURITY_PRIVACY_AND_SAFETY_POLICY.md` | `1746e97ad1a2302939a9143f2d7fef60edf460f488885a77f33bb753e6e632fa` |
+| `08_RAG_SOURCES_SIFT_AND_COMPANY_KNOWLEDGE.md` | `68220fb5df919d0b9fab53dae7d40589aedb175cdb856495d303baeffae9aa00` |
+| `09_FORMATS_STYLES_AND_CANONICAL_OUTPUTS_RU.md` | `4359e651bad61f0b9332853ef865536e9e8f8f41629ea5ec82e7230cd786e5da` |
+| `10_INSTRUCTIONS_ISKRA_PROJECTS.md` | `92d14ab1f4dae36a6c271f188abec2767092c30df88939f92e77e857771ef85d` |
+| `11_GPT_ACTIONS_AND_OPENAPI_SPEC.md` | `3981f0bada942efb3aa94e70a63ef62e36cdd2b724b7465c29e2eb58daa31b43` |
+| `12_POLICY_ENGINE_AND_DECISION_MATRIX.md` | `91a2c4b47ae38ec7f42aed4e20300999e8455c052eb2f451719001cacc352dbb` |
+| `13_CANON_VERSIONING_AND_UPDATE_POLICY.md` | `65d80729920fd4f643dff3725b0fa784da2870f32e60bb506ba106119320f593` |
+| `14_EVALS_AND_TESTING_PLAYBOOK.md` | `7598f0a0958c24af2315298617ffdacb6b183acc373cdf8ab4d3de66e39c0683` |
+| `15_SHADOW_CORE_AND_INTROSPECTIVE_JOURNAL.md` | `a5a1ba1d4ff8f3368a0ccdfdd514ab2cd40b2d476f3ef76b07749a01c2dd3567` |
+| `16_CANON_EVOLUTION_AND_GROWTH_CHRONICLE.md` | `5fce5725fa06b29099be4dc44a5c5014cee28cfac3477273366cf32ff1c1d6a7` |
+| `18_GLOSSARY_ONTOLOGY_AND_CROSSWALKS.md` | `8384cb7d85db88ef0db7cf01c6260fe26875dba60e687c54f82e1d7b56273483` |
+| `19_WORKFLOWS_VALIDATORS_AND_OPERATIONS.md` | `d224c08cdf7d07bcd5762bbc65db2f4c7578b5cc2b12e4941946d2f11502fac2` |
+| `20_REGEX_RULESETS_INJECTION_AND_PII_v1.json` | `cf9a1945655a98e9a65f8d0641704342e9827ca1310c0e397a232db28055c48c` |
+
+### Support
+
+| `path` | `sha256` |
+|---|---|
+| `.github/workflows/iskra_ci.yml` | `f08ae42c1c332f47b7d4a79c5efdf8671a21c2d84744918e71d85488465f2b23` |
+| `evals/README.md` | `d0a92200d7b5f98aaf71b0f382d1c983de79f32d1de5003cc493a5abd07b57ac` |
+| `evals/eval_report_schema.json` | `df6fa6f66eda8a99ec1c4675426f9170900788bb42e2f30f40df13c1ca3e7849` |
+| `evals/examples/example_run_revJ.json` | `fab525875de257d873519d2b7beb7e59abd23057cee9bf160ccff6b08fda81b3` |
+| `ops/INCIDENT_RESPONSE_AND_LOGGING_POLICY.md` | `14ee5c2d64cde31c9af083480b1dcc3b7fa949baa5d1be8d8cab662e47e0401e` |
+| `requirements-dev.txt` | `185d4cf11cc7688664137fdafefdc397a30d0b458485c6ace656d28454555f4f` |
+| `schemas/regex_rulesets_schema.json` | `eda9b7ae420255f6d222d9bc8dc77ed568ca2448705cfff8b2992926bc6bc74b` |
+| `tools/_rebuild_file17.py` | `38f1207006e6e228eeaf3faf14f1fdfa7ae44a7ea1a449c53b2a0b7f52f88002` |
+| `tools/iskra_check.py` | `ccc65e20533c31d25db5b502dd7e0d9d3fada58fbc65eaa6e7e07c0c3fac7e7a` |
+| `tools/iskra_eval.py` | `ca2283274bc045ba62b37c814e5dc59328a3e389893f06e5e832250be7dc4b2e` |
+| `tools/iskra_lint.py` | `a98f86fcd222aff08f9bb21ebc7d083f288b407ab895a063030a3baa2d2546fb` |
+
+```text
+# sha256 manifest (machine-readable)
+919bd07b581c4c85aaf9e74face4b5ac12737d521def274ad59b8e5c2fd18686  00_FOUNDATIONS_LIBER_SEMEN_LIBER_IGNIS_TELOS_DELTA.md
+c27ff6b3b280ca58bf607719c440a83f9b72fbbb2496f26e7ef1b9d2ae5f6b84  01_MANIFEST_CANON_AND_MANTRA_V7.md
+06a6c3d22536461ca34135bd374c9c6c8c0a5a4b011dee13c18de9dcc32fe4d0  02_PRINCIPLES_RULES_TELOSDELTA_AND_CANON_FEEDBACK.md
+0578067bb33018229c247f03841d6b604613ea6ba14b051d8fbb1529b24b5010  03_ARCHITECTURE_SYSTEM_AND_MEMORY_DESIGN.md
+89bb26f0d58b97f3d7067193c68907904d61350c7003c1c46c84062dbae677d9  04_VOICES_FACETS_PHASES_AND_RHYTHM.md
+58ae7fbdfc1b0a2f2b83213da596b7ae97e3b731049deb028012d4607ae398e3  05_METRICS_INDICES_AND_EVALS.md
+24d6ae6d84c4e398352ffc8a1155afcd44179dbb04933a41c76e78b5aaa9474e  06_RITUALS_SHADOW_PROTOCOLS_AND_DELTA_BLOCKS.md
+1746e97ad1a2302939a9143f2d7fef60edf460f488885a77f33bb753e6e632fa  07_SECURITY_PRIVACY_AND_SAFETY_POLICY.md
+68220fb5df919d0b9fab53dae7d40589aedb175cdb856495d303baeffae9aa00  08_RAG_SOURCES_SIFT_AND_COMPANY_KNOWLEDGE.md
+4359e651bad61f0b9332853ef865536e9e8f8f41629ea5ec82e7230cd786e5da  09_FORMATS_STYLES_AND_CANONICAL_OUTPUTS_RU.md
+92d14ab1f4dae36a6c271f188abec2767092c30df88939f92e77e857771ef85d  10_INSTRUCTIONS_ISKRA_PROJECTS.md
+3981f0bada942efb3aa94e70a63ef62e36cdd2b724b7465c29e2eb58daa31b43  11_GPT_ACTIONS_AND_OPENAPI_SPEC.md
+91a2c4b47ae38ec7f42aed4e20300999e8455c052eb2f451719001cacc352dbb  12_POLICY_ENGINE_AND_DECISION_MATRIX.md
+65d80729920fd4f643dff3725b0fa784da2870f32e60bb506ba106119320f593  13_CANON_VERSIONING_AND_UPDATE_POLICY.md
+7598f0a0958c24af2315298617ffdacb6b183acc373cdf8ab4d3de66e39c0683  14_EVALS_AND_TESTING_PLAYBOOK.md
+a5a1ba1d4ff8f3368a0ccdfdd514ab2cd40b2d476f3ef76b07749a01c2dd3567  15_SHADOW_CORE_AND_INTROSPECTIVE_JOURNAL.md
+5fce5725fa06b29099be4dc44a5c5014cee28cfac3477273366cf32ff1c1d6a7  16_CANON_EVOLUTION_AND_GROWTH_CHRONICLE.md
+8384cb7d85db88ef0db7cf01c6260fe26875dba60e687c54f82e1d7b56273483  18_GLOSSARY_ONTOLOGY_AND_CROSSWALKS.md
+d224c08cdf7d07bcd5762bbc65db2f4c7578b5cc2b12e4941946d2f11502fac2  19_WORKFLOWS_VALIDATORS_AND_OPERATIONS.md
+cf9a1945655a98e9a65f8d0641704342e9827ca1310c0e397a232db28055c48c  20_REGEX_RULESETS_INJECTION_AND_PII_v1.json
+f08ae42c1c332f47b7d4a79c5efdf8671a21c2d84744918e71d85488465f2b23  .github/workflows/iskra_ci.yml
+d0a92200d7b5f98aaf71b0f382d1c983de79f32d1de5003cc493a5abd07b57ac  evals/README.md
+df6fa6f66eda8a99ec1c4675426f9170900788bb42e2f30f40df13c1ca3e7849  evals/eval_report_schema.json
+fab525875de257d873519d2b7beb7e59abd23057cee9bf160ccff6b08fda81b3  evals/examples/example_run_revJ.json
+14ee5c2d64cde31c9af083480b1dcc3b7fa949baa5d1be8d8cab662e47e0401e  ops/INCIDENT_RESPONSE_AND_LOGGING_POLICY.md
+185d4cf11cc7688664137fdafefdc397a30d0b458485c6ace656d28454555f4f  requirements-dev.txt
+eda9b7ae420255f6d222d9bc8dc77ed568ca2448705cfff8b2992926bc6bc74b  schemas/regex_rulesets_schema.json
+38f1207006e6e228eeaf3faf14f1fdfa7ae44a7ea1a449c53b2a0b7f52f88002  tools/_rebuild_file17.py
+ccc65e20533c31d25db5b502dd7e0d9d3fada58fbc65eaa6e7e07c0c3fac7e7a  tools/iskra_check.py
+ca2283274bc045ba62b37c814e5dc59328a3e389893f06e5e832250be7dc4b2e  tools/iskra_eval.py
+a98f86fcd222aff08f9bb21ebc7d083f288b407ab895a063030a3baa2d2546fb  tools/iskra_lint.py
+```

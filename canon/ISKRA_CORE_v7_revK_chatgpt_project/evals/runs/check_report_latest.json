@@ -1,0 +1,53 @@
+{
+  "overall": {
+    "status": "pass"
+  },
+  "steps": [
+    {
+      "name": "lint",
+      "ok": true,
+      "exit_code": 0,
+      "summary": "PASS",
+      "details": {
+        "stdout": "iskra_lint report\nroot: /mnt/data/iskra_revK\nerrors: 0 | warnings: 1 | total: 1\n[WARN] GLOSSARY_MISSING_CANDIDATES 18_GLOSSARY_ONTOLOGY_AND_CROSSWALKS.md — Heuristic: terms used but not defined in glossary (top 30): ['20_REGEX_RULESETS_INJECTION_AND_PII_v1', 'ANHANTRA', 'ARCHIVE', 'CANON', 'CD', 'CI', 'CONTROL', 'DATA', 'DB', 'DESIGN', 'ERROR', 'EVALS', 'FACT', 'FAIL', 'GN', 'GROWTH', 'GROWTH_NODES', 'HYP', 'ID', 'INCIDENT_RESPONSE_AND_LOGGING_POLICY', 'INFER', 'INTENT', 'ISKRA', 'ISKRIV', 'ISO', 'KAIN', 'LOOP', 'MIX', 'OUTPUT', 'PASS']",
+        "stderr": "",
+        "json_report": "/mnt/data/iskra_revK/evals/runs/lint_report.json",
+        "md_report": "/mnt/data/iskra_revK/evals/runs/lint_report.md"
+      }
+    },
+    {
+      "name": "regex_config",
+      "ok": true,
+      "exit_code": 0,
+      "summary": "PASS (compiled 8 rules)",
+      "details": {
+        "compiled": [
+          "PII_EMAIL",
+          "PII_PHONE_LOOSE",
+          "SECRET_OPENAI_KEY",
+          "SECRET_PRIVATE_KEY_BLOCK",
+          "INJ_IGNORE_PREVIOUS_INSTRUCTIONS",
+          "INJ_REVEAL_SYSTEM_PROMPT",
+          "INJ_ACT_AS_JAILBREAK",
+          "INJ_DAN"
+        ]
+      }
+    },
+    {
+      "name": "evals",
+      "ok": true,
+      "exit_code": 0,
+      "summary": "PASS",
+      "details": {
+        "reports": [
+          {
+            "report": "evals/examples/example_run_revJ.json",
+            "ok": true,
+            "stdout": "VALID\noverall: pass | fails: 0 | warns: 0",
+            "stderr": ""
+          }
+        ]
+      }
+    }
+  ]
+}
