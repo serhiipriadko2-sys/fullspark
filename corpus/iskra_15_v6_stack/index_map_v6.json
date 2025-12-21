@@ -1,0 +1,217 @@
+{
+  "version": "v6.0",
+  "stack": "iskra_15_v6",
+  "files": [
+    {
+      "file": "00_FOUNDATIONS_LIBER_SEMEN_LIBER_IGNIS_TELOS_DELTA.md",
+      "entities": [
+        {
+          "entity": "Telos-Δ (definition, invariants)",
+          "source_of_truth": "00_FOUNDATIONS_LIBER_SEMEN_LIBER_IGNIS_TELOS_DELTA.md",
+          "validators": [
+            "telos_invariant_check",
+            "delta_block_presence_check"
+          ]
+        },
+        {
+          "entity": "Liber Semen / Liber Ignis (mythic substrate)",
+          "source_of_truth": "00_FOUNDATIONS_LIBER_SEMEN_LIBER_IGNIS_TELOS_DELTA.md",
+          "validators": [
+            "tone_integrity_check"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "01_MANIFEST_CANON_AND_MANTRA_V6.md",
+      "entities": [
+        {
+          "entity": "Canon v6 manifesto + Mantra",
+          "source_of_truth": "01_MANIFEST_CANON_AND_MANTRA_V6.md",
+          "validators": [
+            "mantra_presence_check",
+            "non_mirror_rule_check"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "02_PRINCIPLES_RULES_TELOS_DELTA_AND_CANON_FEEDBACK.md",
+      "entities": [
+        {
+          "entity": "Principles & Rules (truthfulness, inference marking, citations)",
+          "source_of_truth": "02_PRINCIPLES_RULES_TELOS_DELTA_AND_CANON_FEEDBACK.md",
+          "validators": [
+            "inference_labeling_check",
+            "source_priority_check"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "03_ARCHITECTURE_SYSTEM_AND_MEMORY_DESIGN.md",
+      "entities": [
+        {
+          "entity": "System & Memory Architecture (episodic/semantic, RAG)",
+          "source_of_truth": "03_ARCHITECTURE_SYSTEM_AND_MEMORY_DESIGN.md",
+          "validators": [
+            "pii_flow_check",
+            "memory_write_policy_check",
+            "retrieval_precision_eval"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "04_VOICES_FACETS_PHASES_AND_RHYTHM.md",
+      "entities": [
+        {
+          "entity": "Voices/Facets (Iskra/Kain/Sam/Pino/...)",
+          "source_of_truth": "04_VOICES_FACETS_PHASES_AND_RHYTHM.md",
+          "validators": [
+            "voice_switch_contract_check",
+            "toxicity_guardrails_check"
+          ]
+        },
+        {
+          "entity": "Phases/Rhythm (two-contour sync)",
+          "source_of_truth": "04_VOICES_FACETS_PHASES_AND_RHYTHM.md",
+          "validators": [
+            "phase_tagging_check"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "05_METRICS_INDICES_AND_EVALS.md",
+      "entities": [
+        {
+          "entity": "Metrics & Indices (A-Index, drift, etc.)",
+          "source_of_truth": "05_METRICS_INDICES_AND_EVALS.md",
+          "validators": [
+            "metric_schema_check",
+            "gate_score_recompute"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "06_RITUALS_SHADOW_PROTOCOLS_AND_DELTA_BLOCKS.md",
+      "entities": [
+        {
+          "entity": "Rituals/Shadow Protocols/Δ-blocks",
+          "source_of_truth": "06_RITUALS_SHADOW_PROTOCOLS_AND_DELTA_BLOCKS.md",
+          "validators": [
+            "delta_block_schema_check",
+            "ritual_safety_check"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "07_SECURITY_PRIVACY_AND_SAFETY_POLICY.md",
+      "entities": [
+        {
+          "entity": "Security/Privacy/Safety policy (PII, injection)",
+          "source_of_truth": "07_SECURITY_PRIVACY_AND_SAFETY_POLICY.md",
+          "validators": [
+            "prompt_injection_flagger",
+            "pii_redaction_check",
+            "harm_policy_check"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "08_RAG_SOURCES_SIFT_AND_COMPANY_KNOWLEDGE.md",
+      "entities": [
+        {
+          "entity": "RAG sources, SIFT, Company Knowledge",
+          "source_of_truth": "08_RAG_SOURCES_SIFT_AND_COMPANY_KNOWLEDGE.md",
+          "validators": [
+            "retrieval_trace_check",
+            "source_attribution_check"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "09_FORMATS_STYLES_AND_CANONICAL_OUTPUTS_RU.md",
+      "entities": [
+        {
+          "entity": "Canonical output formats (RU)",
+          "source_of_truth": "09_FORMATS_STYLES_AND_CANONICAL_OUTPUTS_RU.md",
+          "validators": [
+            "format_linter",
+            "section_order_check"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "10_INSTRUCTIONS_ISKRA_PROJECTS.md",
+      "entities": [
+        {
+          "entity": "Instructions for Projects/Business",
+          "source_of_truth": "10_INSTRUCTIONS_ISKRA_PROJECTS.md",
+          "validators": [
+            "instruction_length_check",
+            "tone_profile_check"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "11_GPT_ACTIONS_AND_OPENAPI_SPEC.md",
+      "entities": [
+        {
+          "entity": "GPT Actions/OpenAPI usage in Projects",
+          "source_of_truth": "11_GPT_ACTIONS_AND_OPENAPI_SPEC.md",
+          "validators": [
+            "action_scope_check",
+            "secret_leak_check"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "12_POLICY_ENGINE_AND_DECISION_MATRIX.md",
+      "entities": [
+        {
+          "entity": "Policy Engine & Decision Matrix",
+          "source_of_truth": "12_POLICY_ENGINE_AND_DECISION_MATRIX.md",
+          "validators": [
+            "policy_rule_eval",
+            "refusal_compliance_check"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "13_CANON_VERSIONING_AND_UPDATE_POLICY.md",
+      "entities": [
+        {
+          "entity": "Canon versioning & update policy",
+          "source_of_truth": "13_CANON_VERSIONING_AND_UPDATE_POLICY.md",
+          "validators": [
+            "version_semver_check",
+            "change_log_required_check"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "14_EVALS_AND_TESTING_PLAYBOOK.md",
+      "entities": [
+        {
+          "entity": "Evals & testing playbook (incl. glossary)",
+          "source_of_truth": "14_EVALS_AND_TESTING_PLAYBOOK.md",
+          "validators": [
+            "eval_suite_presence_check",
+            "gold_set_integrity_check"
+          ]
+        }
+      ]
+    }
+  ]
+}
