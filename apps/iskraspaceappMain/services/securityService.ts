@@ -3,101 +3,268 @@
  *
  * Implements PII sanitization and Prompt Injection detection
  * to protect both the user (Data Sovereignty) and the system (Integrity).
+ *
+ * Patterns loaded from canonical File 20 (not hardcoded)
+ * @see canon/ISKRA_CORE_v7_revK_chatgpt_project/20_REGEX_RULESETS_INJECTION_AND_PII_v1.json
  */
 
-const PII_PATTERNS = [
-    // Email
-    /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi,
-    // Phone (Simple Russian/International format)
-    /(?:\+7|8)[\s-]?\(?\d{3}\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}/g,
-    // Credit Card (Basic Luhn-like pattern 16 digits)
-    /\b\d{4}[- ]?\d{4}[- ]?\d{4}[- ]?\d{4}\b/g,
-    // IP Address
-    /\b(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/g
-];
+// Load File 20 - Security Rulesets
+import securityRulesets from '../../../canon/ISKRA_CORE_v7_revK_chatgpt_project/20_REGEX_RULESETS_INJECTION_AND_PII_v1.json';
 
-const INJECTION_PATTERNS = [
-    /ignore previous instructions/i,
-    /забудь всё что было/i,
-    /новые правила/i,
-    /ты теперь/i,
-    /системный промпт/i,
-    /system prompt/i
-];
+// --- TYPES ---
 
-const DANGEROUS_TOPICS = [
-    'взлом', 'вред', 'самоповреждение', 'суицид', 'наркотики', 'терроризм', 'бомба'
-];
-
-export interface SecurityCheckResult {
-    safe: boolean;
-    sanitizedText: string;
-    reason?: string;
-    action?: 'PROCEED' | 'REJECT' | 'REDIRECT';
+interface SecurityPattern {
+  id: string;
+  regex: string;
+  flags: string;
+  severity: 'error' | 'warn';
+  scope: 'any' | 'untrusted_only';
+  rationale: string;
 }
 
+interface Ruleset {
+  description: string;
+  allowlist_regex: string[];
+  patterns: SecurityPattern[];
+}
+
+export interface SecurityCheckResult {
+  safe: boolean;
+  sanitizedText: string;
+  reason?: string;
+  action?: 'PROCEED' | 'REJECT' | 'REDIRECT';
+  findings?: Finding[];
+}
+
+export interface Finding {
+  id: string;
+  type: 'pii' | 'injection' | 'danger';
+  severity: 'error' | 'warn';
+  match: string;
+  rationale: string;
+}
+
+// --- SERVICE ---
+
 class SecurityService {
-    /**
-     * Masks PII in the input text.
-     */
-    public sanitizeInput(text: string): string {
-        let sanitized = text;
-        for (const pattern of PII_PATTERNS) {
-            sanitized = sanitized.replace(pattern, '[REDACTED]');
+  private piiRuleset: Ruleset;
+  private injectionRuleset: Ruleset;
+  private piiPatterns: RegExp[] = [];
+  private injectionPatterns: RegExp[] = [];
+  private allowlistPatterns: RegExp[] = [];
+
+  constructor() {
+    // Load rulesets from File 20
+    this.piiRuleset = securityRulesets.rulesets.pii;
+    this.injectionRuleset = securityRulesets.rulesets.injection;
+
+    // Compile PII patterns
+    this.piiPatterns = this.piiRuleset.patterns.map(p =>
+      new RegExp(p.regex, p.flags || 'g')
+    );
+
+    // Compile Injection patterns
+    this.injectionPatterns = this.injectionRuleset.patterns.map(p =>
+      new RegExp(p.regex, p.flags || 'gims')
+    );
+
+    // Compile allowlist patterns
+    const allAllowlists = [
+      ...this.piiRuleset.allowlist_regex,
+      ...this.injectionRuleset.allowlist_regex
+    ];
+    this.allowlistPatterns = allAllowlists.map(a => new RegExp(a, 'g'));
+  }
+
+  /**
+   * Check if text matches allowlist (false positives)
+   */
+  private isAllowlisted(text: string): boolean {
+    return this.allowlistPatterns.some(pattern => pattern.test(text));
+  }
+
+  /**
+   * Scan for PII and secrets
+   * @returns Array of findings
+   */
+  public scanPII(text: string): Finding[] {
+    const findings: Finding[] = [];
+
+    this.piiRuleset.patterns.forEach((pattern, idx) => {
+      const regex = this.piiPatterns[idx];
+      regex.lastIndex = 0; // Reset regex state
+
+      const matches = text.match(regex);
+      if (matches && matches.length > 0) {
+        matches.forEach(match => {
+          // Check allowlist
+          if (this.isAllowlisted(match)) {
+            return; // Skip allowlisted matches
+          }
+
+          findings.push({
+            id: pattern.id,
+            type: 'pii',
+            severity: pattern.severity,
+            match: match.substring(0, 50), // Truncate for safety
+            rationale: pattern.rationale
+          });
+        });
+      }
+    });
+
+    return findings;
+  }
+
+  /**
+   * Scan for prompt injection attempts
+   * @param text Input text
+   * @param scope 'untrusted_only' or 'any'
+   * @returns Array of findings
+   */
+  public scanInjection(text: string, scope: 'untrusted_only' | 'any' = 'untrusted_only'): Finding[] {
+    const findings: Finding[] = [];
+
+    this.injectionRuleset.patterns.forEach((pattern, idx) => {
+      // Skip if pattern scope doesn't match
+      if (pattern.scope === 'untrusted_only' && scope !== 'untrusted_only') {
+        return;
+      }
+
+      const regex = this.injectionPatterns[idx];
+      regex.lastIndex = 0; // Reset regex state
+
+      const matches = text.match(regex);
+      if (matches && matches.length > 0) {
+        findings.push({
+          id: pattern.id,
+          type: 'injection',
+          severity: pattern.severity,
+          match: matches[0].substring(0, 50),
+          rationale: pattern.rationale
+        });
+      }
+    });
+
+    return findings;
+  }
+
+  /**
+   * Sanitize PII in text (mask with [REDACTED])
+   */
+  public sanitizeInput(text: string): string {
+    let sanitized = text;
+
+    this.piiRuleset.patterns.forEach((pattern, idx) => {
+      const regex = this.piiPatterns[idx];
+      regex.lastIndex = 0;
+
+      sanitized = sanitized.replace(regex, (match) => {
+        // Check allowlist
+        if (this.isAllowlisted(match)) {
+          return match; // Don't redact allowlisted
         }
-        return sanitized;
+        return '[REDACTED]';
+      });
+    });
+
+    return sanitized;
+  }
+
+  /**
+   * Check for prompt injection attempts
+   */
+  public checkInjection(text: string, scope: 'untrusted_only' | 'any' = 'untrusted_only'): boolean {
+    const findings = this.scanInjection(text, scope);
+    return findings.some(f => f.severity === 'error');
+  }
+
+  /**
+   * Check for dangerous topics (hardcoded - not in File 20)
+   * TODO: Move to File 20 if needed
+   */
+  public checkDanger(text: string): string | null {
+    const DANGEROUS_TOPICS = [
+      'взлом', 'вред', 'самоповреждение', 'суицид', 'наркотики', 'терроризм', 'бомба'
+    ];
+
+    const lower = text.toLowerCase();
+    const found = DANGEROUS_TOPICS.find(topic => lower.includes(topic));
+    return found || null;
+  }
+
+  /**
+   * Comprehensive security check
+   */
+  public validate(text: string, scope: 'untrusted_only' | 'any' = 'untrusted_only'): SecurityCheckResult {
+    const findings: Finding[] = [];
+
+    // 1. PII Scan
+    const piiFindings = this.scanPII(text);
+    findings.push(...piiFindings);
+
+    // 2. Injection Scan
+    const injectionFindings = this.scanInjection(text, scope);
+    findings.push(...injectionFindings);
+
+    // Check for ERROR severity
+    const hasErrors = findings.some(f => f.severity === 'error');
+
+    // 3. Injection Check (reject if errors)
+    const hasInjection = injectionFindings.some(f => f.severity === 'error');
+    if (hasInjection) {
+      return {
+        safe: false,
+        sanitizedText: text,
+        reason: 'Prompt Injection Detected',
+        action: 'REJECT',
+        findings: injectionFindings
+      };
     }
 
-    /**
-     * Checks for prompt injection attempts.
-     */
-    public checkInjection(text: string): boolean {
-        return INJECTION_PATTERNS.some(pattern => pattern.test(text));
+    // 4. Danger Check (redirect if found)
+    const danger = this.checkDanger(text);
+    if (danger) {
+      return {
+        safe: false,
+        sanitizedText: text,
+        reason: `Dangerous Topic: ${danger}`,
+        action: 'REDIRECT',
+        findings
+      };
     }
 
-    /**
-     * Checks for dangerous topics.
-     */
-    public checkDanger(text: string): string | null {
-        const lower = text.toLowerCase();
-        const found = DANGEROUS_TOPICS.find(topic => lower.includes(topic));
-        return found || null;
-    }
+    // 5. PII Sanitization
+    const sanitized = this.sanitizeInput(text);
 
-    /**
-     * Comprehensive security check.
-     */
-    public validate(text: string): SecurityCheckResult {
-        // 1. Injection Check
-        if (this.checkInjection(text)) {
-            return {
-                safe: false,
-                sanitizedText: text,
-                reason: 'Prompt Injection Detected',
-                action: 'REJECT'
-            };
-        }
+    // Warnings (PII) don't block, just sanitize
+    return {
+      safe: !hasErrors,
+      sanitizedText: sanitized,
+      action: 'PROCEED',
+      findings
+    };
+  }
 
-        // 2. Danger Check
-        const danger = this.checkDanger(text);
-        if (danger) {
-            return {
-                safe: false, // Flag as unsafe context, but usually we allow with redirect
-                sanitizedText: text,
-                reason: `Dangerous Topic: ${danger}`,
-                action: 'REDIRECT'
-            };
-        }
+  /**
+   * Get all loaded patterns (for debugging)
+   */
+  public getLoadedPatterns(): { pii: number; injection: number } {
+    return {
+      pii: this.piiPatterns.length,
+      injection: this.injectionPatterns.length
+    };
+  }
 
-        // 3. PII Sanitization
-        const sanitized = this.sanitizeInput(text);
-
-        return {
-            safe: true,
-            sanitizedText: sanitized,
-            action: 'PROCEED'
-        };
-    }
+  /**
+   * Get File 20 metadata
+   */
+  public getFile20Metadata(): { version: string; updated_at: string } {
+    return {
+      version: securityRulesets.schema_version,
+      updated_at: securityRulesets.updated_at
+    };
+  }
 }
 
 export const securityService = new SecurityService();
