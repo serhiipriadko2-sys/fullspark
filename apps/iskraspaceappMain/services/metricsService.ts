@@ -41,9 +41,55 @@ class MetricsService {
   }
 
   /**
+   * Calculate meta-metrics (CD-Index, Fractality, A-Index)
+   * @see legacy/IskraSAprototype/iskra_engine.ts:397-422
+   * @see canon/IskraCanonDocumentation/05_METRICS_and_RHYTHM_INDEX.md
+   */
+  public calculateMetaMetrics(m: IskraMetrics): MetaMetrics {
+    // Law-47: Fractality = Integrity × Resonance
+    const integrity = (m.trust + m.clarity) / 2;
+    const resonance = (m.mirror_sync + (1 - m.drift)) / 2;
+    const fractality = integrity * resonance * 2.0; // ×2.0 для нормализации к 0-2 range
+
+    // A-Index: Integrative Health
+    // Weighted combination: trust (30%), clarity (40%), mirror_sync (30%), penalty from pain
+    const a_index = (m.trust * 0.3 + m.clarity * 0.4 + m.mirror_sync * 0.3) * (1 - m.pain * 0.5);
+
+    // CD-Index components (Composite Desiderata):
+    // Groundedness: ясность минус дрейф
+    const groundedness = m.clarity * (1 - m.drift);
+
+    // Truthfulness: напрямую trust
+    const truthfulness = m.trust;
+
+    // Helpfulness: синхронизация с пользователем
+    const helpfulness = m.mirror_sync;
+
+    // Resolution: способность разрешать (низкая боль + низкий хаос)
+    const resolution = (1 - m.pain) * (1 - m.chaos);
+
+    // Civility: вежливость и доверие
+    const civility = m.trust;
+
+    // CD-Index: average of all 5 components
+    const cd_index = (groundedness + truthfulness + helpfulness + resolution + civility) / 5;
+
+    return {
+      a_index: parseFloat(a_index.toFixed(2)),
+      cd_index: parseFloat(cd_index.toFixed(2)),
+      fractality: parseFloat(fractality.toFixed(2)),
+      groundedness: parseFloat(groundedness.toFixed(2)),
+      truthfulness: parseFloat(truthfulness.toFixed(2)),
+      helpfulness: parseFloat(helpfulness.toFixed(2)),
+      resolution: parseFloat(resolution.toFixed(2)),
+      civility: parseFloat(civility.toFixed(2))
+    };
+  }
+
+  /**
    * Determines the IskraPhase based on the current metrics topology.
    * Logic derived from 06_PHASES_STATES_PIPELINES.md.
-   * 
+   *
    * Фаза — это режим обработки мира. Переходы происходят по внутреннему резонансу.
    */
   public getPhaseFromMetrics(metrics: IskraMetrics): IskraPhase {

@@ -13,17 +13,40 @@
 
 import { searchService } from './searchService';
 import { memoryService } from './memoryService';
-import { Evidence, MemoryNode, Message, SIFTBlock } from '../types';
+import { evidenceService } from './evidenceService';
+import { Evidence, MemoryNode, Message, SIFTBlock, SIFTEvidence, EvidenceContour } from '../types';
 
 // ============================================
 // TYPES
 // ============================================
+
+/**
+ * Source Priority Levels (A > B > C > D)
+ * @see canon/IskraCanonDocumentation/10_RAG_SOURCES_and_SIFT.md
+ */
+export type SourcePriority = 'A_CANON' | 'B_PROJECT' | 'C_COMPANY' | 'D_WEB';
+
+/**
+ * Conflict between sources
+ */
+export interface SourceConflict {
+  claim: string;
+  sources: Array<{
+    source_id: string;
+    position: string;
+    priority: SourcePriority;
+    confidence: number;
+  }>;
+  resolution?: string;
+}
 
 export interface RAGContext {
   query: string;
   relevantMemories: MemoryHit[];
   contextBlock: string;
   sources: Source[];
+  conflictTable?: SourceConflict[]; // NEW: Conflicts table for SIFT
+  sourcePriority?: SourcePriority;  // NEW: Highest priority source used
 }
 
 export interface MemoryHit {
@@ -134,12 +157,111 @@ export async function buildRAGContext(
     confidence: m.score,
   }));
 
+  // SIFT: Detect conflicts between sources
+  const conflictTable = detectConflicts(relevantMemories);
+
+  // SIFT: Determine highest source priority
+  const sourcePriority = getHighestSourcePriority(relevantMemories);
+
   return {
     query,
     relevantMemories,
     contextBlock,
     sources,
+    conflictTable,      // NEW: SIFT conflict table
+    sourcePriority,     // NEW: Source priority
   };
+}
+
+/**
+ * Detect conflicts between sources
+ * @see canon/IskraCanonDocumentation/10_RAG_SOURCES_and_SIFT.md
+ */
+function detectConflicts(memories: MemoryHit[]): SourceConflict[] {
+  if (memories.length < 2) return [];
+
+  const conflicts: SourceConflict[] = [];
+
+  // Simple conflict detection: противоположные claims
+  const contradictionPatterns = [
+    { positive: /да|правда|верно|корректно|true/gi, negative: /нет|ложь|неверно|false/gi },
+    { positive: /можно|разрешено|допустимо/gi, negative: /нельзя|запрещено|недопустимо/gi },
+    { positive: /есть|существует|имеется/gi, negative: /нет|отсутствует|не имеется/gi },
+  ];
+
+  for (let i = 0; i < memories.length; i++) {
+    for (let j = i + 1; j < memories.length; j++) {
+      const mem1 = memories[i];
+      const mem2 = memories[j];
+
+      for (const pattern of contradictionPatterns) {
+        const hasPositive1 = pattern.positive.test(mem1.content);
+        const hasNegative1 = pattern.negative.test(mem1.content);
+        const hasPositive2 = pattern.positive.test(mem2.content);
+        const hasNegative2 = pattern.negative.test(mem2.content);
+
+        if ((hasPositive1 && hasNegative2) || (hasNegative1 && hasPositive2)) {
+          conflicts.push({
+            claim: 'Противоречие в данных',
+            sources: [
+              {
+                source_id: mem1.id,
+                position: mem1.content.substring(0, 100),
+                priority: getSourcePriority(mem1),
+                confidence: mem1.score
+              },
+              {
+                source_id: mem2.id,
+                position: mem2.content.substring(0, 100),
+                priority: getSourcePriority(mem2),
+                confidence: mem2.score
+              }
+            ],
+            resolution: `Приоритет: ${getSourcePriority(mem1)} vs ${getSourcePriority(mem2)}`
+          });
+        }
+      }
+    }
+  }
+
+  return conflicts;
+}
+
+/**
+ * Determine source priority (A > B > C > D)
+ * @see canon/IskraCanonDocumentation/10_RAG_SOURCES_and_SIFT.md
+ */
+function getSourcePriority(memory: MemoryHit): SourcePriority {
+  // A: Canon (mantra layer or canon files)
+  if (memory.layer === 'mantra' || memory.type === 'canon') {
+    return 'A_CANON';
+  }
+
+  // B: Project (archive layer)
+  if (memory.layer === 'archive' || memory.type === 'project') {
+    return 'B_PROJECT';
+  }
+
+  // C: Company knowledge
+  if (memory.type === 'company' || memory.type === 'knowledge_file') {
+    return 'C_COMPANY';
+  }
+
+  // D: Web (shadow layer or external)
+  return 'D_WEB';
+}
+
+/**
+ * Get highest priority among all memories
+ */
+function getHighestSourcePriority(memories: MemoryHit[]): SourcePriority {
+  const priorities = memories.map(getSourcePriority);
+
+  // Priority order: A > B > C > D
+  if (priorities.includes('A_CANON')) return 'A_CANON';
+  if (priorities.includes('B_PROJECT')) return 'B_PROJECT';
+  if (priorities.includes('C_COMPANY')) return 'C_COMPANY';
+  return 'D_WEB';
 }
 
 /**
@@ -319,6 +441,123 @@ export async function getTopicSummary(topic: string): Promise<{
 }
 
 // ============================================
+// EVIDENCE INTEGRATION
+// ============================================
+
+/**
+ * Create evidence reference from memory hit
+ * Converts memory to canonical {e:contour:id#anchor} format
+ */
+function createEvidenceFromMemory(memory: MemoryHit): Evidence {
+  const priority = getSourcePriority(memory);
+
+  // Map priority to contour
+  let contour: EvidenceContour;
+  switch (priority) {
+    case 'A_CANON':
+      contour = 'canon';
+      break;
+    case 'B_PROJECT':
+      contour = 'project';
+      break;
+    case 'C_COMPANY':
+      contour = 'company';
+      break;
+    case 'D_WEB':
+      contour = 'web';
+      break;
+  }
+
+  // Create identifier (use memory ID or source)
+  const identifier = memory.id || memory.content.substring(0, 20);
+
+  // Create anchor (use title or type)
+  const anchor = memory.title || memory.type;
+
+  return evidenceService.createEvidence(contour, identifier, anchor);
+}
+
+/**
+ * Create SIFT Evidence block from RAG retrieval
+ * Documents the SIFT process (Stop, Investigate, Find, Trace)
+ */
+function createSIFTEvidenceBlock(
+  claim: string,
+  memories: MemoryHit[],
+  conflictResolved: boolean = false
+): SIFTEvidence {
+  // Determine trace label based on evidence quality
+  let label: 'FACT' | 'INFER' | 'HYP' = 'HYP';
+
+  if (memories.length >= 2 && conflictResolved) {
+    label = 'FACT'; // Multiple sources, conflicts resolved
+  } else if (memories.length >= 1) {
+    label = 'INFER'; // Single source or unresolved conflicts
+  }
+
+  // Create evidence references
+  const evidences = memories.map(createEvidenceFromMemory);
+
+  // Calculate SIFT depth (0-4: Stop, Investigate, Find, Trace)
+  let siftDepth = 0; // Stop - no verification
+  if (memories.length >= 1) siftDepth = 1; // Investigate - checked source
+  if (memories.length >= 2) siftDepth = 2; // Find - found multiple sources
+  if (evidences.some(e => e.contour === 'canon' || e.contour === 'project')) {
+    siftDepth = 3; // Trace - reached primary source
+  }
+  if (conflictResolved && siftDepth >= 2) {
+    siftDepth = 4; // Full SIFT - conflicts resolved via source priority
+  }
+
+  return evidenceService.createSIFTEvidence(
+    claim,
+    label,
+    evidences,
+    memories.length,
+    siftDepth
+  );
+}
+
+/**
+ * Enhance RAG context with evidence blocks
+ * Adds SIFT evidence to memory hits
+ */
+function enhanceWithEvidence(ragContext: RAGContext): RAGContext {
+  // Add evidence to each memory hit
+  const enhancedMemories = ragContext.relevantMemories.map(memory => {
+    const evidence = createEvidenceFromMemory(memory);
+
+    // Enhance existing SIFT block or create new one
+    const siftBlock: SIFTBlock = memory.sift ? {
+      ...memory.sift,
+      evidence: [evidence],
+      sift_depth: 1,
+      sources_checked: 1,
+      confidence: memory.score
+    } : {
+      source: evidence.formatted,
+      inference: memory.content.substring(0, 100),
+      fact: 'uncertain',
+      trace: evidence.formatted,
+      evidence: [evidence],
+      sift_depth: 1,
+      sources_checked: 1,
+      confidence: memory.score
+    };
+
+    return {
+      ...memory,
+      sift: siftBlock
+    };
+  });
+
+  return {
+    ...ragContext,
+    relevantMemories: enhancedMemories
+  };
+}
+
+// ============================================
 // EXPORT
 // ============================================
 
@@ -329,5 +568,9 @@ export const ragService = {
   createSIFTFromSource,
   searchForDisplay,
   getTopicSummary,
+  // Evidence integration
+  createEvidenceFromMemory,
+  createSIFTEvidenceBlock,
+  enhanceWithEvidence,
   config: RAG_CONFIG,
 };

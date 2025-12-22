@@ -112,6 +112,81 @@ export interface DeltaSignature {
   lambda: string; // Λ
 }
 
+/**
+ * Meta-Metrics: Derived metrics for system health and canonical compliance
+ * @see legacy/IskraSAprototype/iskra_engine.ts:18-28
+ * @see canon/IskraCanonDocumentation/05_METRICS_and_RHYTHM_INDEX.md
+ */
+export interface MetaMetrics {
+  a_index: number;       // Integrative Health (0-1)
+  cd_index: number;      // Composite Desiderata (Truthfulness) (0-1)
+  fractality: number;    // Law-47: Integrity × Resonance (0-2)
+  groundedness: number;  // Clarity × (1 - Drift) (0-1)
+  truthfulness: number;  // Direct trust mapping (0-1)
+  helpfulness: number;   // Mirror sync (0-1)
+  resolution: number;    // (1 - Pain) × (1 - Chaos) (0-1)
+  civility: number;      // Trust (0-1)
+}
+
+/**
+ * Evidence System Types - Trace Discipline
+ * @see canon/09_FORMATS_STYLES_AND_CANONICAL_OUTPUTS_RU.md#9.3
+ * @see services/evidenceService.ts
+ */
+
+export type EvidenceContour = 'canon' | 'project' | 'company' | 'web';
+export type TraceLabel = 'FACT' | 'INFER' | 'HYP' | 'DESIGN' | 'PLAN' | 'QUOTE';
+
+export interface Evidence {
+  contour: EvidenceContour;
+  identifier: string;       // file_id, path, doc_id, domain
+  anchor?: string;          // section, line, hash
+  label?: TraceLabel;       // Optional trace label
+  formatted: string;        // Full {e:...} format
+}
+
+export interface SIFTEvidence {
+  claim: string;
+  label: TraceLabel;
+  evidence: Evidence[];
+  confidence: number;       // 0.0 - 1.0 (always < 1.0 for SIFT)
+  sources_checked: number;
+  sift_depth: number;       // 0-4 (Stop, Investigate, Find, Trace)
+}
+
+/**
+ * Validators Types - Canonical Format Validation
+ * @see canon/06_RITUALS_SHADOW_PROTOCOLS_AND_DELTA_BLOCKS.md
+ * @see canon/04_VOICES_FACETS_PHASES_AND_RHYTHM.md
+ * @see services/validatorsService.ts
+ */
+
+export type VoiceID =
+  | 'VOICE.ISKRA'      // ⟡ Synthesis & coherence
+  | 'VOICE.ISKRIV'     // 🪞 Audit/conscience
+  | 'VOICE.KAIN'       // ⚑ Truth verdict
+  | 'VOICE.PINO'       // 😏 Paradox/irony
+  | 'VOICE.HUNDUN'     // 🜃 Chaos-breaker
+  | 'VOICE.ANHANTRA'   // ≈ Silence/slowdown
+  | 'VOICE.SAM'        // ☉ Engineering/structure
+  | 'VOICE.MAKI'       // 🌸 Progress consolidation
+  | 'VOICE.SIBYL';     // ✴️ Threshold/transition
+
+export interface LambdaCondition {
+  action?: string;         // Optional: specific action to take
+  owner?: string;          // Optional: who owns this action
+  condition: string;       // When to review (event/metric/date)
+  by?: string;            // Optional: ISO date deadline (YYYY-MM-DD)
+  '<=24h'?: boolean;      // Optional: urgent flag
+}
+
+export interface ValidationResult {
+  valid: boolean;
+  errors: string[];
+  warnings: string[];
+  parsed?: any;  // Parsed structure if valid
+}
+
 // AI Service Types
 export interface DailyAdvice {
   deltaScore: number;
@@ -159,11 +234,23 @@ export interface DeepResearchReport {
 }
 
 // Memory System Types
+
+/**
+ * SIFT Block - Enhanced with Evidence System
+ * @see canon/08_RAG_SOURCES_SIFT_AND_COMPANY_KNOWLEDGE.md#8.3
+ * @see services/evidenceService.ts
+ */
 export interface SIFTBlock {
-  source: string;
-  inference: string;
-  fact: 'true' | 'false' | 'uncertain';
-  trace: string;
+  source: string;              // Original source identifier
+  inference: string;           // Inference made from source
+  fact: 'true' | 'false' | 'uncertain';  // Fact verification status
+  trace: string;               // Trace path to original
+  // Enhanced fields for canonical compliance:
+  evidence?: Evidence[];       // Structured evidence references
+  sift_depth?: number;         // 0-4 (Stop, Investigate, Find, Trace)
+  sources_checked?: number;    // Number of sources verified
+  confidence?: number;         // 0.0-1.0 (always < 1.0)
+  label?: TraceLabel;          // FACT/INFER/HYP/etc
 }
 
 export interface MemoryNodeMetrics {
