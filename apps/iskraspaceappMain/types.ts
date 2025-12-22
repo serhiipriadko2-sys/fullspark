@@ -112,6 +112,22 @@ export interface DeltaSignature {
   lambda: string; // Λ
 }
 
+/**
+ * Meta-Metrics: Derived metrics for system health and canonical compliance
+ * @see legacy/IskraSAprototype/iskra_engine.ts:18-28
+ * @see canon/IskraCanonDocumentation/05_METRICS_and_RHYTHM_INDEX.md
+ */
+export interface MetaMetrics {
+  a_index: number;       // Integrative Health (0-1)
+  cd_index: number;      // Composite Desiderata (Truthfulness) (0-1)
+  fractality: number;    // Law-47: Integrity × Resonance (0-2)
+  groundedness: number;  // Clarity × (1 - Drift) (0-1)
+  truthfulness: number;  // Direct trust mapping (0-1)
+  helpfulness: number;   // Mirror sync (0-1)
+  resolution: number;    // (1 - Pain) × (1 - Chaos) (0-1)
+  civility: number;      // Trust (0-1)
+}
+
 // AI Service Types
 export interface DailyAdvice {
   deltaScore: number;
