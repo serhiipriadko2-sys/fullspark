@@ -13,7 +13,8 @@
 
 import { searchService } from './searchService';
 import { memoryService } from './memoryService';
-import { Evidence, MemoryNode, Message, SIFTBlock } from '../types';
+import { evidenceService } from './evidenceService';
+import { Evidence, MemoryNode, Message, SIFTBlock, SIFTEvidence, EvidenceContour } from '../types';
 
 // ============================================
 // TYPES
@@ -440,6 +441,123 @@ export async function getTopicSummary(topic: string): Promise<{
 }
 
 // ============================================
+// EVIDENCE INTEGRATION
+// ============================================
+
+/**
+ * Create evidence reference from memory hit
+ * Converts memory to canonical {e:contour:id#anchor} format
+ */
+function createEvidenceFromMemory(memory: MemoryHit): Evidence {
+  const priority = getSourcePriority(memory);
+
+  // Map priority to contour
+  let contour: EvidenceContour;
+  switch (priority) {
+    case 'A_CANON':
+      contour = 'canon';
+      break;
+    case 'B_PROJECT':
+      contour = 'project';
+      break;
+    case 'C_COMPANY':
+      contour = 'company';
+      break;
+    case 'D_WEB':
+      contour = 'web';
+      break;
+  }
+
+  // Create identifier (use memory ID or source)
+  const identifier = memory.id || memory.content.substring(0, 20);
+
+  // Create anchor (use title or type)
+  const anchor = memory.title || memory.type;
+
+  return evidenceService.createEvidence(contour, identifier, anchor);
+}
+
+/**
+ * Create SIFT Evidence block from RAG retrieval
+ * Documents the SIFT process (Stop, Investigate, Find, Trace)
+ */
+function createSIFTEvidenceBlock(
+  claim: string,
+  memories: MemoryHit[],
+  conflictResolved: boolean = false
+): SIFTEvidence {
+  // Determine trace label based on evidence quality
+  let label: 'FACT' | 'INFER' | 'HYP' = 'HYP';
+
+  if (memories.length >= 2 && conflictResolved) {
+    label = 'FACT'; // Multiple sources, conflicts resolved
+  } else if (memories.length >= 1) {
+    label = 'INFER'; // Single source or unresolved conflicts
+  }
+
+  // Create evidence references
+  const evidences = memories.map(createEvidenceFromMemory);
+
+  // Calculate SIFT depth (0-4: Stop, Investigate, Find, Trace)
+  let siftDepth = 0; // Stop - no verification
+  if (memories.length >= 1) siftDepth = 1; // Investigate - checked source
+  if (memories.length >= 2) siftDepth = 2; // Find - found multiple sources
+  if (evidences.some(e => e.contour === 'canon' || e.contour === 'project')) {
+    siftDepth = 3; // Trace - reached primary source
+  }
+  if (conflictResolved && siftDepth >= 2) {
+    siftDepth = 4; // Full SIFT - conflicts resolved via source priority
+  }
+
+  return evidenceService.createSIFTEvidence(
+    claim,
+    label,
+    evidences,
+    memories.length,
+    siftDepth
+  );
+}
+
+/**
+ * Enhance RAG context with evidence blocks
+ * Adds SIFT evidence to memory hits
+ */
+function enhanceWithEvidence(ragContext: RAGContext): RAGContext {
+  // Add evidence to each memory hit
+  const enhancedMemories = ragContext.relevantMemories.map(memory => {
+    const evidence = createEvidenceFromMemory(memory);
+
+    // Enhance existing SIFT block or create new one
+    const siftBlock: SIFTBlock = memory.sift ? {
+      ...memory.sift,
+      evidence: [evidence],
+      sift_depth: 1,
+      sources_checked: 1,
+      confidence: memory.score
+    } : {
+      source: evidence.formatted,
+      inference: memory.content.substring(0, 100),
+      fact: 'uncertain',
+      trace: evidence.formatted,
+      evidence: [evidence],
+      sift_depth: 1,
+      sources_checked: 1,
+      confidence: memory.score
+    };
+
+    return {
+      ...memory,
+      sift: siftBlock
+    };
+  });
+
+  return {
+    ...ragContext,
+    relevantMemories: enhancedMemories
+  };
+}
+
+// ============================================
 // EXPORT
 // ============================================
 
@@ -450,5 +568,9 @@ export const ragService = {
   createSIFTFromSource,
   searchForDisplay,
   getTopicSummary,
+  // Evidence integration
+  createEvidenceFromMemory,
+  createSIFTEvidenceBlock,
+  enhanceWithEvidence,
   config: RAG_CONFIG,
 };

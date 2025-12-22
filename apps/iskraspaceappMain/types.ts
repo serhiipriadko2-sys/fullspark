@@ -128,6 +128,32 @@ export interface MetaMetrics {
   civility: number;      // Trust (0-1)
 }
 
+/**
+ * Evidence System Types - Trace Discipline
+ * @see canon/09_FORMATS_STYLES_AND_CANONICAL_OUTPUTS_RU.md#9.3
+ * @see services/evidenceService.ts
+ */
+
+export type EvidenceContour = 'canon' | 'project' | 'company' | 'web';
+export type TraceLabel = 'FACT' | 'INFER' | 'HYP' | 'DESIGN' | 'PLAN' | 'QUOTE';
+
+export interface Evidence {
+  contour: EvidenceContour;
+  identifier: string;       // file_id, path, doc_id, domain
+  anchor?: string;          // section, line, hash
+  label?: TraceLabel;       // Optional trace label
+  formatted: string;        // Full {e:...} format
+}
+
+export interface SIFTEvidence {
+  claim: string;
+  label: TraceLabel;
+  evidence: Evidence[];
+  confidence: number;       // 0.0 - 1.0 (always < 1.0 for SIFT)
+  sources_checked: number;
+  sift_depth: number;       // 0-4 (Stop, Investigate, Find, Trace)
+}
+
 // AI Service Types
 export interface DailyAdvice {
   deltaScore: number;
@@ -175,11 +201,23 @@ export interface DeepResearchReport {
 }
 
 // Memory System Types
+
+/**
+ * SIFT Block - Enhanced with Evidence System
+ * @see canon/08_RAG_SOURCES_SIFT_AND_COMPANY_KNOWLEDGE.md#8.3
+ * @see services/evidenceService.ts
+ */
 export interface SIFTBlock {
-  source: string;
-  inference: string;
-  fact: 'true' | 'false' | 'uncertain';
-  trace: string;
+  source: string;              // Original source identifier
+  inference: string;           // Inference made from source
+  fact: 'true' | 'false' | 'uncertain';  // Fact verification status
+  trace: string;               // Trace path to original
+  // Enhanced fields for canonical compliance:
+  evidence?: Evidence[];       // Structured evidence references
+  sift_depth?: number;         // 0-4 (Stop, Investigate, Find, Trace)
+  sources_checked?: number;    // Number of sources verified
+  confidence?: number;         // 0.0-1.0 (always < 1.0)
+  label?: TraceLabel;          // FACT/INFER/HYP/etc
 }
 
 export interface MemoryNodeMetrics {
