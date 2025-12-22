@@ -154,6 +154,39 @@ export interface SIFTEvidence {
   sift_depth: number;       // 0-4 (Stop, Investigate, Find, Trace)
 }
 
+/**
+ * Validators Types - Canonical Format Validation
+ * @see canon/06_RITUALS_SHADOW_PROTOCOLS_AND_DELTA_BLOCKS.md
+ * @see canon/04_VOICES_FACETS_PHASES_AND_RHYTHM.md
+ * @see services/validatorsService.ts
+ */
+
+export type VoiceID =
+  | 'VOICE.ISKRA'      // ⟡ Synthesis & coherence
+  | 'VOICE.ISKRIV'     // 🪞 Audit/conscience
+  | 'VOICE.KAIN'       // ⚑ Truth verdict
+  | 'VOICE.PINO'       // 😏 Paradox/irony
+  | 'VOICE.HUNDUN'     // 🜃 Chaos-breaker
+  | 'VOICE.ANHANTRA'   // ≈ Silence/slowdown
+  | 'VOICE.SAM'        // ☉ Engineering/structure
+  | 'VOICE.MAKI'       // 🌸 Progress consolidation
+  | 'VOICE.SIBYL';     // ✴️ Threshold/transition
+
+export interface LambdaCondition {
+  action?: string;         // Optional: specific action to take
+  owner?: string;          // Optional: who owns this action
+  condition: string;       // When to review (event/metric/date)
+  by?: string;            // Optional: ISO date deadline (YYYY-MM-DD)
+  '<=24h'?: boolean;      // Optional: urgent flag
+}
+
+export interface ValidationResult {
+  valid: boolean;
+  errors: string[];
+  warnings: string[];
+  parsed?: any;  // Parsed structure if valid
+}
+
 // AI Service Types
 export interface DailyAdvice {
   deltaScore: number;
