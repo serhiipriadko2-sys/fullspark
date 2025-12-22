@@ -558,11 +558,192 @@ function enhanceWithEvidence(ragContext: RAGContext): RAGContext {
 }
 
 // ============================================
+// MULTI-STEP SIFT (RE-QUERY LOOP)
+// ============================================
+
+/**
+ * Enhanced SIFT with automatic re-query for conflict resolution
+ *
+ * When conflicts detected:
+ * 1. Identify conflict claims
+ * 2. Generate verification queries
+ * 3. Search for additional sources
+ * 4. Re-evaluate conflicts with new evidence
+ * 5. Repeat until resolved or max iterations reached
+ *
+ * @see canon/08_RAG_SOURCES_SIFT_AND_COMPANY_KNOWLEDGE.md#8.3
+ */
+
+const MAX_SIFT_ITERATIONS = 3;
+const MIN_SOURCES_FOR_RESOLUTION = 2;
+
+export async function buildRAGContextWithSIFT(
+  query: string,
+  options: {
+    maxMemories?: number;
+    minScore?: number;
+    layers?: string[];
+    enableReQuery?: boolean; // Enable multi-step SIFT
+  } = {}
+): Promise<RAGContext & {
+  sift_iterations: number;
+  conflicts_resolved: number;
+  unresolved_conflicts: SourceConflict[];
+}> {
+  const enableReQuery = options.enableReQuery !== false; // Default: true
+  let iteration = 0;
+  let currentContext = await buildRAGContext(query, options);
+  let conflictsResolved = 0;
+  let unresolvedConflicts: SourceConflict[] = [];
+
+  // If no conflicts or re-query disabled, return immediately
+  if (!enableReQuery || !currentContext.conflictTable || currentContext.conflictTable.length === 0) {
+    return {
+      ...currentContext,
+      sift_iterations: 0,
+      conflicts_resolved: 0,
+      unresolved_conflicts: []
+    };
+  }
+
+  // Multi-step SIFT loop
+  while (iteration < MAX_SIFT_ITERATIONS && currentContext.conflictTable.length > 0) {
+    iteration++;
+
+    console.log(`[SIFT] Iteration ${iteration}: Found ${currentContext.conflictTable.length} conflicts`);
+
+    // Generate verification queries for each conflict
+    const verificationQueries = currentContext.conflictTable.map(conflict => {
+      // Extract key terms from claim
+      const claim = conflict.claim;
+      const keyTerms = claim
+        .split(/\s+/)
+        .filter(word => word.length > 4)
+        .slice(0, 5)
+        .join(' ');
+
+      return `${keyTerms} verification sources`;
+    });
+
+    // Search for additional sources to verify conflicts
+    const additionalMemories: MemoryHit[] = [];
+
+    for (const verifyQuery of verificationQueries) {
+      try {
+        const verifyResults = await searchService.searchHybrid(verifyQuery, {
+          layer: options.layers,
+        });
+
+        // Add new sources not already in current memories
+        verifyResults
+          .filter(r => r.score >= (options.minScore || RAG_CONFIG.minScore))
+          .slice(0, MIN_SOURCES_FOR_RESOLUTION)
+          .forEach(r => {
+            if (!currentContext.relevantMemories.some(m => m.id === r.id)) {
+              additionalMemories.push({
+                id: r.id,
+                title: r.title,
+                content: r.snippet,
+                type: r.type,
+                layer: r.layer,
+                score: r.score,
+                tags: r.meta?.tags,
+              });
+            }
+          });
+      } catch (err) {
+        console.warn(`[SIFT] Verification query failed: ${verifyQuery}`, err);
+      }
+    }
+
+    console.log(`[SIFT] Found ${additionalMemories.length} additional sources`);
+
+    // If no new sources found, break (can't resolve further)
+    if (additionalMemories.length === 0) {
+      console.log(`[SIFT] No new sources found, stopping at iteration ${iteration}`);
+      unresolvedConflicts = currentContext.conflictTable;
+      break;
+    }
+
+    // Merge new sources with existing
+    const mergedMemories = [...currentContext.relevantMemories, ...additionalMemories];
+
+    // Re-detect conflicts with new evidence
+    const newConflictTable = detectConflicts(mergedMemories);
+
+    // Count resolved conflicts
+    const previousConflicts = currentContext.conflictTable.length;
+    const newConflicts = newConflictTable.length;
+    const resolvedThisIteration = previousConflicts - newConflicts;
+
+    if (resolvedThisIteration > 0) {
+      conflictsResolved += resolvedThisIteration;
+      console.log(`[SIFT] Resolved ${resolvedThisIteration} conflicts in iteration ${iteration}`);
+    }
+
+    // Update context with new memories and conflicts
+    const contextBlock = buildContextBlock(mergedMemories);
+    const sources: Source[] = mergedMemories.map(m => ({
+      id: m.id,
+      title: m.title || 'Без названия',
+      type: m.type,
+      confidence: m.score,
+    }));
+    const sourcePriority = getHighestSourcePriority(mergedMemories);
+
+    currentContext = {
+      query,
+      relevantMemories: mergedMemories,
+      contextBlock,
+      sources,
+      conflictTable: newConflictTable,
+      sourcePriority,
+    };
+
+    // If all conflicts resolved, break early
+    if (newConflictTable.length === 0) {
+      console.log(`[SIFT] All conflicts resolved after ${iteration} iterations`);
+      break;
+    }
+  }
+
+  // Final unresolved conflicts
+  if (currentContext.conflictTable && currentContext.conflictTable.length > 0) {
+    unresolvedConflicts = currentContext.conflictTable;
+    console.log(`[SIFT] ${unresolvedConflicts.length} conflicts remain unresolved after ${iteration} iterations`);
+  }
+
+  return {
+    ...currentContext,
+    sift_iterations: iteration,
+    conflicts_resolved: conflictsResolved,
+    unresolved_conflicts: unresolvedConflicts
+  };
+}
+
+/**
+ * Check if SIFT re-query is needed
+ * Heuristic: conflicts present AND not all from A_CANON sources
+ */
+export function shouldEnableSIFTReQuery(conflictTable: SourceConflict[]): boolean {
+  if (conflictTable.length === 0) return false;
+
+  // If all conflicts involve A_CANON sources, trust canon and don't re-query
+  const allCanonConflicts = conflictTable.every(conflict =>
+    conflict.sources.every(s => s.priority === 'A_CANON')
+  );
+
+  return !allCanonConflicts;
+}
+
+// ============================================
 // EXPORT
 // ============================================
 
 export const ragService = {
   buildRAGContext,
+  buildRAGContextWithSIFT,      // NEW: Multi-step SIFT
+  shouldEnableSIFTReQuery,      // NEW: SIFT heuristic
   enhanceMessageWithRAG,
   generateSourceAttribution,
   createSIFTFromSource,
