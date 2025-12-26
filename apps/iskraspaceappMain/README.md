@@ -32,7 +32,7 @@ npm run dev
 | Metric | Value |
 |--------|-------|
 | **Services** | 27 microservices |
-| **Components** | 44 React components |
+| **Components** | 42 React components |
 | **Types** | 46+ TypeScript interfaces |
 | **Tests** | 322 unit + 3 E2E |
 | **Bundle** | 515 KB (155 KB gzip) |
@@ -57,7 +57,7 @@ npm run dev
 ├─────────────────────────────────────────────────────────────┤
 │  Policy Engine (ROUTINE/SIFT/SHADOW/COUNCIL/CRISIS)          │
 ├─────────────────────────────────────────────────────────────┤
-│  Voice Engine (7 Voices: ISKRA, KAIN, PINO, SAM, etc.)       │
+│  Voice Engine (9 Voices: ISKRA, KAIN, PINO, SAM, MAKI, etc.) │
 ├─────────────────────────────────────────────────────────────┤
 │  RAG Service + GraphRAG Memory (Mantra/Archive/Shadow)       │
 ├─────────────────────────────────────────────────────────────┤
@@ -71,17 +71,19 @@ npm run dev
 
 ## Core Systems
 
-### Voice System (7 Personalities)
+### Voice System (9 Personalities)
 
 | Voice | Symbol | Activation | Role |
 |-------|--------|------------|------|
-| **ISKRA** | ⟡ | Synthesis | Core integration |
+| **ISKRA** | ⟡ | Default | Core synthesis |
 | **KAIN** | ⚑ | pain ≥ 0.70 | Truth, directness |
-| **PINO** | 😏 | Paradox | Playfulness, irony |
-| **SAM** | ☉ | clarity < 0.70 | Structure, engineering |
+| **PINO** | 😏 | Low pain/chaos | Playfulness, irony |
+| **SAM** | ☉ | clarity < 0.60 | Structure, engineering |
 | **ANHANTRA** | ≈ | trust < 0.75 | Silence, slowing |
 | **HUNDUN** | 🜃 | chaos > 0.60 | Chaos-breaking |
 | **ISKRIV** | 🪞 | drift > 0.30 | Audit, conscience |
+| **MAKI** | 🌸 | Post-delta | Integration, healing |
+| **SIBYL** | ✴️ | Transition* | Threshold (*pending) |
 
 ### Playbook System
 
