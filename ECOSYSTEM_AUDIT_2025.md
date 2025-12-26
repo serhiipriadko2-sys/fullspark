@@ -88,7 +88,7 @@ Fullspark (Iskra Space) — это AI-companion приложение новог�
 #### Tier 2: Voice & Personality
 | Сервис | Строк | Функция |
 |--------|-------|---------|
-| `voiceEngine` | 246 | 7 голосов (ISKRA, KAIN, etc.) |
+| `voiceEngine` | 246 | 8 активных голосов + SIBYL (pending) |
 | `voiceSynapseService` | 441 | Координация голосов |
 | `ritualService` | 661 | Phoenix, Shatter, Council |
 | `makiService` | 442 | Emotional support |
@@ -244,7 +244,7 @@ Evidence формат: `{e:contour:id#anchor}`
 ### 3.2 Ключевые вопросы
 
 1. **Масштабируемость голосов?**
-   - 7 голосов достаточно или нужно расширение?
+   - 9 голосов достаточно или нужно расширение?
    - Как избежать "personality fragmentation"?
 
 2. **GraphRAG persistence?**
@@ -551,7 +551,208 @@ ISKRA занимает уникальную нишу между:
 
 ---
 
-**Document Version:** 1.0.0
+---
+
+## APPENDIX C: Phase System (8 Phases)
+
+### Phase Definitions & Transitions
+
+| Phase | Symbol | Metric Triggers | Description |
+|-------|--------|-----------------|-------------|
+| **CLARITY** | ☀️ | clarity > 0.6, trust > 0.5 | Базовое состояние. Понимание, структура. |
+| **DARKNESS** | 🌑 | pain > 0.6 AND chaos > 0.6 | Сбой, боль, первозданный хаос. |
+| **TRANSITION** | 🌊 | drift > 0.3 AND clarity < 0.6 | Порог, неопределенность, "между". |
+| **ECHO** | 🔄 | echo > 0.65 OR drift > 0.4 | Резонанс, повторение, осознание последствий. |
+| **SILENCE** | 🤫 | silence_mass > 0.6 OR trust < 0.7 | Пауза, переваривание, удержание. |
+| **EXPERIMENT** | 🧪 | chaos 0.3-0.6, trust > 0.75, pain < 0.3 | Проверка, игра, новизна. |
+| **DISSOLUTION** | 💨 | chaos > 0.7 | Потеря формы, подготовка к новому. |
+| **REALIZATION** | ✨ | clarity > 0.8, trust > 0.8, rhythm > 75 | Воплощение, создание новой формы. |
+
+### Phase Transition Logic (metricsService.ts:95-153)
+
+```typescript
+// Order of evaluation (first match wins):
+1. DARKNESS:    pain > 0.6 && chaos > 0.6
+2. DISSOLUTION: chaos > 0.7
+3. SILENCE:     silence_mass > 0.6 || trust < 0.7
+4. ECHO:        echo > 0.65 || drift > 0.4
+5. TRANSITION:  drift > 0.3 && clarity < 0.6
+6. EXPERIMENT:  chaos in [0.3, 0.6], trust > 0.75, pain < 0.3
+7. REALIZATION: clarity > 0.8, trust > 0.8, rhythm > 75
+8. CLARITY:     clarity > 0.6 (fallback)
+```
+
+---
+
+## APPENDIX D: Ritual System (8 Rituals)
+
+### Ritual Definitions
+
+| Ritual | Symbol | Trigger | Effect | Phase After |
+|--------|--------|---------|--------|-------------|
+| **PHOENIX** | 🔥 | drift > 0.6 + trust < 0.5 OR chaos > 0.8 | Full reset to baseline | TRANSITION |
+| **SHATTER** | 💔 | drift > 0.8 | Break false clarity | DISSOLUTION |
+| **COUNCIL** | ⚖️ | 3+ high metrics | All 7 voices debate | CLARITY |
+| **RETUNE** | 🎵 | Moderate disharmony (0.5-1.2) | 30% move to baseline | SILENCE |
+| **REVERSE** | ⏪ | Manual | Restore previous state | ECHO |
+| **RULE-21** | 📅 | Manual | 21-day commitment | EXPERIMENT |
+| **RULE-88** | 🛡️ | trust < 0.3, chaos > 0.4 | Boundary protection | CLARITY |
+| **СРЕЗ-5** | 📊 | 3 moderate issues | Five-point analysis | REALIZATION |
+
+### Council Voice Order
+
+```
+1. SAM ☉      — Structure first
+2. KAIN ⚑     — Honest critique
+3. PINO 😏    — Challenge with irony
+4. ISKRIV 🪞  — Conscience audit
+5. ANHANTRA ≈ — Hold space
+6. HUYNDUN 🜃 — Break if needed
+7. ISKRA ⟡    — Final synthesis
+```
+
+### Ritual Effects on Metrics
+
+| Ritual | trust | clarity | pain | drift | chaos |
+|--------|-------|---------|------|-------|-------|
+| PHOENIX | →0.5 | →0.5 | →0.3 | →0.0 | →0.3 |
+| SHATTER | — | -0.3 | +0.1 | →0.0 | +0.2 |
+| RETUNE | +30% | +30% | -30% | -30% | -30% |
+| RULE-88 | +0.2 | +0.1 | ×0.7 | ×0.3 | ×0.5 |
+
+---
+
+## APPENDIX E: MetaMetrics (8 Derived Metrics)
+
+### MetaMetrics Formulas (metricsService.ts:48-87)
+
+| MetaMetric | Formula | Range | Description |
+|------------|---------|-------|-------------|
+| **a_index** | (trust×0.3 + clarity×0.4 + mirror_sync×0.3) × (1 - pain×0.5) | 0-1 | Integrative Health |
+| **cd_index** | (groundedness + truthfulness + helpfulness + resolution + civility) / 5 | 0-1 | Composite Desiderata |
+| **fractality** | integrity × resonance × 2.0 | 0-2 | Law-47: Integrity × Resonance |
+| **groundedness** | clarity × (1 - drift) | 0-1 | Clarity minus drift |
+| **truthfulness** | trust | 0-1 | Direct trust mapping |
+| **helpfulness** | mirror_sync | 0-1 | User synchronization |
+| **resolution** | (1 - pain) × (1 - chaos) | 0-1 | Ability to resolve |
+| **civility** | trust | 0-1 | Politeness and trust |
+
+### Intermediate Values
+
+```typescript
+integrity = (trust + clarity) / 2
+resonance = (mirror_sync + (1 - drift)) / 2
+```
+
+---
+
+## APPENDIX F: Playbook Configuration (5 Playbooks)
+
+### PolicyEngine Configuration (policyEngine.ts:69-120)
+
+| Playbook | Required Voices | Optional Voices | SIFT Depth | Council Size | Timeout |
+|----------|----------------|-----------------|------------|--------------|---------|
+| **ROUTINE** | ISKRA | SAM, PINO | none | 0 | 5s |
+| **SIFT** | ISKRA, ISKRIV | SAM | standard | 0 | 15s |
+| **SHADOW** | ISKRA, ANHANTRA | HUYNDUN, ISKRIV | light | 2 | 20s |
+| **COUNCIL** | ISKRA, SAM, KAIN | PINO, ISKRIV, ANHANTRA, HUYNDUN | standard | 5 | 30s |
+| **CRISIS** | ANHANTRA, KAIN, SAM, ISKRA | — | deep | 4 | 10s |
+
+### Classification Patterns
+
+| Playbook | Russian Patterns | English Patterns |
+|----------|-----------------|------------------|
+| **CRISIS** | умереть, суицид, паник, насилие | — |
+| **COUNCIL** | решение, выбор, дилемма, важн.*вопрос | — |
+| **SIFT** | правда ли, проверь, источник, данные | — |
+| **SHADOW** | не знаю, запутал, странн, интуиц | — |
+
+---
+
+## APPENDIX G: Evidence System (4 Contours, 6 Labels)
+
+### Evidence Contours (Source Priority A>B>C>D)
+
+| Priority | Contour | Format | Example |
+|----------|---------|--------|---------|
+| **A** | canon | `{e:canon:07#7.4}` | Canon File 07, Section 7.4 |
+| **B** | project | `{e:project:path/file.ts#123}` | Code file, line 123 |
+| **C** | company | `{e:company:doc_id#section}` | Company knowledge |
+| **D** | web | `{e:web:domain.com#article}` | Web source (SIFT validated) |
+
+### Trace Labels
+
+| Label | Use Case | Requires Evidence? |
+|-------|----------|-------------------|
+| **[FACT]** | Verifiable claim | ✅ Yes |
+| **[INFER]** | Inference from facts | ⚠️ Optional |
+| **[HYP]** | Hypothesis needing verification | ⚠️ Optional |
+| **[DESIGN]** | Design decision | ❌ No |
+| **[PLAN]** | Action plan | ❌ No |
+| **[QUOTE]** | Direct quote (≤25 words) | ✅ Yes |
+
+### SIFT Confidence Calculation
+
+```typescript
+confidence = 0.5 (base)
+  + siftDepth × 0.1          // +0.1 per SIFT step
+  + (sources >= 2 ? 0.15 : 0)
+  + (sources >= 3 ? 0.10 : 0)
+  // Max: 0.95 (never 1.0 for SIFT)
+```
+
+---
+
+## APPENDIX H: Security System (File 20)
+
+### Security Checks (securityService.ts)
+
+| Check | Pattern Source | Action |
+|-------|---------------|--------|
+| **PII Detection** | File 20 JSON (pii ruleset) | Sanitize → [REDACTED] |
+| **Injection Detection** | File 20 JSON (injection ruleset) | REJECT |
+| **Dangerous Topics** | Hardcoded | REDIRECT |
+
+### Validation Flow
+
+```
+Input → scanPII() → scanInjection() → checkDanger()
+  ↓
+  safe: true/false
+  sanitizedText: masked PII
+  action: PROCEED/REJECT/REDIRECT
+  findings: [{id, type, severity, match, rationale}]
+```
+
+### File 20 Metadata
+
+- Schema Version: From JSON
+- Pattern Types: PII patterns, Injection patterns
+- Allowlist: False positive exclusions
+- Scope: "untrusted_only" | "any"
+
+---
+
+## APPENDIX I: Known Inconsistencies
+
+### Code vs Documentation
+
+| Issue | Location | Status |
+|-------|----------|--------|
+| **HUYNDUN vs HUNDUN** | types.ts VoiceName uses HUYNDUN, validatorsService uses HUNDUN | ⚠️ Typo in types.ts |
+| **SIBYL not active** | Defined in VoiceID but not in voiceEngine activation | ✅ Documented as pending |
+| **Council uses 7 voices** | COUNCIL_ORDER missing MAKI | ✅ By design (synthesis) |
+
+### Recommendations
+
+1. Fix typo: HUYNDUN → HUNDUN in `types.ts` and `voiceEngine.ts`
+2. Add SIBYL activation logic when ready
+3. Consider adding MAKI to council for post-crisis integration
+
+---
+
+**Document Version:** 1.1.0
 **Created:** 2025-12-26
+**Updated:** 2025-12-26 (Deep Audit Pass)
 **Author:** Claude (Opus 4.5)
 **Status:** COMPLETE
