@@ -1,0 +1,34 @@
+{
+  "archives_found": [
+    "AgiAgentIskra-main.zip",
+    "ISKRA_OMEGA_BUILD_20251027T171807Z_CORE.zip",
+    "AgiAgentIskra-telos-delta.zip"
+  ],
+  "extracted_dirs": [
+    "/mnt/data/extracted/AgiAgentIskra-main",
+    "/mnt/data/extracted/ISKRA_OMEGA_BUILD_20251027T171807Z_CORE",
+    "/mnt/data/extracted/AgiAgentIskra-telos-delta"
+  ],
+  "total_files_indexed": 429,
+  "by_extension": {
+    ".md": 224,
+    ".txt": 47,
+    ".py": 34,
+    ".jsonl": 30,
+    ".tsx": 28,
+    ".json": 20,
+    "": 10,
+    ".yml": 7,
+    ".ts": 6,
+    ".png": 5,
+    ".zip": 3,
+    ".csv": 3,
+    ".yaml": 3,
+    ".mp4": 2,
+    ".html": 2,
+    ".sql": 2,
+    ".docx": 1,
+    ".diff": 1,
+    ".example": 1
+  }
+}

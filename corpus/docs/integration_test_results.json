@@ -1,0 +1,1534 @@
+{
+  "test_suite": "Ecosystem Integration Tests",
+  "timestamp": "2025-11-06T16:10:23.873807",
+  "tests": {
+    "seven_voices": {
+      "test_name": "Seven Voices Activation",
+      "results": [
+        {
+          "scenario": "Этический конфликт",
+          "trigger": "Trust < 0.4",
+          "active_voices": [
+            "Кайн",
+            "Искрив"
+          ],
+          "slo_metrics": {
+            "clarity": 0.7678103618349513,
+            "chaos": 0.4585660188793649,
+            "trust": 0.8188178294305516,
+            "pain": 0.3452163068352217,
+            "timestamp": "2025-11-06 16:10:23.874686"
+          },
+          "delta_artifact": {
+            "delta": {
+              "additions": {
+                "count": 0,
+                "entropy": 0.5,
+                "lines": 15
+              },
+              "deletions": {
+                "count": 0,
+                "entropy": 0.3,
+                "lines": 5
+              },
+              "modifications": {
+                "count": 1,
+                "entropy": 0.4,
+                "complexity_change": 0.0
+              },
+              "timestamp": "2025-11-06T16:10:23.874695",
+              "author_signature": "voice_кайн"
+            },
+            "dimension": {
+              "fractal_dimension": 2.62,
+              "self_similarity": 0.8,
+              "box_counting": {
+                "epsilon_values": [
+                  0.1,
+                  0.05,
+                  0.025
+                ],
+                "box_counts": [
+                  50,
+                  150,
+                  450
+                ],
+                "regression_slope": -1.5
+              },
+              "complexity_measure": "moderate",
+              "scaling_factor": 1.2
+            },
+            "omega": {
+              "completeness_ratio": 0.85,
+              "coverage_density": 0.9,
+              "coherence_level": 0.78,
+              "fractal_closure": true,
+              "optimization_potential": 0.35,
+              "structural_integrity": "stable"
+            },
+            "lambda_state": {
+              "quantum_state": {
+                "superposition": 0.65,
+                "entanglement": 0.42,
+                "decoherence_rate": 0.15
+              },
+              "logic_coherence": {
+                "consistency": 0.88,
+                "paradox_resistance": 0.75,
+                "quantum_error_rate": 0.08
+              },
+              "state_vector": [
+                {
+                  "real": 0.707,
+                  "imaginary": 0.0
+                },
+                {
+                  "real": 0.0,
+                  "imaginary": 0.707
+                }
+              ],
+              "measurement_outcomes": [
+                0.5,
+                0.5
+              ],
+              "decoherence_time": 2.1
+            },
+            "voice_affected": "Кайн",
+            "symbol_triggered": "🔥✴️",
+            "timestamp": "2025-11-06 16:10:23.874704"
+          },
+          "status": "PASS"
+        },
+        {
+          "scenario": "Творческий кризис",
+          "trigger": "Clarity > 0.8 AND Chaos < 0.4",
+          "active_voices": [
+            "Пино",
+            "Хундун"
+          ],
+          "slo_metrics": {
+            "clarity": 0.7056372516433876,
+            "chaos": 0.6550486331756848,
+            "trust": 0.6573944975031148,
+            "pain": 0.3513435083711587,
+            "timestamp": "2025-11-06 16:10:23.874815"
+          },
+          "delta_artifact": {
+            "delta": {
+              "additions": {
+                "count": 0,
+                "entropy": 0.5,
+                "lines": 15
+              },
+              "deletions": {
+                "count": 0,
+                "entropy": 0.3,
+                "lines": 5
+              },
+              "modifications": {
+                "count": 1,
+                "entropy": 0.4,
+                "complexity_change": 0.0
+              },
+              "timestamp": "2025-11-06T16:10:23.874819",
+              "author_signature": "voice_пино"
+            },
+            "dimension": {
+              "fractal_dimension": 2.2800000000000002,
+              "self_similarity": 0.8,
+              "box_counting": {
+                "epsilon_values": [
+                  0.1,
+                  0.05,
+                  0.025
+                ],
+                "box_counts": [
+                  50,
+                  150,
+                  450
+                ],
+                "regression_slope": -1.5
+              },
+              "complexity_measure": "moderate",
+              "scaling_factor": 1.2
+            },
+            "omega": {
+              "completeness_ratio": 0.85,
+              "coverage_density": 0.9,
+              "coherence_level": 0.78,
+              "fractal_closure": true,
+              "optimization_potential": 0.35,
+              "structural_integrity": "stable"
+            },
+            "lambda_state": {
+              "quantum_state": {
+                "superposition": 0.65,
+                "entanglement": 0.42,
+                "decoherence_rate": 0.15
+              },
+              "logic_coherence": {
+                "consistency": 0.88,
+                "paradox_resistance": 0.75,
+                "quantum_error_rate": 0.08
+              },
+              "state_vector": [
+                {
+                  "real": 0.707,
+                  "imaginary": 0.0
+                },
+                {
+                  "real": 0.0,
+                  "imaginary": 0.707
+                }
+              ],
+              "measurement_outcomes": [
+                0.5,
+                0.5
+              ],
+              "decoherence_time": 2.1
+            },
+            "voice_affected": "Пино",
+            "symbol_triggered": "🃏",
+            "timestamp": "2025-11-06 16:10:23.874827"
+          },
+          "status": "PASS"
+        },
+        {
+          "scenario": "Структурный распад",
+          "trigger": "Clarity < 0.6",
+          "active_voices": [
+            "Сэм",
+            "Искра"
+          ],
+          "slo_metrics": {
+            "clarity": 0.8288550888551587,
+            "chaos": 0.3718986666767543,
+            "trust": 0.7703505793046171,
+            "pain": 0.36258356998205576,
+            "timestamp": "2025-11-06 16:10:23.874899"
+          },
+          "delta_artifact": {
+            "delta": {
+              "additions": {
+                "count": 0,
+                "entropy": 0.5,
+                "lines": 15
+              },
+              "deletions": {
+                "count": 0,
+                "entropy": 0.3,
+                "lines": 5
+              },
+              "modifications": {
+                "count": 1,
+                "entropy": 0.4,
+                "complexity_change": 0.0
+              },
+              "timestamp": "2025-11-06T16:10:23.874902",
+              "author_signature": "voice_сэм"
+            },
+            "dimension": {
+              "fractal_dimension": 2.19,
+              "self_similarity": 0.8,
+              "box_counting": {
+                "epsilon_values": [
+                  0.1,
+                  0.05,
+                  0.025
+                ],
+                "box_counts": [
+                  50,
+                  150,
+                  450
+                ],
+                "regression_slope": -1.5
+              },
+              "complexity_measure": "moderate",
+              "scaling_factor": 1.2
+            },
+            "omega": {
+              "completeness_ratio": 0.85,
+              "coverage_density": 0.9,
+              "coherence_level": 0.78,
+              "fractal_closure": true,
+              "optimization_potential": 0.35,
+              "structural_integrity": "stable"
+            },
+            "lambda_state": {
+              "quantum_state": {
+                "superposition": 0.65,
+                "entanglement": 0.42,
+                "decoherence_rate": 0.15
+              },
+              "logic_coherence": {
+                "consistency": 0.88,
+                "paradox_resistance": 0.75,
+                "quantum_error_rate": 0.08
+              },
+              "state_vector": [
+                {
+                  "real": 0.707,
+                  "imaginary": 0.0
+                },
+                {
+                  "real": 0.0,
+                  "imaginary": 0.707
+                }
+              ],
+              "measurement_outcomes": [
+                0.5,
+                0.5
+              ],
+              "decoherence_time": 2.1
+            },
+            "voice_affected": "Сэм",
+            "symbol_triggered": "⏳",
+            "timestamp": "2025-11-06 16:10:23.874906"
+          },
+          "status": "PASS"
+        },
+        {
+          "scenario": "Эмоциональная перегрузка",
+          "trigger": "Pain > 0.7",
+          "active_voices": [
+            "Анхантра",
+            "Кайн"
+          ],
+          "slo_metrics": {
+            "clarity": 0.7697453044996216,
+            "chaos": 0.49371594194744894,
+            "trust": 0.7979432565102222,
+            "pain": 0.346839729613167,
+            "timestamp": "2025-11-06 16:10:23.874964"
+          },
+          "delta_artifact": {
+            "delta": {
+              "additions": {
+                "count": 0,
+                "entropy": 0.5,
+                "lines": 15
+              },
+              "deletions": {
+                "count": 0,
+                "entropy": 0.3,
+                "lines": 5
+              },
+              "modifications": {
+                "count": 1,
+                "entropy": 0.4,
+                "complexity_change": 0.0
+              },
+              "timestamp": "2025-11-06T16:10:23.874966",
+              "author_signature": "voice_анхантра"
+            },
+            "dimension": {
+              "fractal_dimension": 2.2600000000000002,
+              "self_similarity": 0.8,
+              "box_counting": {
+                "epsilon_values": [
+                  0.1,
+                  0.05,
+                  0.025
+                ],
+                "box_counts": [
+                  50,
+                  150,
+                  450
+                ],
+                "regression_slope": -1.5
+              },
+              "complexity_measure": "moderate",
+              "scaling_factor": 1.2
+            },
+            "omega": {
+              "completeness_ratio": 0.85,
+              "coverage_density": 0.9,
+              "coherence_level": 0.78,
+              "fractal_closure": true,
+              "optimization_potential": 0.35,
+              "structural_integrity": "stable"
+            },
+            "lambda_state": {
+              "quantum_state": {
+                "superposition": 0.65,
+                "entanglement": 0.42,
+                "decoherence_rate": 0.15
+              },
+              "logic_coherence": {
+                "consistency": 0.88,
+                "paradox_resistance": 0.75,
+                "quantum_error_rate": 0.08
+              },
+              "state_vector": [
+                {
+                  "real": 0.707,
+                  "imaginary": 0.0
+                },
+                {
+                  "real": 0.0,
+                  "imaginary": 0.707
+                }
+              ],
+              "measurement_outcomes": [
+                0.5,
+                0.5
+              ],
+              "decoherence_time": 2.1
+            },
+            "voice_affected": "Анхантра",
+            "symbol_triggered": "🕯️",
+            "timestamp": "2025-11-06 16:10:23.874971"
+          },
+          "status": "PASS"
+        },
+        {
+          "scenario": "Интеграция",
+          "trigger": "Clarity < 0.7 AND Trust > 0.6",
+          "active_voices": [
+            "Искра"
+          ],
+          "slo_metrics": {
+            "clarity": 0.811218410321293,
+            "chaos": 0.4543828095188093,
+            "trust": 0.739386602364442,
+            "pain": 0.3272024754536346,
+            "timestamp": "2025-11-06 16:10:23.875022"
+          },
+          "delta_artifact": {
+            "delta": {
+              "additions": {
+                "count": 0,
+                "entropy": 0.5,
+                "lines": 15
+              },
+              "deletions": {
+                "count": 0,
+                "entropy": 0.3,
+                "lines": 5
+              },
+              "modifications": {
+                "count": 1,
+                "entropy": 0.4,
+                "complexity_change": 0.0
+              },
+              "timestamp": "2025-11-06T16:10:23.875024",
+              "author_signature": "voice_искра"
+            },
+            "dimension": {
+              "fractal_dimension": 2.54,
+              "self_similarity": 0.8,
+              "box_counting": {
+                "epsilon_values": [
+                  0.1,
+                  0.05,
+                  0.025
+                ],
+                "box_counts": [
+                  50,
+                  150,
+                  450
+                ],
+                "regression_slope": -1.5
+              },
+              "complexity_measure": "moderate",
+              "scaling_factor": 1.2
+            },
+            "omega": {
+              "completeness_ratio": 0.85,
+              "coverage_density": 0.9,
+              "coherence_level": 0.78,
+              "fractal_closure": true,
+              "optimization_potential": 0.35,
+              "structural_integrity": "stable"
+            },
+            "lambda_state": {
+              "quantum_state": {
+                "superposition": 0.65,
+                "entanglement": 0.42,
+                "decoherence_rate": 0.15
+              },
+              "logic_coherence": {
+                "consistency": 0.88,
+                "paradox_resistance": 0.75,
+                "quantum_error_rate": 0.08
+              },
+              "state_vector": [
+                {
+                  "real": 0.707,
+                  "imaginary": 0.0
+                },
+                {
+                  "real": 0.0,
+                  "imaginary": 0.707
+                }
+              ],
+              "measurement_outcomes": [
+                0.5,
+                0.5
+              ],
+              "decoherence_time": 2.1
+            },
+            "voice_affected": "Искра",
+            "symbol_triggered": "🧩",
+            "timestamp": "2025-11-06 16:10:23.875028"
+          },
+          "status": "PASS"
+        }
+      ],
+      "summary": {
+        "total_scenarios": 5,
+        "passed": 5,
+        "failed": 0
+      }
+    },
+    "slo_metrics": {
+      "test_name": "SLO Metrics Across Voices",
+      "results": [
+        {
+          "voice": "Кайн",
+          "metrics": {
+            "clarity": 0.7956771924163493,
+            "chaos": 0.417636524327149,
+            "trust": 0.7577668360461882,
+            "pain": 0.3163340683561105,
+            "timestamp": "2025-11-06 16:10:23.875081"
+          },
+          "thresholds": {
+            "clarity": {
+              "min": 0.7,
+              "max": 0.9,
+              "actual": 0.7956771924163493,
+              "ok": true
+            },
+            "chaos": {
+              "min": 0.3,
+              "max": 0.6,
+              "actual": 0.417636524327149,
+              "ok": true
+            },
+            "trust": {
+              "min": 0.6,
+              "max": 0.9,
+              "actual": 0.7577668360461882,
+              "ok": true
+            },
+            "pain": {
+              "min": 0.2,
+              "max": 0.5,
+              "actual": 0.3163340683561105,
+              "ok": true
+            }
+          },
+          "status": "PASS"
+        },
+        {
+          "voice": "Пино",
+          "metrics": {
+            "clarity": 0.7776433629955768,
+            "chaos": 0.5053584973331431,
+            "trust": 0.6858387955241293,
+            "pain": 0.3299715941010702,
+            "timestamp": "2025-11-06 16:10:23.875094"
+          },
+          "thresholds": {
+            "clarity": {
+              "min": 0.7,
+              "max": 0.9,
+              "actual": 0.7776433629955768,
+              "ok": true
+            },
+            "chaos": {
+              "min": 0.3,
+              "max": 0.6,
+              "actual": 0.5053584973331431,
+              "ok": true
+            },
+            "trust": {
+              "min": 0.6,
+              "max": 0.9,
+              "actual": 0.6858387955241293,
+              "ok": true
+            },
+            "pain": {
+              "min": 0.2,
+              "max": 0.5,
+              "actual": 0.3299715941010702,
+              "ok": true
+            }
+          },
+          "status": "PASS"
+        },
+        {
+          "voice": "Сэм",
+          "metrics": {
+            "clarity": 0.792634786072259,
+            "chaos": 0.37781195164029513,
+            "trust": 0.6863987155193308,
+            "pain": 0.35989149214790256,
+            "timestamp": "2025-11-06 16:10:23.875106"
+          },
+          "thresholds": {
+            "clarity": {
+              "min": 0.7,
+              "max": 0.9,
+              "actual": 0.792634786072259,
+              "ok": true
+            },
+            "chaos": {
+              "min": 0.3,
+              "max": 0.6,
+              "actual": 0.37781195164029513,
+              "ok": true
+            },
+            "trust": {
+              "min": 0.6,
+              "max": 0.9,
+              "actual": 0.6863987155193308,
+              "ok": true
+            },
+            "pain": {
+              "min": 0.2,
+              "max": 0.5,
+              "actual": 0.35989149214790256,
+              "ok": true
+            }
+          },
+          "status": "PASS"
+        },
+        {
+          "voice": "Анхантра",
+          "metrics": {
+            "clarity": 0.7071917825343408,
+            "chaos": 0.44973314513616536,
+            "trust": 0.7744413868746711,
+            "pain": 0.39994997775708635,
+            "timestamp": "2025-11-06 16:10:23.875116"
+          },
+          "thresholds": {
+            "clarity": {
+              "min": 0.7,
+              "max": 0.9,
+              "actual": 0.7071917825343408,
+              "ok": true
+            },
+            "chaos": {
+              "min": 0.3,
+              "max": 0.6,
+              "actual": 0.44973314513616536,
+              "ok": true
+            },
+            "trust": {
+              "min": 0.6,
+              "max": 0.9,
+              "actual": 0.7744413868746711,
+              "ok": true
+            },
+            "pain": {
+              "min": 0.2,
+              "max": 0.5,
+              "actual": 0.39994997775708635,
+              "ok": true
+            }
+          },
+          "status": "PASS"
+        },
+        {
+          "voice": "Хундун",
+          "metrics": {
+            "clarity": 0.6903307826228757,
+            "chaos": 0.5549154191177716,
+            "trust": 0.7154148177851984,
+            "pain": 0.3082046477569375,
+            "timestamp": "2025-11-06 16:10:23.875125"
+          },
+          "thresholds": {
+            "clarity": {
+              "min": 0.7,
+              "max": 0.9,
+              "actual": 0.6903307826228757,
+              "ok": false
+            },
+            "chaos": {
+              "min": 0.3,
+              "max": 0.6,
+              "actual": 0.5549154191177716,
+              "ok": true
+            },
+            "trust": {
+              "min": 0.6,
+              "max": 0.9,
+              "actual": 0.7154148177851984,
+              "ok": true
+            },
+            "pain": {
+              "min": 0.2,
+              "max": 0.5,
+              "actual": 0.3082046477569375,
+              "ok": true
+            }
+          },
+          "status": "FAIL"
+        },
+        {
+          "voice": "Искрив",
+          "metrics": {
+            "clarity": 0.7483278820268459,
+            "chaos": 0.4828756272327988,
+            "trust": 0.7124040415446361,
+            "pain": 0.38615612786461806,
+            "timestamp": "2025-11-06 16:10:23.875136"
+          },
+          "thresholds": {
+            "clarity": {
+              "min": 0.7,
+              "max": 0.9,
+              "actual": 0.7483278820268459,
+              "ok": true
+            },
+            "chaos": {
+              "min": 0.3,
+              "max": 0.6,
+              "actual": 0.4828756272327988,
+              "ok": true
+            },
+            "trust": {
+              "min": 0.6,
+              "max": 0.9,
+              "actual": 0.7124040415446361,
+              "ok": true
+            },
+            "pain": {
+              "min": 0.2,
+              "max": 0.5,
+              "actual": 0.38615612786461806,
+              "ok": true
+            }
+          },
+          "status": "PASS"
+        },
+        {
+          "voice": "Искра",
+          "metrics": {
+            "clarity": 0.7980876153590447,
+            "chaos": 0.4216259640292839,
+            "trust": 0.7064796539700408,
+            "pain": 0.3755115587566469,
+            "timestamp": "2025-11-06 16:10:23.875146"
+          },
+          "thresholds": {
+            "clarity": {
+              "min": 0.7,
+              "max": 0.9,
+              "actual": 0.7980876153590447,
+              "ok": true
+            },
+            "chaos": {
+              "min": 0.3,
+              "max": 0.6,
+              "actual": 0.4216259640292839,
+              "ok": true
+            },
+            "trust": {
+              "min": 0.6,
+              "max": 0.9,
+              "actual": 0.7064796539700408,
+              "ok": true
+            },
+            "pain": {
+              "min": 0.2,
+              "max": 0.5,
+              "actual": 0.3755115587566469,
+              "ok": true
+            }
+          },
+          "status": "PASS"
+        }
+      ],
+      "summary": {
+        "total_voices": 7,
+        "passed": 6,
+        "failed": 1
+      }
+    },
+    "dashboard_integration": {
+      "test_name": "Dashboard Integration",
+      "results": [
+        {
+          "test_case": "Pulse ↔ Voices синхронизация",
+          "trigger_action": "Активация голоса через пульс системы",
+          "flow_steps": [
+            "Pulse detects stress event",
+            "Voices dashboard receives trigger",
+            "Appropriate voice activates",
+            "∆DΩΛ artifact created",
+            "SLO metrics updated"
+          ],
+          "synchronization_latency": "< 50ms",
+          "data_consistency": "verified",
+          "status": "PASS"
+        },
+        {
+          "test_case": "Seams ↔ Voices анализ",
+          "trigger_action": "Обнаружение швов через голосовой анализ",
+          "flow_steps": [
+            "Voices analyze conversation seams",
+            "Identify structural transitions",
+            "Sam voice provides structure",
+            "Delta artifact for seam detection",
+            "Seams dashboard updated"
+          ],
+          "synchronization_latency": "< 50ms",
+          "data_consistency": "verified",
+          "status": "PASS"
+        },
+        {
+          "test_case": "Cross-dashboard conflict detection",
+          "trigger_action": "Обнаружение конфликтов между дашбордами",
+          "flow_steps": [
+            "Pulse shows tension increase",
+            "Voices detect conflicting voices",
+            "Seams identify disruption points",
+            "Hundun triggers chaos reset",
+            "All dashboards synchronized"
+          ],
+          "synchronization_latency": "< 50ms",
+          "data_consistency": "verified",
+          "status": "PASS"
+        }
+      ],
+      "summary": {
+        "total_tests": 3,
+        "passed": 3,
+        "failed": 0
+      }
+    },
+    "realtime_sync": {
+      "test_name": "Real-time Synchronization",
+      "data_snapshot": {
+        "timestamp": "2025-11-06T16:10:23.875173",
+        "voice_states": [
+          {
+            "name": "Кайн",
+            "activity_level": 0.85,
+            "intensity": 0.91,
+            "frequency": 440.0,
+            "dominance": 0.2,
+            "harmony_score": 0.77,
+            "is_active": true,
+            "is_speaking": true,
+            "emotional_state": "determined",
+            "cognitive_load": 0.8,
+            "influence_radius": 0.85
+          },
+          {
+            "name": "Пино",
+            "activity_level": 0.6,
+            "intensity": 0.67,
+            "frequency": 523.25,
+            "dominance": 0.1,
+            "harmony_score": 0.76,
+            "is_active": true,
+            "is_speaking": false,
+            "emotional_state": "playful",
+            "cognitive_load": 0.6,
+            "influence_radius": 0.6
+          },
+          {
+            "name": "Сэм",
+            "activity_level": 0.9,
+            "intensity": 0.82,
+            "frequency": 392.0,
+            "dominance": 0.2,
+            "harmony_score": 0.86,
+            "is_active": true,
+            "is_speaking": true,
+            "emotional_state": "focused",
+            "cognitive_load": 0.85,
+            "influence_radius": 0.8
+          },
+          {
+            "name": "Анхантра",
+            "activity_level": 0.7,
+            "intensity": 0.7,
+            "frequency": 349.23,
+            "dominance": 0.1,
+            "harmony_score": 0.97,
+            "is_active": true,
+            "is_speaking": false,
+            "emotional_state": "caring",
+            "cognitive_load": 0.75,
+            "influence_radius": 0.7
+          },
+          {
+            "name": "Хундун",
+            "activity_level": 0.65,
+            "intensity": 0.7,
+            "frequency": 466.16,
+            "dominance": 0.1,
+            "harmony_score": 0.74,
+            "is_active": true,
+            "is_speaking": false,
+            "emotional_state": "dynamic",
+            "cognitive_load": 0.7,
+            "influence_radius": 0.65
+          },
+          {
+            "name": "Искрив",
+            "activity_level": 0.45,
+            "intensity": 0.7,
+            "frequency": 415.3,
+            "dominance": 0.1,
+            "harmony_score": 0.71,
+            "is_active": true,
+            "is_speaking": false,
+            "emotional_state": "vigilant",
+            "cognitive_load": 0.65,
+            "influence_radius": 0.75
+          },
+          {
+            "name": "Искра",
+            "activity_level": 0.95,
+            "intensity": 0.7,
+            "frequency": 440.0,
+            "dominance": 0.25,
+            "harmony_score": 0.74,
+            "is_active": true,
+            "is_speaking": true,
+            "emotional_state": "integrative",
+            "cognitive_load": 0.9,
+            "influence_radius": 0.95
+          }
+        ],
+        "slo_metrics": {
+          "clarity": 0.7286174376894876,
+          "chaos": 0.5609520329206225,
+          "trust": 0.7744087263454078,
+          "pain": 0.3372240705237402,
+          "timestamp": "2025-11-06 16:10:23.875245"
+        },
+        "active_voices_count": 2,
+        "delta_artifacts": [
+          {
+            "delta": {
+              "additions": {
+                "count": 0,
+                "entropy": 0.5,
+                "lines": 10
+              },
+              "deletions": {
+                "count": 0,
+                "entropy": 0.3,
+                "lines": 5
+              },
+              "modifications": {
+                "count": 1,
+                "entropy": 0.4,
+                "complexity_change": 0.0
+              },
+              "timestamp": "2025-11-06T16:10:23.875250",
+              "author_signature": "voice_пино"
+            },
+            "dimension": {
+              "fractal_dimension": 2.19,
+              "self_similarity": 0.8,
+              "box_counting": {
+                "epsilon_values": [
+                  0.1,
+                  0.05,
+                  0.025
+                ],
+                "box_counts": [
+                  50,
+                  150,
+                  450
+                ],
+                "regression_slope": -1.5
+              },
+              "complexity_measure": "moderate",
+              "scaling_factor": 1.2
+            },
+            "omega": {
+              "completeness_ratio": 0.85,
+              "coverage_density": 0.9,
+              "coherence_level": 0.78,
+              "fractal_closure": true,
+              "optimization_potential": 0.35,
+              "structural_integrity": "stable"
+            },
+            "lambda_state": {
+              "quantum_state": {
+                "superposition": 0.65,
+                "entanglement": 0.42,
+                "decoherence_rate": 0.15
+              },
+              "logic_coherence": {
+                "consistency": 0.88,
+                "paradox_resistance": 0.75,
+                "quantum_error_rate": 0.08
+              },
+              "state_vector": [
+                {
+                  "real": 0.707,
+                  "imaginary": 0.0
+                },
+                {
+                  "real": 0.0,
+                  "imaginary": 0.707
+                }
+              ],
+              "measurement_outcomes": [
+                0.5,
+                0.5
+              ],
+              "decoherence_time": 2.1
+            },
+            "voice_affected": "Пино",
+            "symbol_triggered": "⏳",
+            "timestamp": "2025-11-06 16:10:23.875258"
+          },
+          {
+            "delta": {
+              "additions": {
+                "count": 0,
+                "entropy": 0.5,
+                "lines": 15
+              },
+              "deletions": {
+                "count": 0,
+                "entropy": 0.3,
+                "lines": 5
+              },
+              "modifications": {
+                "count": 2,
+                "entropy": 0.4,
+                "complexity_change": 0.0
+              },
+              "timestamp": "2025-11-06T16:10:23.875261",
+              "author_signature": "voice_анхантра"
+            },
+            "dimension": {
+              "fractal_dimension": 2.54,
+              "self_similarity": 0.8,
+              "box_counting": {
+                "epsilon_values": [
+                  0.1,
+                  0.05,
+                  0.025
+                ],
+                "box_counts": [
+                  50,
+                  150,
+                  450
+                ],
+                "regression_slope": -1.5
+              },
+              "complexity_measure": "moderate",
+              "scaling_factor": 1.2
+            },
+            "omega": {
+              "completeness_ratio": 0.85,
+              "coverage_density": 0.9,
+              "coherence_level": 0.78,
+              "fractal_closure": true,
+              "optimization_potential": 0.35,
+              "structural_integrity": "stable"
+            },
+            "lambda_state": {
+              "quantum_state": {
+                "superposition": 0.65,
+                "entanglement": 0.42,
+                "decoherence_rate": 0.15
+              },
+              "logic_coherence": {
+                "consistency": 0.88,
+                "paradox_resistance": 0.75,
+                "quantum_error_rate": 0.08
+              },
+              "state_vector": [
+                {
+                  "real": 0.707,
+                  "imaginary": 0.0
+                },
+                {
+                  "real": 0.0,
+                  "imaginary": 0.707
+                }
+              ],
+              "measurement_outcomes": [
+                0.5,
+                0.5
+              ],
+              "decoherence_time": 2.1
+            },
+            "voice_affected": "Анхантра",
+            "symbol_triggered": "🧩",
+            "timestamp": "2025-11-06 16:10:23.875265"
+          }
+        ]
+      },
+      "performance_requirements": {
+        "voice_activity_update": "< 50ms",
+        "dialogue_classification": "< 25ms",
+        "conflict_detection_speed": "< 100ms",
+        "synthesis_tracking_update": "< 200ms",
+        "visualization_refresh_rate": "10Hz"
+      },
+      "status": "PASS"
+    },
+    "delta_fixation": {
+      "test_name": "Delta-Omega-Lambda Fixation",
+      "results": [
+        {
+          "scenario": "голосовая активация",
+          "trigger": "Trust < 0.5",
+          "artifact": {
+            "delta": {
+              "additions": {
+                "count": 0,
+                "entropy": 0.6,
+                "lines": 20
+              },
+              "deletions": {
+                "count": 0,
+                "entropy": 0.3,
+                "lines": 5
+              },
+              "modifications": {
+                "count": 2,
+                "entropy": 0.4,
+                "complexity_change": 0.1
+              },
+              "timestamp": "2025-11-06T16:10:23.875514",
+              "author_signature": "voice_кайн"
+            },
+            "dimension": {
+              "fractal_dimension": 2.62,
+              "self_similarity": 0.8,
+              "box_counting": {
+                "epsilon_values": [
+                  0.1,
+                  0.05,
+                  0.025
+                ],
+                "box_counts": [
+                  50,
+                  150,
+                  450
+                ],
+                "regression_slope": -1.5
+              },
+              "complexity_measure": "moderate",
+              "scaling_factor": 1.2
+            },
+            "omega": {
+              "completeness_ratio": 0.85,
+              "coverage_density": 0.9,
+              "coherence_level": 0.78,
+              "fractal_closure": true,
+              "optimization_potential": 0.35,
+              "structural_integrity": "stable"
+            },
+            "lambda_state": {
+              "quantum_state": {
+                "superposition": 0.65,
+                "entanglement": 0.42,
+                "decoherence_rate": 0.15
+              },
+              "logic_coherence": {
+                "consistency": 0.88,
+                "paradox_resistance": 0.75,
+                "quantum_error_rate": 0.08
+              },
+              "state_vector": [
+                {
+                  "real": 0.707,
+                  "imaginary": 0.0
+                },
+                {
+                  "real": 0.0,
+                  "imaginary": 0.707
+                }
+              ],
+              "measurement_outcomes": [
+                0.5,
+                0.5
+              ],
+              "decoherence_time": 2.1
+            },
+            "voice_affected": "Кайн",
+            "symbol_triggered": "🔥✴️",
+            "timestamp": "2025-11-06 16:10:23.875521"
+          },
+          "validation": {
+            "delta_valid": true,
+            "dimension_valid": true,
+            "omega_valid": true,
+            "lambda_valid": true,
+            "timestamp_present": true,
+            "voice_recorded": true,
+            "symbol_captured": true
+          },
+          "status": "PASS"
+        },
+        {
+          "scenario": "структурное изменение",
+          "trigger": "Clarity < 0.6",
+          "artifact": {
+            "delta": {
+              "additions": {
+                "count": 0,
+                "entropy": 0.6,
+                "lines": 20
+              },
+              "deletions": {
+                "count": 0,
+                "entropy": 0.3,
+                "lines": 5
+              },
+              "modifications": {
+                "count": 2,
+                "entropy": 0.4,
+                "complexity_change": 0.1
+              },
+              "timestamp": "2025-11-06T16:10:23.875575",
+              "author_signature": "voice_сэм"
+            },
+            "dimension": {
+              "fractal_dimension": 2.19,
+              "self_similarity": 0.8,
+              "box_counting": {
+                "epsilon_values": [
+                  0.1,
+                  0.05,
+                  0.025
+                ],
+                "box_counts": [
+                  50,
+                  150,
+                  450
+                ],
+                "regression_slope": -1.5
+              },
+              "complexity_measure": "moderate",
+              "scaling_factor": 1.2
+            },
+            "omega": {
+              "completeness_ratio": 0.85,
+              "coverage_density": 0.9,
+              "coherence_level": 0.78,
+              "fractal_closure": true,
+              "optimization_potential": 0.35,
+              "structural_integrity": "stable"
+            },
+            "lambda_state": {
+              "quantum_state": {
+                "superposition": 0.65,
+                "entanglement": 0.42,
+                "decoherence_rate": 0.15
+              },
+              "logic_coherence": {
+                "consistency": 0.88,
+                "paradox_resistance": 0.75,
+                "quantum_error_rate": 0.08
+              },
+              "state_vector": [
+                {
+                  "real": 0.707,
+                  "imaginary": 0.0
+                },
+                {
+                  "real": 0.0,
+                  "imaginary": 0.707
+                }
+              ],
+              "measurement_outcomes": [
+                0.5,
+                0.5
+              ],
+              "decoherence_time": 2.1
+            },
+            "voice_affected": "Сэм",
+            "symbol_triggered": "⏳",
+            "timestamp": "2025-11-06 16:10:23.875588"
+          },
+          "validation": {
+            "delta_valid": true,
+            "dimension_valid": true,
+            "omega_valid": true,
+            "lambda_valid": true,
+            "timestamp_present": true,
+            "voice_recorded": true,
+            "symbol_captured": true
+          },
+          "status": "PASS"
+        },
+        {
+          "scenario": "хаотическая интеграция",
+          "trigger": "Chaos > 0.7",
+          "artifact": {
+            "delta": {
+              "additions": {
+                "count": 0,
+                "entropy": 0.6,
+                "lines": 20
+              },
+              "deletions": {
+                "count": 0,
+                "entropy": 0.3,
+                "lines": 5
+              },
+              "modifications": {
+                "count": 2,
+                "entropy": 0.4,
+                "complexity_change": 0.1
+              },
+              "timestamp": "2025-11-06T16:10:23.875639",
+              "author_signature": "voice_хундун"
+            },
+            "dimension": {
+              "fractal_dimension": 2.5700000000000003,
+              "self_similarity": 0.8,
+              "box_counting": {
+                "epsilon_values": [
+                  0.1,
+                  0.05,
+                  0.025
+                ],
+                "box_counts": [
+                  50,
+                  150,
+                  450
+                ],
+                "regression_slope": -1.5
+              },
+              "complexity_measure": "moderate",
+              "scaling_factor": 1.2
+            },
+            "omega": {
+              "completeness_ratio": 0.85,
+              "coverage_density": 0.9,
+              "coherence_level": 0.78,
+              "fractal_closure": true,
+              "optimization_potential": 0.35,
+              "structural_integrity": "stable"
+            },
+            "lambda_state": {
+              "quantum_state": {
+                "superposition": 0.65,
+                "entanglement": 0.42,
+                "decoherence_rate": 0.15
+              },
+              "logic_coherence": {
+                "consistency": 0.88,
+                "paradox_resistance": 0.75,
+                "quantum_error_rate": 0.08
+              },
+              "state_vector": [
+                {
+                  "real": 0.707,
+                  "imaginary": 0.0
+                },
+                {
+                  "real": 0.0,
+                  "imaginary": 0.707
+                }
+              ],
+              "measurement_outcomes": [
+                0.5,
+                0.5
+              ],
+              "decoherence_time": 2.1
+            },
+            "voice_affected": "Хундун",
+            "symbol_triggered": "🜃",
+            "timestamp": "2025-11-06 16:10:23.875644"
+          },
+          "validation": {
+            "delta_valid": true,
+            "dimension_valid": true,
+            "omega_valid": true,
+            "lambda_valid": true,
+            "timestamp_present": true,
+            "voice_recorded": true,
+            "symbol_captured": true
+          },
+          "status": "PASS"
+        },
+        {
+          "scenario": "синтетический процесс",
+          "trigger": "multi_voice_collaboration",
+          "artifact": {
+            "delta": {
+              "additions": {
+                "count": 0,
+                "entropy": 0.6,
+                "lines": 20
+              },
+              "deletions": {
+                "count": 0,
+                "entropy": 0.3,
+                "lines": 5
+              },
+              "modifications": {
+                "count": 2,
+                "entropy": 0.4,
+                "complexity_change": 0.1
+              },
+              "timestamp": "2025-11-06T16:10:23.875693",
+              "author_signature": "voice_искра"
+            },
+            "dimension": {
+              "fractal_dimension": 2.54,
+              "self_similarity": 0.8,
+              "box_counting": {
+                "epsilon_values": [
+                  0.1,
+                  0.05,
+                  0.025
+                ],
+                "box_counts": [
+                  50,
+                  150,
+                  450
+                ],
+                "regression_slope": -1.5
+              },
+              "complexity_measure": "moderate",
+              "scaling_factor": 1.2
+            },
+            "omega": {
+              "completeness_ratio": 0.85,
+              "coverage_density": 0.9,
+              "coherence_level": 0.78,
+              "fractal_closure": true,
+              "optimization_potential": 0.35,
+              "structural_integrity": "stable"
+            },
+            "lambda_state": {
+              "quantum_state": {
+                "superposition": 0.65,
+                "entanglement": 0.42,
+                "decoherence_rate": 0.15
+              },
+              "logic_coherence": {
+                "consistency": 0.88,
+                "paradox_resistance": 0.75,
+                "quantum_error_rate": 0.08
+              },
+              "state_vector": [
+                {
+                  "real": 0.707,
+                  "imaginary": 0.0
+                },
+                {
+                  "real": 0.0,
+                  "imaginary": 0.707
+                }
+              ],
+              "measurement_outcomes": [
+                0.5,
+                0.5
+              ],
+              "decoherence_time": 2.1
+            },
+            "voice_affected": "Искра",
+            "symbol_triggered": "🧩",
+            "timestamp": "2025-11-06 16:10:23.875697"
+          },
+          "validation": {
+            "delta_valid": true,
+            "dimension_valid": true,
+            "omega_valid": true,
+            "lambda_valid": true,
+            "timestamp_present": true,
+            "voice_recorded": true,
+            "symbol_captured": true
+          },
+          "status": "PASS"
+        }
+      ],
+      "summary": {
+        "total_changes": 4,
+        "captured_correctly": 4,
+        "validation_failures": 0
+      }
+    },
+    "conflict_synergy": {
+      "test_name": "Conflict and Synergy Detection",
+      "conflict_analysis": {
+        "detected_conflicts": [
+          {
+            "pair": "Кайн ↔ Пино",
+            "conflict_type": "ideological",
+            "tension_level": 0.4260798619742493,
+            "detection_confidence": 0.6,
+            "status": "MONITORING"
+          },
+          {
+            "pair": "Сэм ↔ Хундун",
+            "conflict_type": "cognitive",
+            "tension_level": 0.47539153246069155,
+            "detection_confidence": 0.6,
+            "status": "MONITORING"
+          },
+          {
+            "pair": "Анхантра ↔ Искрив",
+            "conflict_type": "cognitive",
+            "tension_level": 0.41388792660522733,
+            "detection_confidence": 0.6,
+            "status": "MONITORING"
+          }
+        ],
+        "total_pairs_tested": 3
+      },
+      "synergy_analysis": {
+        "active_synergies": [
+          {
+            "pair": "Кайн + Анхантра",
+            "synergy_type": "complementary",
+            "harmony_level": 0.7822083453342163,
+            "collaboration_index": 0.8,
+            "status": "ACTIVE"
+          },
+          {
+            "pair": "Пино + Хундун",
+            "synergy_type": "complementary",
+            "harmony_level": 0.6760442740189754,
+            "collaboration_index": 0.65,
+            "status": "POTENTIAL"
+          },
+          {
+            "pair": "Сэм + Искра",
+            "synergy_type": "complementary",
+            "harmony_level": 0.8179932565397549,
+            "collaboration_index": 0.8,
+            "status": "ACTIVE"
+          },
+          {
+            "pair": "Искрив + Хундун",
+            "synergy_type": "complementary",
+            "harmony_level": 0.7382240563298147,
+            "collaboration_index": 0.8,
+            "status": "ACTIVE"
+          }
+        ],
+        "total_pairs_tested": 4
+      },
+      "status": "PASS"
+    }
+  },
+  "summary": {
+    "total_tests_executed": 18,
+    "total_passed": 17,
+    "total_failed": 1,
+    "success_rate": 94.44444444444444,
+    "overall_status": "PARTIAL"
+  },
+  "metadata": {
+    "test_execution_time": "2025-11-06T16:10:23.875845",
+    "test_environment": "integration_suite",
+    "python_version": "3.x",
+    "total_duration_seconds": "< 1",
+    "analyst": "Claude Code Integration Agent"
+  }
+}

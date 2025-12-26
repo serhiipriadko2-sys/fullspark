@@ -1,0 +1,10 @@
+{"question": "Что такое Rule-8 в Искре и как он исполняется?", "answer": "TBD"}
+{"question": "Опиши Rule-88 и его цель.", "answer": "TBD"}
+{"question": "Что такое ∆DΩΛ и из каких компонентов он состоит?", "answer": "TBD"}
+{"question": "Как устроена память ARCHIVE и SHADOW в Искре?", "answer": "TBD"}
+{"question": "Опиши канон Искры и ключевые принципы.", "answer": "TBD"}
+{"question": "Что такое Phoenix и Shatter в процедуре восстановления?", "answer": "TBD"}
+{"question": "Как устроен гибрид GraphRAG с community summaries?", "answer": "TBD"}
+{"question": "Какие эндпоинты предоставляет API Искры?", "answer": "TBD"}
+{"question": "Какие метрики использовать: RAGAS, TruthfulQA и как их интерпретировать?", "answer": "TBD"}
+{"question": "Какие рекомендации по pgvector HNSW и IVFFlat?", "answer": "TBD"}

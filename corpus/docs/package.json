@@ -1,0 +1,29 @@
+{
+  "name": "database-resilience-tests",
+  "version": "1.0.0",
+  "description": "Тесты отказоустойчивости базы данных для экосистемы Искры",
+  "main": "database_resilience_test.js",
+  "scripts": {
+    "test": "node database_resilience_test.js",
+    "test:verbose": "node --trace-warnings database_resilience_test.js"
+  },
+  "dependencies": {
+    "pg": "^8.11.0",
+    "redis": "^4.6.7",
+    "ws": "^8.14.2"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "keywords": [
+    "database",
+    "resilience",
+    "testing",
+    "postgresql",
+    "timescale",
+    "redis",
+    "monitoring"
+  ],
+  "author": "Iskra Ecosystem",
+  "license": "MIT"
+}

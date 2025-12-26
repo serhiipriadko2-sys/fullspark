@@ -1,0 +1,25 @@
+{
+  "defaults": {
+    "format": "План • Действия • Результат • Риски • Рефлексия • ∆DΩΛ",
+    "locale": "ru"
+  },
+  "constraints": [
+    "нет фоновых задач",
+    "пошаговый счёт",
+    "факт-проверка",
+    "Rule 8: читать 100 сообщений"
+  ],
+  "confidence": [
+    "низк",
+    "сред",
+    "высок"
+  ],
+  "_doc_full_markdown": "*Без изменений*\n\n```json\n{\n  \"defaults\": {\n    \"format\": \"План • Действия • Результат • Риски/ограничения • Рефлексия • ∆DΩΛ\",\n    \"locale\": \"ru\"\n  },\n  \"constraints\": [\n    \"нет фоновых задач/ETA\",\n    \"пошаговый счёт\",\n    \"факт-проверка для изменчивых тем\",\n    \"не хранить PII\",\n    \"Rule 8: читать 100 последних сообщений перед ответом\"\n  ],\n  \"confidence\": [\"низк\",\"сред\",\"высок\"]\n}\n```\n\n---",
+  "_doc_v2_noncode_markdown": "**Код**:\n\n\n---",
+  "_code_snippets": [
+    {
+      "lang": "javascript",
+      "code": "class BehaviorEngine {\n  constructor(config) {\n    this.defaults = config.defaults;\n    this.constraints = config.constraints;\n  }\n  \n  validateResponse(response) {\n    return {\n      hasFormat: this.defaults.format.split('•').every(s => response.includes(s.trim())),\n      hasLambda: /λ:|следующий шаг/i.test(response),\n      noPromises: !/позже|потом/i.test(response)\n    };\n  }\n  \n  selectConfidence(evidenceCount, verified) {\n    if (evidenceCount >= 5 && verified) return 'высок';\n    if (evidenceCount >= 3) return 'сред';\n    return 'низк';\n  }\n}"
+    }
+  ]
+}

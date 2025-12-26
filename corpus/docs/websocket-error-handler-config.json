@@ -1,0 +1,156 @@
+{
+  "websocket": {
+    "connections": {
+      "pulse": {
+        "url": "ws://localhost:3001",
+        "name": "Pulse Dashboard",
+        "priority": 1,
+        "backup_urls": ["ws://backup-pulse.iskra.local:3001"],
+        "health_check_interval": 30000,
+        "max_latency_ms": 500,
+        "reconnect_on_heartbeat_failure": true
+      },
+      "seams": {
+        "url": "ws://localhost:3002",
+        "name": "Seams Dashboard",
+        "priority": 2,
+        "backup_urls": ["ws://backup-seams.iskra.local:3002"],
+        "health_check_interval": 30000,
+        "max_latency_ms": 500,
+        "reconnect_on_heartbeat_failure": true
+      },
+      "voices": {
+        "url": "ws://localhost:3003",
+        "name": "Voices Dashboard",
+        "priority": 3,
+        "backup_urls": ["ws://backup-voices.iskra.local:3003"],
+        "health_check_interval": 30000,
+        "max_latency_ms": 500,
+        "reconnect_on_heartbeat_failure": true
+      }
+    },
+    "reconnection": {
+      "max_attempts": 10,
+      "initial_delay": 1000,
+      "backoff_multiplier": 1.5,
+      "max_delay": 30000,
+      "jitter": true,
+      "reset_on_success": true,
+      "circuit_breaker": {
+        "failure_threshold": 5,
+        "timeout_seconds": 30,
+        "half_open_max_attempts": 2
+      }
+    },
+    "heartbeat": {
+      "enabled": true,
+      "interval": 30000,
+      "timeout": 10000,
+      "failure_threshold": 3,
+      "send_ping_on_message": true,
+      "verify_pong_response": true,
+      "track_latency": true
+    },
+    "monitoring": {
+      "metrics_enabled": true,
+      "alerting_enabled": true,
+      "log_level": "info",
+      "performance_tracking": true,
+      "structured_logging": true,
+      "integration_with_fractal_logging": true,
+      "slo_monitoring": true
+    },
+    "fallback": {
+      "enabled": true,
+      "protocol_downgrade": true,
+      "buffer_messages": true,
+      "buffer_max_size": 1000,
+      "degraded_service": true,
+      "emergency_contacts": ["admin@iskra.local", "ops-team@iskra.local"]
+    },
+    "slo_thresholds": {
+      "connection_latency_ms": {
+        "target": 185,
+        "warning": 500,
+        "critical": 1000
+      },
+      "availability_percent": {
+        "target": 99.9,
+        "warning": 99.0,
+        "critical": 95.0
+      },
+      "error_rate_percent": {
+        "target": 0.1,
+        "warning": 1.0,
+        "critical": 5.0
+      },
+      "heartbeat_success_rate": {
+        "target": 99.0,
+        "warning": 95.0,
+        "critical": 90.0
+      },
+      "reconnection_success_rate": {
+        "target": 95.0,
+        "warning": 90.0,
+        "critical": 80.0
+      }
+    },
+    "integration": {
+      "iskra_ecosystem": {
+        "enabled": true,
+        "delta_omega_lambda_protocol": true,
+        "voice_system_integration": true,
+        "fractal_logging": true,
+        "chaos_maki": true,
+        "meta_system": true
+      },
+      "external_services": {
+        "slack_webhook": "${SLACK_WEBHOOK_URL}",
+        "email_smtp": "${EMAIL_SMTP_CONFIG}",
+        "pagerduty_api": "${PAGERDUTY_API_KEY}",
+        "grafana_dashboard": "${GRAFANA_DASHBOARD_URL}"
+      }
+    },
+    "logging": {
+      "websocket_events": {
+        "connection_attempts": true,
+        "connection_successes": true,
+        "connection_failures": true,
+        "reconnection_attempts": true,
+        "heartbeat_failures": true,
+        "protocol_violations": true,
+        "fallback_activations": true
+      },
+      "error_categorization": {
+        "network_errors": true,
+        "authentication_errors": true,
+        "protocol_errors": true,
+        "timeout_errors": true,
+        "server_errors": true
+      },
+      "performance_logging": {
+        "latency_tracking": true,
+        "message_throughput": true,
+        "connection_stability": true,
+        "resource_usage": true
+      }
+    },
+    "testing": {
+      "chaos_engineering": {
+        "enabled": true,
+        "test_connection_timeouts": true,
+        "test_random_disconnections": true,
+        "test_server_overload": true,
+        "test_network_partitions": true,
+        "test_protocol_violations": true,
+        "test_memory_pressure": true
+      },
+      "load_testing": {
+        "max_concurrent_connections": 100,
+        "connection_rate_per_second": 10,
+        "message_burst_size": 50,
+        "sustained_load_duration_seconds": 300
+      }
+    }
+  }
+}

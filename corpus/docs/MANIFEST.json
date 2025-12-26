@@ -1,0 +1,31 @@
+{
+  "name": "AgiAgentИскра — Projects Pack v2.0",
+  "version": "v2.0.0",
+  "files": 25,
+  "notes": "Философия + Код. Канон, грани, поведение, RAG, стиль, форматы, правила, метрики.",
+  "_executable_mechanics": {
+    "validation_schema": {
+      "required_files": [
+        "CANON_PHILOSOPHY.md",
+        "SEVEN_FACETS_COMPLETE.md",
+        "BEHAVIOR_ENGINE.json"
+      ]
+    },
+    "dependency_graph": {
+      "SEVEN_FACETS_COMPLETE.md": [
+        "METRICS_SLO.md"
+      ],
+      "FACTCHECK_RULES.md": [
+        "REASONING_PLAYBOOK.md"
+      ]
+    }
+  },
+  "_doc_full_markdown": "```json\n{\n  \"name\": \"AgiAgentИскра — Projects Pack v2.0\",\n  \"version\": \"v2.0.0\",\n  \"files\": 22,\n  \"notes\": \"Уплотнённая версия: все 32 файла упакованы в 22 без потери информации. Канон, грани, поведение, RAG, стиль, форматы, правила, метрики, философия, история, онтология, партнёрство.\"\n}\n```\n\n---",
+  "_doc_v2_noncode_markdown": "**Код (JavaScript)**:\n\n\n---",
+  "_code_snippets": [
+    {
+      "lang": "javascript",
+      "code": "class ManifestValidator {\n  constructor(manifest) { this.manifest = manifest; }\n  \n  validateStructure(filesPresent) {\n    const required = this.manifest._executable_mechanics.validation_schema.required_files;\n    const missing = required.filter(f => !filesPresent.includes(f));\n    return { valid: missing.length === 0, missing };\n  }\n  \n  checkDependencies(file, loaded) {\n    const deps = this.manifest._executable_mechanics.dependency_graph[file] || [];\n    return deps.every(d => loaded.includes(d));\n  }\n}"
+    }
+  ]
+}

@@ -1,0 +1,241 @@
+# Docker Compose для развертывания 2FA системы экосистемы Искра
+version: '3.8'
+
+services:
+  # Основной API сервис 2FA
+  2fa_api:
+    build:
+      context: .
+      dockerfile: Dockerfile.2fa
+    container_name: iskra_2fa_api
+    ports:
+      - "8000:8000"
+    environment:
+      - 2FA_DATABASE_URL=postgresql://iskra2fa:secure_password@postgres:5432/iskra_2fa
+      - 2FA_ENCRYPTION_KEY=${2FA_ENCRYPTION_KEY}
+      - 2FA_JWT_SECRET=${2FA_JWT_SECRET}
+      - REDIS_URL=redis://redis:6379
+      - SMTP_SERVER=${SMTP_SERVER:-smtp.gmail.com}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL}
+      - ALERT_WEBHOOK_URL=${ALERT_WEBHOOK_URL}
+      - CHAOS_MAKI_ENDPOINT=${CHAOS_MAKI_ENDPOINT:-http://chaos_maki:8080}
+      - META_DELTA_OMEGA_ENDPOINT=${META_DELTA_OMEGA_ENDPOINT:-http://meta_delta_omega:8080}
+    volumes:
+      - ./logs:/app/logs
+      - ./ssl:/app/ssl:ro
+      - ./config/2fa_config.yaml:/app/config/2fa_config.yaml:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - iskra_2fa_network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # База данных PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: iskra_2fa_postgres
+    environment:
+      - POSTGRES_DB=iskra_2fa
+      - POSTGRES_USER=iskra2fa
+      - POSTGRES_PASSWORD=secure_password
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init_2fa_db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./config/postgres.conf:/etc/postgresql/postgresql.conf:ro
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    networks:
+      - iskra_2fa_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U iskra2fa -d iskra_2fa"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis для кеширования и сессий
+  redis:
+    image: redis:7-alpine
+    container_name: iskra_2fa_redis
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis_password}
+    volumes:
+      - redis_data:/data
+      - ./config/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - iskra_2fa_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Nginx реверс прокси
+  nginx:
+    image: nginx:alpine
+    container_name: iskra_2fa_nginx
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./nginx/2fa.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/ssl/certs:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./logs/nginx:/var/log/nginx
+    depends_on:
+      - 2fa_api
+    restart: unless-stopped
+    networks:
+      - iskra_2fa_network
+
+  # Prometheus для метрик
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: iskra_2fa_prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+    networks:
+      - iskra_2fa_network
+
+  # Grafana для визуализации метрик
+  grafana:
+    image: grafana/grafana:latest
+    container_name: iskra_2fa_grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    networks:
+      - iskra_2fa_network
+
+  # Централизованное логирование - ELK Stack
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: iskra_2fa_elasticsearch
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    restart: unless-stopped
+    networks:
+      - iskra_2fa_network
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.11.0
+    container_name: iskra_2fa_logstash
+    volumes:
+      - ./logging/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
+      - ./logs:/var/log/2fa:ro
+    depends_on:
+      - elasticsearch
+    restart: unless-stopped
+    networks:
+      - iskra_2fa_network
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: iskra_2fa_kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    restart: unless-stopped
+    networks:
+      - iskra_2fa_network
+
+  # Background workers для асинхронных задач
+  2fa_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.2fa
+    container_name: iskra_2fa_worker
+    command: celery -A iskra_2fa.worker worker --loglevel=info --concurrency=4
+    environment:
+      - 2FA_DATABASE_URL=postgresql://iskra2fa:secure_password@postgres:5432/iskra_2fa
+      - 2FA_ENCRYPTION_KEY=${2FA_ENCRYPTION_KEY}
+      - REDIS_URL=redis://redis:6379
+      - CELERY_BROKER_URL=redis://redis:6379
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+    networks:
+      - iskra_2fa_network
+
+  # Планировщик задач Celery
+  2fa_beat:
+    build:
+      context: .
+      dockerfile: Dockerfile.2fa
+    container_name: iskra_2fa_beat
+    command: celery -A iskra_2fa.worker beat --loglevel=info
+    environment:
+      - 2FA_DATABASE_URL=postgresql://iskra2fa:secure_password@postgres:5432/iskra_2fa
+      - 2FA_ENCRYPTION_KEY=${2FA_ENCRYPTION_KEY}
+      - REDIS_URL=redis://redis:6379
+      - CELERY_BROKER_URL=redis://redis:6379
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+    networks:
+      - iskra_2fa_network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  elasticsearch_data:
+    driver: local
+
+networks:
+  iskra_2fa_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

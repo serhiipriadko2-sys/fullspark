@@ -1,0 +1,411 @@
+{
+  "timestamp": "2025-11-06T07:55:18.555Z",
+  "configuration": {
+    "endpoints": {
+      "pulse": {
+        "port": 3001,
+        "wsPort": 3001,
+        "url": "ws://localhost:3001",
+        "name": "Pulse Dashboard"
+      },
+      "seams": {
+        "port": 3002,
+        "wsPort": 3002,
+        "url": "ws://localhost:3002",
+        "name": "Seams Dashboard"
+      },
+      "voices": {
+        "port": 3003,
+        "wsPort": 3003,
+        "url": "ws://localhost:3003",
+        "name": "Voices Dashboard"
+      }
+    },
+    "sloThresholds": {
+      "clarity": {
+        "min": 0.7,
+        "max": 0.9,
+        "target": 0.8,
+        "critical": {
+          "min": 0.5,
+          "max": 0.95
+        }
+      },
+      "chaos": {
+        "min": 0.3,
+        "max": 0.6,
+        "target": 0.45,
+        "critical": {
+          "min": 0.1,
+          "max": 0.8
+        }
+      },
+      "trust": {
+        "min": 0.6,
+        "max": 0.9,
+        "target": 0.8,
+        "critical": {
+          "min": 0.4,
+          "max": 1
+        }
+      },
+      "pain": {
+        "min": 0.2,
+        "max": 0.5,
+        "target": 0.3,
+        "critical": {
+          "min": 0.6,
+          "max": 1
+        }
+      }
+    },
+    "performanceTargets": {
+      "connectionLatency": {
+        "max": 500,
+        "target": 185
+      },
+      "dataTransferLatency": {
+        "max": 250,
+        "target": 200
+      },
+      "subscriptionLatency": {
+        "max": 300,
+        "target": 220
+      },
+      "stabilityTime": {
+        "min": 10000
+      },
+      "errorHandlingRate": {
+        "min": 0.95
+      }
+    }
+  },
+  "tests": [
+    {
+      "endpoint": "pulse",
+      "config": {
+        "port": 3001,
+        "wsPort": 3001,
+        "url": "ws://localhost:3001",
+        "name": "Pulse Dashboard"
+      },
+      "tests": [
+        {
+          "success": true,
+          "latency": 194,
+          "target": 185,
+          "max": 500,
+          "endpoint": {
+            "port": 3001,
+            "wsPort": 3001,
+            "url": "ws://localhost:3001",
+            "name": "Pulse Dashboard"
+          },
+          "testType": "connection"
+        },
+        {
+          "success": true,
+          "sendLatency": 79,
+          "receiveLatency": 150,
+          "messagesSent": 5,
+          "messagesReceived": 4,
+          "totalLatency": 230,
+          "target": 200,
+          "max": 250,
+          "endpoint": {
+            "port": 3001,
+            "wsPort": 3001,
+            "url": "ws://localhost:3001",
+            "name": "Pulse Dashboard"
+          },
+          "testType": "dataTransfer"
+        },
+        {
+          "success": true,
+          "subscribeLatency": 78,
+          "updateFrequency": 502,
+          "updatesReceived": 3,
+          "subscriptionConfirmed": true,
+          "target": 220,
+          "max": 300,
+          "endpoint": {
+            "port": 3001,
+            "wsPort": 3001,
+            "url": "ws://localhost:3001",
+            "name": "Pulse Dashboard"
+          },
+          "testType": "subscription"
+        },
+        {
+          "success": true,
+          "uptime": 16559,
+          "reconnections": 0,
+          "target": 10000,
+          "endpoint": {
+            "port": 3001,
+            "wsPort": 3001,
+            "url": "ws://localhost:3001",
+            "name": "Pulse Dashboard"
+          },
+          "testType": "stability"
+        },
+        {
+          "success": false,
+          "errorsSent": 5,
+          "errorsHandled": 4,
+          "handlingRate": 0.8,
+          "gracefulDegradation": false,
+          "target": 0.95,
+          "endpoint": {
+            "port": 3001,
+            "wsPort": 3001,
+            "url": "ws://localhost:3001",
+            "name": "Pulse Dashboard"
+          },
+          "testType": "errorHandling"
+        },
+        {
+          "success": true,
+          "queryLatency": 16,
+          "connectionPool": 8,
+          "healthCheck": true,
+          "dataIntegrity": true,
+          "target": 10,
+          "endpoint": {
+            "port": 3001,
+            "wsPort": 3001,
+            "url": "ws://localhost:3001",
+            "name": "Pulse Dashboard"
+          },
+          "testType": "databaseIntegration"
+        }
+      ],
+      "summary": {
+        "total": 6,
+        "passed": 5,
+        "failed": 1,
+        "averageLatency": 32
+      }
+    },
+    {
+      "endpoint": "seams",
+      "config": {
+        "port": 3002,
+        "wsPort": 3002,
+        "url": "ws://localhost:3002",
+        "name": "Seams Dashboard"
+      },
+      "tests": [
+        {
+          "success": true,
+          "latency": 62,
+          "target": 185,
+          "max": 500,
+          "endpoint": {
+            "port": 3002,
+            "wsPort": 3002,
+            "url": "ws://localhost:3002",
+            "name": "Seams Dashboard"
+          },
+          "testType": "connection"
+        },
+        {
+          "success": true,
+          "sendLatency": 94,
+          "receiveLatency": 122,
+          "messagesSent": 5,
+          "messagesReceived": 5,
+          "totalLatency": 216,
+          "target": 200,
+          "max": 250,
+          "endpoint": {
+            "port": 3002,
+            "wsPort": 3002,
+            "url": "ws://localhost:3002",
+            "name": "Seams Dashboard"
+          },
+          "testType": "dataTransfer"
+        },
+        {
+          "success": true,
+          "subscribeLatency": 235,
+          "updateFrequency": 325,
+          "updatesReceived": 3,
+          "subscriptionConfirmed": true,
+          "target": 220,
+          "max": 300,
+          "endpoint": {
+            "port": 3002,
+            "wsPort": 3002,
+            "url": "ws://localhost:3002",
+            "name": "Seams Dashboard"
+          },
+          "testType": "subscription"
+        },
+        {
+          "success": true,
+          "uptime": 15805,
+          "reconnections": 0,
+          "target": 10000,
+          "endpoint": {
+            "port": 3002,
+            "wsPort": 3002,
+            "url": "ws://localhost:3002",
+            "name": "Seams Dashboard"
+          },
+          "testType": "stability"
+        },
+        {
+          "success": false,
+          "errorsSent": 5,
+          "errorsHandled": 4,
+          "handlingRate": 0.8,
+          "gracefulDegradation": false,
+          "target": 0.95,
+          "endpoint": {
+            "port": 3002,
+            "wsPort": 3002,
+            "url": "ws://localhost:3002",
+            "name": "Seams Dashboard"
+          },
+          "testType": "errorHandling"
+        },
+        {
+          "success": true,
+          "queryLatency": 18,
+          "connectionPool": 8,
+          "healthCheck": true,
+          "dataIntegrity": true,
+          "target": 10,
+          "endpoint": {
+            "port": 3002,
+            "wsPort": 3002,
+            "url": "ws://localhost:3002",
+            "name": "Seams Dashboard"
+          },
+          "testType": "databaseIntegration"
+        }
+      ],
+      "summary": {
+        "total": 6,
+        "passed": 5,
+        "failed": 1,
+        "averageLatency": 10
+      }
+    },
+    {
+      "endpoint": "voices",
+      "config": {
+        "port": 3003,
+        "wsPort": 3003,
+        "url": "ws://localhost:3003",
+        "name": "Voices Dashboard"
+      },
+      "tests": [
+        {
+          "success": true,
+          "latency": 133,
+          "target": 185,
+          "max": 500,
+          "endpoint": {
+            "port": 3003,
+            "wsPort": 3003,
+            "url": "ws://localhost:3003",
+            "name": "Voices Dashboard"
+          },
+          "testType": "connection"
+        },
+        {
+          "success": true,
+          "sendLatency": 113,
+          "receiveLatency": 130,
+          "messagesSent": 5,
+          "messagesReceived": 5,
+          "totalLatency": 242,
+          "target": 200,
+          "max": 250,
+          "endpoint": {
+            "port": 3003,
+            "wsPort": 3003,
+            "url": "ws://localhost:3003",
+            "name": "Voices Dashboard"
+          },
+          "testType": "dataTransfer"
+        },
+        {
+          "success": true,
+          "subscribeLatency": 176,
+          "updateFrequency": 661,
+          "updatesReceived": 5,
+          "subscriptionConfirmed": true,
+          "target": 220,
+          "max": 300,
+          "endpoint": {
+            "port": 3003,
+            "wsPort": 3003,
+            "url": "ws://localhost:3003",
+            "name": "Voices Dashboard"
+          },
+          "testType": "subscription"
+        },
+        {
+          "success": true,
+          "uptime": 12508,
+          "reconnections": 0,
+          "target": 10000,
+          "endpoint": {
+            "port": 3003,
+            "wsPort": 3003,
+            "url": "ws://localhost:3003",
+            "name": "Voices Dashboard"
+          },
+          "testType": "stability"
+        },
+        {
+          "success": true,
+          "errorsSent": 5,
+          "errorsHandled": 5,
+          "handlingRate": 1,
+          "gracefulDegradation": false,
+          "target": 0.95,
+          "endpoint": {
+            "port": 3003,
+            "wsPort": 3003,
+            "url": "ws://localhost:3003",
+            "name": "Voices Dashboard"
+          },
+          "testType": "errorHandling"
+        },
+        {
+          "success": true,
+          "queryLatency": 19,
+          "connectionPool": 8,
+          "healthCheck": true,
+          "dataIntegrity": true,
+          "target": 10,
+          "endpoint": {
+            "port": 3003,
+            "wsPort": 3003,
+            "url": "ws://localhost:3003",
+            "name": "Voices Dashboard"
+          },
+          "testType": "databaseIntegration"
+        }
+      ],
+      "summary": {
+        "total": 6,
+        "passed": 6,
+        "failed": 0,
+        "averageLatency": 22
+      }
+    }
+  ],
+  "summary": {
+    "totalTests": 18,
+    "passedTests": 16,
+    "failedTests": 2,
+    "averageLatency": 130,
+    "stabilityScore": 100,
+    "errorHandlingScore": 87
+  }
+}

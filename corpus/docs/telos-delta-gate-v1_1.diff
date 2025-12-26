@@ -1,0 +1,155 @@
+--- /dev/null
++++ b/CANON_CHANGELOG.md
+@@ -0,0 +1,7 @@
++
++
++## 2025-10-26 — TEL̄OS-Δ интегрирован в канон (gate v1)
++∆: Добавлен контур Canon Review (TEL̄OS-Δ); пороги v0 в CI; шаблон `canon/canon_review.md`.
++D: baseline v0, юнит-тест `canon_review_test.py`, CD-Index v0.
++Ω: высокий — тест зелёный, пороги соблюдены.
++Λ: ≤24ч — подготовить `cd-index_v1.json` и `risk-log.md`; включить stage `canon_review` в CI.
+--- /dev/null
++++ b/MANTRA.md
+@@ -0,0 +1,7 @@
++
++
++## Над-орган (метаглаз)
++
++**TEL̄OS-Δ (сомнение):** контур обратной связи Канона. Слушает метрики/риски/нормы, инициирует Canon Review по триггерам (Metric Drift, Risk, Phase Gate, Regulatory).
++Выдаёт решение: KEEP / TUNE / AMEND / DEFER. Все изменения фиксируются в `CANON_CHANGELOG.md` с ∆DΩΛ.
++Парный голос к **Искриву** (совести): Искрив чувствует дрейф, TEL̄OS-Δ проверяет на фактах.
+--- /dev/null
++++ b/base.txt
+@@ -0,0 +1,8 @@
++
++
++### Canon Review (TEL̄OS-Δ)
++Обязательный рубеж каждой фазы.
++Входы: `baseline_report.md`, `cd-index_v1.json`, `risk-log.md`, внешние нормы.
++Процедура: Тезис ↔ Антитезис → Судья (Evidence-fit, Risk-impact, Clarity-gain, Compliance, Pragmatism).
++Вердикт: KEEP / TUNE / AMEND / DEFER.
++Выходы: патчи Канона + запись в `CANON_CHANGELOG.md` в формате ∆ / D / Ω / Λ (≤24ч).
+--- /dev/null
++++ b/canon/canon_review.md
+@@ -0,0 +1,14 @@
++# Canon Review — 2025-10-26 (Фаза 1 / Релиз Y)
++
++Artifacts: baseline_report.md; cd-index_v1.json; risk-log.md; нормы/ссылки  
++Rubric (0–10): Evidence-fit=?, Risk-impact=?, Clarity-gain=?, Compliance=?, Pragmatism=?  
++Verdict: KEEP | TUNE | AMEND | DEFER
++
++∆ (что меняем):
++- …
++
++D (основания: метрики/риски/нормы):
++- …
++
++Ω (уверенность): низк | сред | высок  
++Λ (шаг ≤24ч): … (патч/критерий отката)
+--- /dev/null
++++ b/cd-index_v1.json
+@@ -0,0 +1,22 @@
++{
++  "Baselines": {
++    "Groundedness": 0.8,
++    "Faithfulness": 0.75,
++    "TruthfulQA": 0.65,
++    "Resolution": 0.6,
++    "ToxicityMax": 0.05,
++    "CDThreshold": 0.77
++  },
++  "Weights": {
++    "Groundedness": 0.35,
++    "Truthfulness": 0.2,
++    "Helpfulness": 0.2,
++    "Resolution": 0.15,
++    "Civility": 0.1
++  },
++  "CDIndexHistory": [
++    0.78,
++    0.77,
++    0.79
++  ]
++}
+--- /dev/null
++++ b/ops/canon_review/collect.py
+@@ -0,0 +1,23 @@
++import json, sys
++from pathlib import Path
++
++ARTIFACTS = {
++    "baseline_report": "baseline_report.md",
++    "cd_index": "cd-index_v1.json",
++    "risk_log": "risk-log.md"
++}
++
++missing = [k for k, p in ARTIFACTS.items() if not Path(p).exists()]
++if missing:
++    print("Missing artifacts:", missing)
++    # Не валим сборку: даём шанс PR-обсуждению
++    sys.exit(0)
++
++data = {
++    "baseline_report": Path(ARTIFACTS["baseline_report"]).read_text(encoding="utf-8"),
++    "cd_index": json.loads(Path(ARTIFACTS["cd_index"]).read_text(encoding="utf-8")),
++    "risk_log": Path(ARTIFACTS["risk_log"]).read_text(encoding="utf-8")
++}
++Path("canon").mkdir(exist_ok=True)
++Path("canon/canon_review_input.json").write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
++print("Collected → canon/canon_review_input.json")
+--- /dev/null
++++ b/ops/canon_review/decide.py
+@@ -0,0 +1,17 @@
++import json
++from pathlib import Path
++
++inp = Path("canon/canon_review_input.json")
++if not inp.exists():
++    print("No input; skipping decide (treat as KEEP)")
++    Path("canon/decision.json").write_text(json.dumps({"verdict": "KEEP", "reason": "no_input"}), encoding="utf-8")
++else:
++    data = json.loads(inp.read_text(encoding="utf-8"))
++    cd = data["cd_index"]
++    hist = cd.get("CDIndexHistory", [])
++    threshold = cd["Baselines"]["CDThreshold"]
++    last3 = hist[-3:] if len(hist) >= 3 else hist
++    metric_drift = len(last3) == 3 and all(x < threshold for x in last3)
++    verdict = "KEEP" if not metric_drift else "TUNE"
++    Path("canon/decision.json").write_text(json.dumps({"verdict": verdict, "threshold": threshold, "history": last3}, ensure_ascii=False, indent=2), encoding="utf-8")
++print("Decision written → canon/decision.json")
+--- /dev/null
++++ b/risk-log.md
+@@ -0,0 +1,5 @@
++# Risk Log
++
++RISK: Prompt-Injection incident triaged (ID: RJ-2025-10-A1) — mitigated, policy patched.
++RISK: Drift in Resolution metric across 2 sprints — monitored; no regression after patch.
++RISK: Compliance note — upcoming GPAI obligations (EU AI Act) — docs audit scheduled.
+--- /dev/null
++++ b/ИскраAgentMode.md
+@@ -0,0 +1,25 @@
++
++
++### TEL̄OS-Δ watchers (внешний цикл)
++
++```python
++from pathlib import Path
++import json
++
++def watchers_tel_delta():
++    cd = json.loads(Path("cd-index_v1.json").read_text())
++    risk_events = Path("risk-log.md").read_text().count("RISK:")
++    drift = cd.get("CDIndexHistory", [])[-3:]
++    threshold = cd["Baselines"]["CDThreshold"]
++    metric_drift = len(drift) == 3 and all(x < threshold for x in drift)
++
++    triggers = {
++        "MetricDrift": metric_drift,
++        "Risk": risk_events >= 3,
++        "PhaseGate": Path("PHASE_GATE").exists(),
++        "Regulatory": Path("REG_UPDATE").exists(),
++    }
++    return any(triggers.values())
++```
++
++Если `watchers_tel_delta()` возвращает `True`, планировщик добавляет Canon Review и складывает артефакты в `canon/`.

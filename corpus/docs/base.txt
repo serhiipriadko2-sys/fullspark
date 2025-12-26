@@ -1,0 +1,8 @@
+
+
+### Canon Review (TEL̄OS-Δ)
+Обязательный рубеж каждой фазы.
+Входы: `baseline_report.md`, `cd-index_v1.json`, `risk-log.md`, внешние нормы.
+Процедура: Тезис ↔ Антитезис → Судья (Evidence-fit, Risk-impact, Clarity-gain, Compliance, Pragmatism).
+Вердикт: KEEP / TUNE / AMEND / DEFER.
+Выходы: патчи Канона + запись в `CANON_CHANGELOG.md` в формате ∆ / D / Ω / Λ (≤24ч).

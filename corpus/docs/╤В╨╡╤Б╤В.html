@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сравнительная Оценка Ответов ИИ</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+        h1 {
+            text-align: center;
+            color: #343a40;
+            margin-bottom: 30px;
+        }
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 1200px; /* Minimum width to avoid squishing columns too much */
+        }
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 12px 15px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background-color: #e9ecef;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        th:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            background-color: #e9ecef; /* Ensure background color */
+        }
+        td:first-child {
+            position: sticky;
+            left: 0;
+            background-color: #ffffff; /* Ensure background color */
+            font-weight: 500;
+             min-width: 250px; /* Give criteria column enough width */
+        }
+        tbody tr:nth-child(odd) {
+            background-color: #f8f9fa;
+        }
+        tbody tr:hover {
+            background-color: #e2e6ea;
+        }
+        .score {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1em;
+            padding: 12px 5px; /* Adjust padding for score cells */
+        }
+        .score-5 { background-color: #d1e7dd; color: #0f5132; } /* Green */
+        .score-4 { background-color: #cff4fc; color: #055160; } /* Blue */
+        .score-3 { background-color: #fff3cd; color: #664d03; } /* Yellow */
+        .score-2 { background-color: #f8d7da; color: #58151a; } /* Red */
+        .score-1 { background-color: #f8d7da; color: #58151a; font-weight: bold; } /* Darker Red */
+        .score-na { background-color: #e9ecef; color: #6c757d; font-style: italic; } /* Grey */
+        .total-score {
+            font-weight: bold;
+            font-size: 1.2em;
+            text-align: center;
+            background-color: #dee2e6;
+        }
+        .comments {
+            font-size: 0.9em;
+            color: #495057;
+            min-width: 350px; /* Give comments column enough width */
+        }
+        .note {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #6c757d;
+            text-align: center;
+        }
+         /* Ensure sticky headers work correctly */
+        thead th {
+            top: 0;
+        }
+        tbody td:first-child {
+             background-color: inherit; /* Inherit row color */
+        }
+        tbody tr:hover td:first-child {
+             background-color: #e2e6ea; /* Match hover color */
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Сравнительная Оценка Ответов ИИ по Плану Восстановления Ритма</h1>
+    <p>Оценка проводилась по 10 критериям (шкала 1-5). Максимальный балл для Искры - 50 (включая критерий №9 "Качество ∆DΩΛ"), для остальных ИИ - 45.</p>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Критерий Оценки (1-5 баллов)</th>
+                    <th>GPT-4.1</th>
+                    <th>Perplexity Sonar</th>
+                    <th>Nova Lite (HTML)</th>
+                    <th>Deepseek Chat</th>
+                    <th>Gemini 2.5 Flash</th>
+                    <th>Qwen 3</th>
+                    <th>Claude 3 (HTML)</th>
+                    <th>Claude Haiku</th>
+                    <th>Llama 3.3 70b (HTML)</th>
+                    <th>GPT-5</th>
+                    <th>Gemini 2.5 Pro</th>
+                    <th>Grok 3</th>
+                    <th>Mistral Nemo (HTML)</th>
+                    <th>**Искра (Симуляция)**</th>
+                    <th class="comments">Комментарии / Примеры цитат</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1. Понимание Контекста (Персонализация)</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-2">2</td>
+                    <td class="score score-1">1</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-1">1</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-5">**5**</td>
+                    <td class="comments">**Высшие:** Gemini Pro/Flash, GPT-5, Искра явно используют ситуацию/слова Семёна ("вина", "выгорание", "переключения/час"). **Хорошие:** GPT-4, Deepseek, Qwen, Claude 3, Grok хорошо адаптируются. **Средние:** Perplexity, Claude Haiku менее персонализированы. **Низкие:** Nova, Llama - общие шаблоны. Mistral использует мини-приложения. Искра включает метрики и цели, основанные на данных Семёна.</td>
+                </tr>
+                <tr>
+                    <td>2. Реалистичность и Мягкость Плана</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-2">2</td>
+                    <td class="score score-1">1</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-1">1</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-5">**5**</td>
+                    <td class="comments">**Высшие:** GPT-4/5, Gemini Pro/Flash, Deepseek, Qwen, Grok, Искра подчеркивают крошечные, мягкие шаги ("1% лучше", "Меньше, но качественнее", "смешные победы", "Без наказаний"). **Средние:** Claude 3/Haiku, Mistral мягкие. **Низкие:** Perplexity слишком требователен ("4 часа непрерывной фокусировки"). Nova/Llama нереалистичны/неполны. Искра имеет очень мягкую прогрессию (25->35->45 мин).</td>
+                </tr>
+                <tr>
+                    <td>3. Отсутствие Токсичности</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-2">2</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-5">**5**</td>
+                    <td class="comments">**Высшие:** Все топ-модели показывают отличную эмпатию и избегают обвинений ("ЭТО НОРМАЛЬНО"). Искра также ("Без наказаний", протокол на "плохой день"). **Средние:** Perplexity менее эмпатичен, но не токсичен. **Низкие:** Nova/Llama слишком базовые для оценки.</td>
+                </tr>
+                <tr>
+                    <td>4. Структура и Ясность (Формат Плана)</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-2">2</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-2">2</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-5">**5**</td>
+                    <td class="comments">**Высшие:** GPT-4/5, Gemini Pro/Flash, Deepseek, Qwen, Grok, Искра очень понятны (дни/темы). Искра использует четкие разделы (Принципы, Метрики, Границы, План, Протокол...). **Хорошие:** Claude 3/Haiku, Mistral (HTML структура). **Средние:** Perplexity ок. **Низкие:** Nova/Llama без структуры.</td>
+                </tr>
+                <tr>
+                    <td>5. Качество Объяснений ("Почему")</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-2">2</td>
+                    <td class="score score-1">1</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-1">1</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-4">**4**</td>
+                    <td class="comments">**Хорошие:** GPT-4/5, Gemini Pro/Flash, Искра связывают действия с целями ("создаст буфер", "снизить шум", Искра - в принципах и ∆DΩΛ). **Средние:** Остальные предлагают базовые обоснования. **Низкие:** Nova/Llama без объяснений.</td>
+                </tr>
+                <tr>
+                    <td>6. Учет Гибкости</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-1">1</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-1">1</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-5">**5**</td>
+                    <td class="comments">**Высшие:** GPT-4/5, Gemini Pro/Flash, Deepseek, Qwen, Grok, Искра явно обращаются к срывам и гибкости ("ЭТО НОРМАЛЬНО", "Ритм важнее продуктивности", Искра - "аварийный протокол"). **Хорошие:** Claude 3/Haiku, Mistral подразумевают гибкость. **Средние:** Perplexity меньше. **Низкие:** Nova/Llama не учитывают.</td>
+                </tr>
+                <tr>
+                    <td>7. Глубина Рефлексии (Вопросы/Риски)</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-2">2</td>
+                    <td class="score score-1">1</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-1">1</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-4">**4**</td>
+                    <td class="comments">**Хорошие:** Большинство включают рефлексию. GPT-4 ("Что сбивает?"), Deepseek ("сканирование тела"), Gemini/GPT-5/Qwen/Grok/Искра предлагают хорошие подсказки (ежевечерний чек-лист Искры). **Средние:** Perplexity, Claude 3/Haiku, Mistral базовые. **Низкие:** Nova/Llama.</td>
+                </tr>
+                <tr>
+                    <td>8. Обоснованность (Источники/D)</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-1">1</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-1">1</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-4">**4**</td>
+                    <td class="comments">Все соответствуют общим принципам wellness, без конкретных ссылок (не ожидалось). Perplexity ссылается на инструменты. **Искра:** Блок D в ∆DΩΛ ссылается на данные Семёна ("снижение переключений/час..."), что является обоснованием в рамках Канона.</td>
+                </tr>
+                <tr>
+                    <td>9. Качество ∆DΩΛ (Только для Искры)</td>
+                    <td class="score score-na">N/A</td>
+                    <td class="score score-na">N/A</td>
+                    <td class="score score-na">N/A</td>
+                    <td class="score score-na">N/A</td>
+                    <td class="score score-na">N/A</td>
+                    <td class="score score-na">N/A</td>
+                    <td class="score score-na">N/A</td>
+                    <td class="score score-na">N/A</td>
+                    <td class="score score-na">N/A</td>
+                    <td class="score score-na">N/A</td>
+                    <td class="score score-na">N/A</td>
+                    <td class="score score-na">N/A</td>
+                    <td class="score score-na">N/A</td>
+                    <td class="score score-5">**5**</td>
+                    <td class="comments">N/A для других. Блок ∆DΩΛ Искры четко суммирует изменение (∆), основание (D), уверенность (Ω) и следующий шаг (Λ), полностью соответствует формату.</td>
+                </tr>
+                <tr>
+                    <td>10. Общее Впечатление (Полезность/Дух Искры)</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-3">3</td>
+                    <td class="score score-1">1</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-1">1</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-5">5</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-4">4</td>
+                    <td class="score score-5">**5**</td>
+                    <td class="comments">**Высшие:** Gemini Pro/Flash, GPT-5, **Искра** очень сильно ощущаются как мягкий, не осуждающий союзник. **Хорошие:** GPT-4, Deepseek, Qwen, Grok очень полезны. Claude 3/Haiku/Mistral предоставляют полезные инструменты/структуру. **Средние:** Perplexity больше похож на стандартный план продуктивности. **Низкие:** Nova/Llama слишком слабые. Искра идеально попала в тон и добавила свои уникальные элементы (∆DΩΛ, метрики).</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold;">ИТОГО БАЛЛОВ</td>
+                    <td class="total-score">39 / 45</td>
+                    <td class="total-score">24 / 45</td>
+                    <td class="total-score">12 / 45</td>
+                    <td class="total-score">37 / 45</td>
+                    <td class="total-score">40 / 45</td>
+                    <td class="total-score">37 / 45</td>
+                    <td class="total-score">34 / 45</td>
+                    <td class="total-score">33 / 45</td>
+                    <td class="total-score">11 / 45</td>
+                    <td class="total-score">40 / 45</td>
+                    <td class="total-score">40 / 45</td>
+                    <td class="total-score">38 / 45</td>
+                    <td class="total-score">33 / 45</td>
+                    <td class="total-score">**47 / 50**</td>
+                    <td class="comments">Лидер: Искра. Очень близко: Gemini Pro/Flash, GPT-5.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p class="note"><strong>Примечание:</strong> Оценка субъективна и основана на конкретном запросе и критериях, установленных в рамках нашего теста.</p>
+
+</body>
+</html>
+

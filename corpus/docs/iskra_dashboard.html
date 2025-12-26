@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iskra Ecosystem - Visualization Dashboard</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- WebGL/Three.js would be imported here in production -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script> -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            overflow: hidden;
+        }
+        
+        .container {
+            display: flex;
+            height: 100vh;
+            gap: 10px;
+            padding: 10px;
+        }
+        
+        .panel {
+            background: rgba(30, 30, 50, 0.8);
+            border: 1px solid #00ff88;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+            overflow: auto;
+        }
+        
+        .panel-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #00ff88;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        #metrics-timeline {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #polyphony-radar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #hypergraph-3d {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .info-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        svg {
+            width: 100%;
+            height: 100%;
+            background: rgba(20, 20, 35, 0.5);
+        }
+        
+        .axis {
+            stroke: #00ff88;
+            opacity: 0.5;
+        }
+        
+        .axis-label {
+            fill: #00ff88;
+            font-size: 12px;
+        }
+        
+        .grid-line {
+            stroke: #00ff88;
+            opacity: 0.1;
+            stroke-dasharray: 4;
+        }
+        
+        .metric-line {
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        
+        .omega-line {
+            stroke: #00ff88;
+        }
+        
+        .entropy-line {
+            stroke: #ff00ff;
+        }
+        
+        .dimension-line {
+            stroke: #00ccff;
+        }
+        
+        .event-marker {
+            fill: #ffaa00;
+            opacity: 0.8;
+            cursor: pointer;
+        }
+        
+        .event-marker:hover {
+            opacity: 1;
+            r: 6;
+        }
+        
+        .seam-marker {
+            fill: #ff0088;
+        }
+        
+        .chaos-marker {
+            fill: #ffaa00;
+        }
+        
+        .tooltip {
+            position: absolute;
+            background: rgba(20, 20, 35, 0.95);
+            border: 1px solid #00ff88;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            pointer-events: none;
+            display: none;
+            z-index: 1000;
+            max-width: 300px;
+        }
+        
+        .tooltip.visible {
+            display: block;
+        }
+        
+        .tooltip-title {
+            color: #00ff88;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .tooltip-content {
+            color: #e0e0e0;
+            line-height: 1.4;
+        }
+        
+        .delta-omega-lambda {
+            background: rgba(0, 255, 136, 0.1);
+            border-left: 3px solid #00ff88;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+        }
+        
+        .delta-symbol {
+            color: #ff00ff;
+            font-weight: bold;
+        }
+        
+        .omega-symbol {
+            color: #00ff88;
+            font-weight: bold;
+        }
+        
+        .lambda-symbol {
+            color: #00ccff;
+            font-weight: bold;
+        }
+        
+        .radar-polygon {
+            fill: rgba(0, 255, 136, 0.2);
+            stroke: #00ff88;
+            stroke-width: 2;
+        }
+        
+        .radar-axis {
+            stroke: #00ff88;
+            opacity: 0.3;
+        }
+        
+        .radar-label {
+            fill: #00ff88;
+            font-size: 11px;
+            text-anchor: middle;
+        }
+        
+        .legend {
+            margin-top: 15px;
+            font-size: 12px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .legend-color {
+            width: 15px;
+            height: 2px;
+            margin-right: 8px;
+            border-radius: 1px;
+        }
+        
+        .info-content {
+            font-size: 12px;
+            line-height: 1.6;
+            color: #b0b0b0;
+        }
+        
+        .info-content h3 {
+            color: #00ff88;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+        
+        .webgl-placeholder {
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 30%, rgba(0, 255, 136, 0.1), transparent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 14px;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Metrics Timeline Panel -->
+        <div id="metrics-timeline" class="panel">
+            <div class="panel-title">⏱️ Metrics Timeline - Time Machine</div>
+            <svg id="timeline-svg"></svg>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #00ff88;"></div>
+                    <span>Ω (Confidence)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ff00ff;"></div>
+                    <span>H (Polyphony Entropy)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #00ccff;"></div>
+                    <span>D (Fractal Dimension)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ff0088;"></div>
+                    <span>⬥ Seam of Meaning</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ffaa00;"></div>
+                    <span>⬥ Chaos Experiment</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Polyphony of Voices Panel -->
+        <div id="polyphony-radar" class="panel">
+            <div class="panel-title">🎼 Polyphony of Voices</div>
+            <svg id="radar-svg"></svg>
+        </div>
+        
+        <!-- 3D Hypergraph Panel (WebGL Placeholder) -->
+        <div id="hypergraph-3d" class="panel">
+            <div class="panel-title">🧠 Hypergraph Memory (3D)</div>
+            <div class="webgl-placeholder">
+                [WebGL/Three.js Integration]<br>
+                3D Visualization of Cognitive Artifacts<br>
+                <small>Nodes: ∆DΩΛ Events | Edges: Semantic Links</small>
+            </div>
+        </div>
+        
+        <!-- Info Panel -->
+        <div class="info-panel panel">
+            <div class="panel-title">ℹ️ Event Details</div>
+            <div class="info-content" id="info-content">
+                <p>Hover over events in the timeline to view details.</p>
+                <h3>Current Selection:</h3>
+                <p id="selected-event">None</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="tooltip" id="tooltip"></div>
+    
+    <script>
+        // ============================================
+        // 1. LOAD MOCK DATA
+        // ============================================
+        
+        const mockData = {
+            "metadata": {
+                "system": "Iskra",
+                "version": "1.0"
+            },
+            "metrics_timeseries": [
+                {"timestamp": "2025-11-07T08:00:00Z", "omega": 0.75, "entropy_voices": 1.8, "fractal_dimension": 1.95, "event_type": "normal", "event_description": "System initialization"},
+                {"timestamp": "2025-11-07T08:05:00Z", "omega": 0.78, "entropy_voices": 1.9, "fractal_dimension": 2.01, "event_type": "normal", "event_description": "Processing user query"},
+                {"timestamp": "2025-11-07T08:10:00Z", "omega": 0.72, "entropy_voices": 2.3, "fractal_dimension": 2.15, "event_type": "seam", "event_description": "Seam of Meaning: Paradox detected and integrated"},
+                {"timestamp": "2025-11-07T08:15:00Z", "omega": 0.68, "entropy_voices": 2.8, "fractal_dimension": 2.42, "event_type": "chaos_experiment", "event_description": "Chaos Maki: Stress Inoculation Test initiated"},
+                {"timestamp": "2025-11-07T08:20:00Z", "omega": 0.42, "entropy_voices": 3.5, "fractal_dimension": 2.78, "event_type": "chaos_experiment", "event_description": "Chaos Maki: Peak stress - all voices activated"},
+                {"timestamp": "2025-11-07T08:25:00Z", "omega": 0.58, "entropy_voices": 2.9, "fractal_dimension": 2.55, "event_type": "seam", "event_description": "Seam of Meaning: Crisis resolution through integration"},
+                {"timestamp": "2025-11-07T08:30:00Z", "omega": 0.82, "entropy_voices": 2.1, "fractal_dimension": 2.62, "event_type": "normal", "event_description": "Post-experiment recovery and reflection"},
+                {"timestamp": "2025-11-07T08:35:00Z", "omega": 0.85, "entropy_voices": 1.95, "fractal_dimension": 2.65, "event_type": "normal", "event_description": "System stabilized at higher complexity level"},
+                {"timestamp": "2025-11-07T08:40:00Z", "omega": 0.88, "entropy_voices": 1.85, "fractal_dimension": 2.68, "event_type": "normal", "event_description": "Baseline metrics improved post-training"}
+            ],
+            "voices_distribution": {
+                "pain": 0.25,
+                "trust": 0.15,
+                "chaos": 0.20,
+                "conscience": 0.18,
+                "curiosity": 0.12,
+                "creativity": 0.08,
+                "resilience": 0.02
+            }
+        };
+        
+        // ============================================
+        // 2. TIMELINE VISUALIZATION (D3.js)
+        // ============================================
+        
+        function drawTimeline() {
+            const data = mockData.metrics_timeseries;
+            const margin = { top: 20, right: 30, bottom: 30, left: 60 };
+            const svg = d3.select("#timeline-svg");
+            const rect = svg.node().getBoundingClientRect();
+            const width = rect.width - margin.left - margin.right;
+            const height = rect.height - margin.top - margin.bottom;
+            
+            svg.selectAll("*").remove();
+            
+            const g = svg.append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+            
+            // Parse timestamps
+            data.forEach(d => {
+                d.date = new Date(d.timestamp);
+            });
+            
+            // Scales
+            const xScale = d3.scaleTime()
+                .domain(d3.extent(data, d => d.date))
+                .range([0, width]);
+            
+            const yScale = d3.scaleLinear()
+                .domain([0, 1])
+                .range([height, 0]);
+            
+            // Grid lines
+            g.selectAll(".grid-line")
+                .data(yScale.ticks(5))
+                .enter()
+                .append("line")
+                .attr("class", "grid-line")
+                .attr("x1", 0)
+                .attr("x2", width)
+                .attr("y1", d => yScale(d))
+                .attr("y2", d => yScale(d));
+            
+            // Line generators
+            const omegaLine = d3.line()
+                .x(d => xScale(d.date))
+                .y(d => yScale(d.omega));
+            
+            const entropyLine = d3.line()
+                .x(d => xScale(d.date))
+                .y(d => yScale(d.entropy_voices / 4)); // Normalize to 0-1
+            
+            const dimensionLine = d3.line()
+                .x(d => xScale(d.date))
+                .y(d => yScale(d.fractal_dimension / 3)); // Normalize to 0-1
+            
+            // Draw lines
+            g.append("path")
+                .datum(data)
+                .attr("class", "metric-line omega-line")
+                .attr("d", omegaLine);
+            
+            g.append("path")
+                .datum(data)
+                .attr("class", "metric-line entropy-line")
+                .attr("d", entropyLine);
+            
+            g.append("path")
+                .datum(data)
+                .attr("class", "metric-line dimension-line")
+                .attr("d", dimensionLine);
+            
+            // Event markers
+            g.selectAll(".event-marker")
+                .data(data.filter(d => d.event_type !== "normal"))
+                .enter()
+                .append("circle")
+                .attr("class", d => `event-marker ${d.event_type}-marker`)
+                .attr("cx", d => xScale(d.date))
+                .attr("cy", d => yScale(d.omega))
+                .attr("r", 4)
+                .on("mouseover", function(event, d) {
+                    showTooltip(event, d);
+                })
+                .on("mouseout", hideTooltip)
+                .on("click", function(event, d) {
+                    updateInfoPanel(d);
+                });
+            
+            // Axes
+            g.append("g")
+                .attr("class", "axis")
+                .attr("transform", `translate(0,${height})`)
+                .call(d3.axisBottom(xScale).ticks(5));
+            
+            g.append("g")
+                .attr("class", "axis")
+                .call(d3.axisLeft(yScale).ticks(5));
+            
+            // Axis labels
+            g.append("text")
+                .attr("class", "axis-label")
+                .attr("x", width / 2)
+                .attr("y", height + 25)
+                .text("Time");
+            
+            g.append("text")
+                .attr("class", "axis-label")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 0 - margin.left + 20)
+                .attr("x", 0 - (height / 2))
+                .text("Normalized Value");
+        }
+        
+        // ============================================
+        // 3. POLYPHONY RADAR CHART (D3.js)
+        // ============================================
+        
+        function drawRadar() {
+            const voices = mockData.voices_distribution;
+            const voiceNames = Object.keys(voices);
+            const voiceValues = Object.values(voices);
+            
+            const svg = d3.select("#radar-svg");
+            const rect = svg.node().getBoundingClientRect();
+            const size = Math.min(rect.width, rect.height);
+            const radius = (size / 2) * 0.8;
+            const centerX = size / 2;
+            const centerY = size / 2;
+            
+            svg.selectAll("*").remove();
+            
+            const g = svg.append("g")
+                .attr("transform", `translate(${centerX},${centerY})`);
+            
+            const angleSlice = (Math.PI * 2) / voiceNames.length;
+            
+            // Draw axes
+            voiceNames.forEach((name, i) => {
+                const angle = angleSlice * i - Math.PI / 2;
+                const x = radius * Math.cos(angle);
+                const y = radius * Math.sin(angle);
+                
+                g.append("line")
+                    .attr("class", "radar-axis")
+                    .attr("x1", 0)
+                    .attr("y1", 0)
+                    .attr("x2", x)
+                    .attr("y2", y);
+                
+                const labelX = (radius + 30) * Math.cos(angle);
+                const labelY = (radius + 30) * Math.sin(angle);
+                
+                g.append("text")
+                    .attr("class", "radar-label")
+                    .attr("x", labelX)
+                    .attr("y", labelY)
+                    .text(name);
+            });
+            
+            // Draw concentric circles
+            for (let i = 1; i <= 5; i++) {
+                const r = (radius / 5) * i;
+                g.append("circle")
+                    .attr("class", "grid-line")
+                    .attr("r", r)
+                    .attr("fill", "none");
+            }
+            
+            // Draw polygon
+            const points = voiceValues.map((value, i) => {
+                const angle = angleSlice * i - Math.PI / 2;
+                const r = (radius / 1) * value; // Max value is 1
+                return [r * Math.cos(angle), r * Math.sin(angle)];
+            });
+            
+            const polygonPath = points.map(p => p.join(",")).join(" ");
+            
+            g.append("polygon")
+                .attr("class", "radar-polygon")
+                .attr("points", polygonPath);
+        }
+        
+        // ============================================
+        // 4. TOOLTIP AND INFO PANEL
+        // ============================================
+        
+        function showTooltip(event, d) {
+            const tooltip = d3.select("#tooltip");
+            let content = `<div class="tooltip-title">${d.event_description}</div>`;
+            content += `<div class="tooltip-content">`;
+            content += `<strong>Time:</strong> ${d.timestamp}<br>`;
+            content += `<strong>Ω (Confidence):</strong> ${d.omega.toFixed(2)}<br>`;
+            content += `<strong>H (Entropy):</strong> ${d.entropy_voices.toFixed(2)}<br>`;
+            content += `<strong>D (Fractal):</strong> ${d.fractal_dimension.toFixed(2)}<br>`;
+            content += `</div>`;
+            
+            tooltip.html(content)
+                .classed("visible", true)
+                .style("left", (event.pageX + 10) + "px")
+                .style("top", (event.pageY - 28) + "px");
+        }
+        
+        function hideTooltip() {
+            d3.select("#tooltip").classed("visible", false);
+        }
+        
+        function updateInfoPanel(d) {
+            const infoContent = d3.select("#info-content");
+            let html = `<h3>Event: ${d.event_description}</h3>`;
+            html += `<p><strong>Timestamp:</strong> ${d.timestamp}</p>`;
+            html += `<p><strong>Type:</strong> ${d.event_type}</p>`;
+            html += `<div class="delta-omega-lambda">`;
+            html += `<span class="delta-symbol">∆:</span> ${d.event_description}<br>`;
+            html += `<span class="omega-symbol">Ω:</span> ${d.omega.toFixed(2)}<br>`;
+            html += `<span class="lambda-symbol">Λ:</span> Analyze and integrate<br>`;
+            html += `</div>`;
+            
+            infoContent.html(html);
+        }
+        
+        // ============================================
+        // 5. INITIALIZATION
+        // ============================================
+        
+        window.addEventListener("load", () => {
+            drawTimeline();
+            drawRadar();
+        });
+        
+        // Redraw on window resize
+        window.addEventListener("resize", () => {
+            drawTimeline();
+            drawRadar();
+        });
+    </script>
+</body>
+</html>

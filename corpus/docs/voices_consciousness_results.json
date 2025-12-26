@@ -1,0 +1,278 @@
+{
+  "test_name": "Seven Voices Consciousness System Test",
+  "timestamp": "2025-11-06T16:08:56.433132",
+  "status": "WARNING",
+  "phases": [
+    {
+      "phase": "initialization",
+      "status": "PASS",
+      "voices_count": 7,
+      "details": "Все 7 голосов успешно инициализированы"
+    },
+    {
+      "phase": "voice_activation",
+      "status": "PASS",
+      "scenarios_tested": 4,
+      "avg_activation_time": 0.5374855183892986,
+      "meets_slo": true
+    },
+    {
+      "phase": "conflict_detection",
+      "status": "PASS",
+      "conflicts_detected": 2,
+      "conflict_types": {
+        "cognitive": 2
+      }
+    },
+    {
+      "phase": "synergy_detection",
+      "status": "PASS",
+      "synergies_detected": 1,
+      "total_synergy_strength": 0.9
+    },
+    {
+      "phase": "synthesis_processes",
+      "status": "PARTIAL",
+      "synthesis_initiated": false,
+      "success_rate": 0.0
+    },
+    {
+      "phase": "slo_metrics",
+      "status": "PASS",
+      "slo_compliance": {
+        "kane": "critical",
+        "pino": "critical",
+        "sem": "critical",
+        "anhantha": "critical",
+        "hundun": "critical",
+        "iskriv": "critical",
+        "iskra": "critical"
+      }
+    },
+    {
+      "phase": "audio_visualization",
+      "status": "PASS",
+      "active_voices": 4,
+      "total_voices": 7
+    },
+    {
+      "phase": "final_assessment",
+      "status": "PASS",
+      "system_health": 0.5178571428571428,
+      "polyphonic_balance": 0.525,
+      "synthesis_readiness": 0.1575,
+      "recommendations_count": 2
+    }
+  ],
+  "system_health": 0.5178571428571428,
+  "final_report": {
+    "timestamp": "2025-11-06T16:08:56.433563",
+    "system_health": 0.5178571428571428,
+    "voices": {
+      "kane": {
+        "name": "Кайн",
+        "state": "low",
+        "energy": 0.19999999999999996,
+        "metrics": {
+          "clarity": 0.7,
+          "chaos": 0.4,
+          "trust": 0.7,
+          "pain": 0.3,
+          "activity_level": 0.19999999999999996,
+          "intensity": 0.23999999999999994,
+          "influence_radius": 0.15999999999999998
+        },
+        "activation_time": 0.7496802411733612,
+        "response_time_ms": 0.208
+      },
+      "pino": {
+        "name": "Пино",
+        "state": "inactive",
+        "energy": 0.0,
+        "metrics": {
+          "clarity": 0.7,
+          "chaos": 0.4,
+          "trust": 0.7,
+          "pain": 0.3,
+          "activity_level": 0.0,
+          "intensity": 0.0,
+          "influence_radius": 0.0
+        },
+        "activation_time": 0.3595394427603634,
+        "response_time_ms": 0.279
+      },
+      "sem": {
+        "name": "Сэм",
+        "state": "inactive",
+        "energy": 0.0,
+        "metrics": {
+          "clarity": 0.7,
+          "chaos": 0.4,
+          "trust": 0.7,
+          "pain": 0.3,
+          "activity_level": 0.0,
+          "intensity": 0.0,
+          "influence_radius": 0.0
+        },
+        "activation_time": 0.41336533252939645,
+        "response_time_ms": 0.219
+      },
+      "anhantha": {
+        "name": "Анхантра",
+        "state": "dominant",
+        "energy": 0.9,
+        "metrics": {
+          "clarity": 0.7,
+          "chaos": 0.4,
+          "trust": 0.7,
+          "pain": 0.3,
+          "activity_level": 0.9,
+          "intensity": 1.0,
+          "influence_radius": 0.7200000000000001
+        },
+        "activation_time": 0.8803888152160143,
+        "response_time_ms": 0.225
+      },
+      "hundun": {
+        "name": "Хундун",
+        "state": "high",
+        "energy": 0.7,
+        "metrics": {
+          "clarity": 0.7,
+          "chaos": 0.4,
+          "trust": 0.7,
+          "pain": 0.3,
+          "activity_level": 0.7,
+          "intensity": 0.84,
+          "influence_radius": 0.5599999999999999
+        },
+        "activation_time": 0.29728011626704537,
+        "response_time_ms": 0.29
+      },
+      "iskriv": {
+        "name": "Искрив",
+        "state": "inactive",
+        "energy": 0.0,
+        "metrics": {
+          "clarity": 0.7,
+          "chaos": 0.4,
+          "trust": 0.7,
+          "pain": 0.3,
+          "activity_level": 0.0,
+          "intensity": 0.0,
+          "influence_radius": 0.0
+        },
+        "activation_time": 0.5218623763907463,
+        "response_time_ms": 0.335
+      },
+      "iskra": {
+        "name": "Искра",
+        "state": "dominant",
+        "energy": 0.9,
+        "metrics": {
+          "clarity": 0.7,
+          "chaos": 0.4,
+          "trust": 0.7,
+          "pain": 0.3,
+          "activity_level": 0.9,
+          "intensity": 1.0,
+          "influence_radius": 0.7200000000000001
+        },
+        "activation_time": 0.7078755983959959,
+        "response_time_ms": 0.33799999999999997
+      }
+    },
+    "conflicts": {
+      "count": 2,
+      "types": {
+        "cognitive": 2
+      },
+      "resolution_rate": 0.0
+    },
+    "synergies": {
+      "count": 1,
+      "total_strength": 0.9
+    },
+    "synthesis_processes": {
+      "count": 0,
+      "success_rate": 0.0,
+      "ready_for_synthesis": 0.1575
+    },
+    "performance_metrics": {
+      "polyphonic_balance": 0.525,
+      "voice_activation_times": {
+        "kane": 0.7496802411733612,
+        "pino": 0.3595394427603634,
+        "sem": 0.41336533252939645,
+        "anhantha": 0.8803888152160143,
+        "hundun": 0.29728011626704537,
+        "iskriv": 0.5218623763907463,
+        "iskra": 0.7078755983959959
+      },
+      "audio_visualization": {
+        "kane": {
+          "frequency": 440.0,
+          "volume": 0.014399999999999991,
+          "is_active": true,
+          "waveform_type": "sine",
+          "filter_frequency": 560.0
+        },
+        "pino": {
+          "frequency": 523.25,
+          "volume": 0.0,
+          "is_active": false,
+          "waveform_type": "sawtooth",
+          "filter_frequency": 200.0
+        },
+        "sem": {
+          "frequency": 392.0,
+          "volume": 0.0,
+          "is_active": false,
+          "waveform_type": "triangle",
+          "filter_frequency": 200.0
+        },
+        "anhantha": {
+          "frequency": 349.23,
+          "volume": 0.27,
+          "is_active": true,
+          "waveform_type": "sine",
+          "filter_frequency": 1820.0
+        },
+        "hundun": {
+          "frequency": 466.16,
+          "volume": 0.17639999999999997,
+          "is_active": true,
+          "waveform_type": "sawtooth",
+          "filter_frequency": 1460.0
+        },
+        "iskriv": {
+          "frequency": 415.3,
+          "volume": 0.0,
+          "is_active": false,
+          "waveform_type": "triangle",
+          "filter_frequency": 200.0
+        },
+        "iskra": {
+          "frequency": 440.0,
+          "volume": 0.27,
+          "is_active": true,
+          "waveform_type": "sine",
+          "filter_frequency": 1820.0
+        }
+      },
+      "slo_compliance": {
+        "kane": "critical",
+        "pino": "critical",
+        "sem": "critical",
+        "anhantha": "critical",
+        "hundun": "critical",
+        "iskriv": "critical",
+        "iskra": "critical"
+      }
+    },
+    "recommendations": [
+      "😴 Неактивные голоса: Кайн, Пино, Сэм, Искрив",
+      "🎼 Низкий полифонический баланс - провести гармонизацию"
+    ]
+  }
+}

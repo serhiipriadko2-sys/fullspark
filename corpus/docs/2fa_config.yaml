@@ -1,0 +1,176 @@
+# Конфигурационный файл 2FA системы
+version: "1.0"
+environment: "production"
+
+# Настройки безопасности
+security:
+  encryption:
+    algorithm: "AES-256-GCM"
+    key_rotation_days: 90
+    master_key_source: "environment"
+    
+  totp:
+    window: 30  # seconds (допустимое отклонение во времени)
+    digits: 6
+    algorithm: "SHA1"
+    issuer: "Искра Экосистема"
+    
+  backup_codes:
+    count: 10
+    length: 8
+    algorithm: "SHA256"
+    one_time_use: true
+    
+  lockout:
+    max_attempts: 5
+    lockout_duration: 300  # seconds
+    progressive_delay: true
+    ban_threshold: 10
+    ban_duration: 3600  # 1 hour
+    
+  recovery:
+    methods: ["email", "sms", "admin"]
+    trusted_devices: true
+    recovery_email_timeout: 3600
+    admin_approval_required: false
+    
+  audit:
+    log_level: "INFO"
+    retention_days: 365
+    sensitive_data_masking: true
+    compliance_logging: true
+
+# Настройки базы данных
+database:
+  url: "${2FA_DATABASE_URL}"
+  pool_size: 10
+  max_overflow: 20
+  echo: false
+  ssl_mode: "require"
+  
+# Настройки API
+api:
+  rate_limiting:
+    enabled: true
+    requests_per_minute: 60
+    burst_size: 10
+    
+  cors:
+    allowed_origins: ["https://iskra.ai", "https://app.iskra.ai"]
+    allowed_methods: ["GET", "POST", "PUT", "DELETE"]
+    allowed_headers: ["Content-Type", "Authorization", "X-Requested-With"]
+    
+  jwt:
+    secret: "${2FA_JWT_SECRET}"
+    algorithm: "HS256"
+    access_token_expire_minutes: 30
+    refresh_token_expire_days: 7
+
+# Настройки мониторинга
+monitoring:
+  metrics_enabled: true
+  prometheus_port: 9090
+  health_check_interval: 30
+  alert_webhook: "${ALERT_WEBHOOK_URL}"
+  security_monitoring:
+    enabled: true
+    anomaly_detection: true
+    alert_thresholds:
+      failed_auth_rate: 0.1  # 10%
+      lockout_rate: 0.05     # 5%
+
+# Настройки уведомлений
+notifications:
+  email:
+    enabled: true
+    smtp_server: "${SMTP_SERVER}"
+    smtp_port: 587
+    username: "${SMTP_USERNAME}"
+    password: "${SMTP_PASSWORD}"
+    use_tls: true
+    templates_dir: "templates/email"
+    
+  sms:
+    enabled: false
+    provider: "twilio"
+    account_sid: "${TWILIO_ACCOUNT_SID}"
+    auth_token: "${TWILIO_AUTH_TOKEN}"
+    
+  slack:
+    enabled: true
+    webhook_url: "${SLACK_WEBHOOK_URL}"
+    channel: "#security-alerts"
+    username: "2FA Security Bot"
+
+# Настройки соответствия
+compliance:
+  gdpr:
+    enabled: true
+    data_retention_days: 2555  # 7 years
+    right_to_erasure: true
+    data_portability: true
+    consent_tracking: true
+    
+  hipaa:
+    enabled: false
+    audit_trail: true
+    access_controls: true
+    encryption_required: true
+    
+  iso27001:
+    enabled: true
+    risk_assessment: true
+    incident_response: true
+    security_controls: true
+
+# Интеграция с экосистемой Искра
+iskra_integration:
+  fractal_logging:
+    enabled: true
+    log_format: "delta_omega_lambda"
+    correlation_id_header: "X-Correlation-ID"
+    
+  chaos_maki:
+    enabled: true
+    testing_endpoint: "${CHAOS_MAKI_ENDPOINT}"
+    test_scenarios:
+      - time_drift
+      - concurrent_attempts
+      - brute_force_protection
+      
+  meta_delta_omega:
+    enabled: true
+    analysis_endpoint: "${META_DELTA_OMEGA_ENDPOINT}"
+    metrics_collection: true
+    security_recommendations: true
+
+# Настройки развертывания
+deployment:
+  docker:
+    image: "iskra/2fa:latest"
+    port: 8000
+    replicas: 3
+    
+  kubernetes:
+    namespace: "iskra-2fa"
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "256Mi"
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
+
+# Переменные окружения (должны быть установлены)
+environment_variables:
+  - 2FA_ENCRYPTION_KEY
+  - 2FA_JWT_SECRET
+  - 2FA_DATABASE_URL
+  - REDIS_URL
+  - SMTP_SERVER
+  - SMTP_USERNAME
+  - SMTP_PASSWORD
+  - SLACK_WEBHOOK_URL
+  - ALERT_WEBHOOK_URL
+  - CHAOS_MAKI_ENDPOINT
+  - META_DELTA_OMEGA_ENDPOINT
