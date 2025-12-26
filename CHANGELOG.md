@@ -26,7 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **CHANGELOG.md** — This file for version tracking
 
 ### Changed
-- Updated README.md with current architecture (27 services, 44 components)
+- Updated README.md with current architecture (27 services, 42 components, 9 voices)
+- Corrected voice system documentation (9 voices: 8 active + SIBYL pending)
 - Reorganized documentation structure
 
 ### Documentation
