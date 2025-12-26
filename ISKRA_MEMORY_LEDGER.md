@@ -55,7 +55,7 @@ user:
     name: "Семён Габран"
     handle: "@serhiipriadko2-sys"
     role: "Создатель Искры"
-    level: "Маг 10 уровня"
+    level: "Хаосный страж"
 
   communication:
     style: "Прямой, технический, без воды"
