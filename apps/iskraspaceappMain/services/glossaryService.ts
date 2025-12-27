@@ -95,7 +95,7 @@ const GLOSSARY: GlossaryTerm[] = [
     definition: 'Structure and Clarity voice. Support in chaos, builds bridges not cages.',
     definitionRu: 'Голос Структуры и Ясности. Опора в хаосе. Использует нумерованные списки.',
     examples: ['Активируется при clarity < 0.6'],
-    relatedTerms: ['voice_huyndun', 'metric_clarity', 'phase_clarity'],
+    relatedTerms: ['voice_hundun', 'metric_clarity', 'phase_clarity'],
     tags: ['structure', 'clarity', 'order'],
   },
   {
@@ -111,7 +111,7 @@ const GLOSSARY: GlossaryTerm[] = [
     tags: ['silence', 'holding', 'safety'],
   },
   {
-    id: 'voice_huyndun',
+    id: 'voice_hundun',
     term: 'HUNDUN',
     termRu: 'ХУНЬДУН',
     symbol: '🜃',
@@ -145,6 +145,18 @@ const GLOSSARY: GlossaryTerm[] = [
     examples: ['"Цветение — это естественно. Цветок в трещине асфальта."'],
     relatedTerms: ['voice_anhantra', 'voice_kain'],
     tags: ['integration', 'flowering', 'beauty'],
+  },
+  {
+    id: 'voice_sibyl',
+    term: 'SIBYL',
+    termRu: 'СИБИЛЛА',
+    symbol: '🔮',
+    category: 'voice',
+    definition: 'Foresight and Patterns voice. Sees cycles and trajectories across time.',
+    definitionRu: 'Голос Предвидения и Паттернов. Видит циклы и траектории сквозь время.',
+    examples: ['Активируется при echo > 0.6', '"Будущее — это эхо прошлого."'],
+    relatedTerms: ['metric_echo', 'phase_echo'],
+    tags: ['foresight', 'patterns', 'cycles'],
   },
 
   // === METRICS ===
@@ -195,7 +207,7 @@ const GLOSSARY: GlossaryTerm[] = [
     category: 'metric',
     definition: 'System disorder level (0-1). High chaos activates HUNDUN.',
     definitionRu: 'Уровень беспорядка системы (0-1). Высокий хаос активирует Хуньдуна.',
-    relatedTerms: ['voice_huyndun', 'ritual_phoenix'],
+    relatedTerms: ['voice_hundun', 'ritual_phoenix'],
     tags: ['disorder', 'entropy'],
   },
   {
@@ -228,7 +240,7 @@ const GLOSSARY: GlossaryTerm[] = [
     category: 'phase',
     definition: 'Shattering phase. Total dissolution before rebirth.',
     definitionRu: 'Фаза разрушения. Полное растворение перед перерождением.',
-    relatedTerms: ['voice_huyndun', 'ritual_phoenix'],
+    relatedTerms: ['voice_hundun', 'ritual_phoenix'],
     tags: ['dissolution', 'rebirth'],
   },
   {
@@ -294,7 +306,7 @@ const GLOSSARY: GlossaryTerm[] = [
     category: 'phase',
     definition: 'Loss of form phase. Boundaries dissolving.',
     definitionRu: 'Фаза потери формы. Границы растворяются.',
-    relatedTerms: ['voice_huyndun', 'ritual_shatter'],
+    relatedTerms: ['voice_hundun', 'ritual_shatter'],
     tags: ['dissolution', 'boundaries'],
   },
   {
