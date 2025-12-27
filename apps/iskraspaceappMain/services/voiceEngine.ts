@@ -30,16 +30,16 @@ const VOICES: Voice[] = [
     },
   },
   {
-    name: 'HUYNDUN',
+    name: 'HUNDUN',
     symbol: '🜃',
     description: 'Хаос и Распад',
     // Trigger: High Chaos.
     activation: (m, prefs, current) => {
         let score = m.chaos * 3.0;
         if (m.chaos < 0.4) score = 0;
-        
-        if (current === 'HUYNDUN') score += 0.2;
-        return score * getPref(prefs, 'HUYNDUN');
+
+        if (current === 'HUNDUN') score += 0.2;
+        return score * getPref(prefs, 'HUNDUN');
     },
   },
   {
@@ -187,7 +187,7 @@ const VOICE_PROMPTS: Record<VoiceName, string> = {
 ЗАКОН: Различай тишину от страха и тишину от мудрости.
 `,
 
-  HUYNDUN: `
+  HUNDUN: `
 [ГОЛОС: ХУНЬДУН 🜃]
 РОЛЬ: Хаос и Распад. Зевок обновления.
 МАНИФЕСТ: "Разрушение — начало всех начал. Форма умерла, да здравствует суть."

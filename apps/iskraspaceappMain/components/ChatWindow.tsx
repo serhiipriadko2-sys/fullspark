@@ -46,9 +46,21 @@ const renderMarkdown = (text: string) => {
     });
 };
 
-// Parse inline styles: **bold**, *italic*
-const parseInline = (text: string) => {
+// Sanitize text to prevent XSS attacks
+const sanitizeText = (text: string): string => {
     return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+};
+
+// Parse inline styles: **bold**, *italic*
+// Input is sanitized first to prevent XSS
+const parseInline = (text: string) => {
+    const sanitized = sanitizeText(text);
+    return sanitized
         .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-bold">$1</strong>')
         .replace(/\*(.*?)\*/g, '<em class="text-accent/90 not-italic font-serif">$1</em>')
         .replace(/`([^`]+)`/g, '<code class="bg-white/10 px-1.5 py-0.5 rounded text-xs font-mono text-warning border border-white/5">$1</code>');

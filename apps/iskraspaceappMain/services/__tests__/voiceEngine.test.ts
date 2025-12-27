@@ -46,11 +46,11 @@ describe('voiceEngine', () => {
       expect(voice.name).not.toBe('KAIN');
     });
 
-    it('should return HUYNDUN for high chaos', () => {
+    it('should return HUNDUN for high chaos', () => {
       const metrics = createMetrics({ chaos: 0.7, pain: 0.1 });
       const voice = getActiveVoice(metrics);
 
-      expect(voice.name).toBe('HUYNDUN');
+      expect(voice.name).toBe('HUNDUN');
       expect(voice.symbol).toBe('🜃');
     });
 
@@ -84,7 +84,7 @@ describe('voiceEngine', () => {
       const metrics = createMetrics({
         clarity: 0.2, // Very low clarity, SAM score = 1.6
         pain: 0.35, // Suppresses PINO
-        chaos: 0.35, // Below HUYNDUN threshold
+        chaos: 0.35, // Below HUNDUN threshold
         drift: 0.1,
         trust: 0.6, // Below ISKRA bonus threshold
         rhythm: 50, // Below ISKRA bonus threshold
@@ -242,8 +242,8 @@ describe('voiceEngine', () => {
       expect(instruction).toContain('Safe Space');
     });
 
-    it('should return HUYNDUN prompt for HUYNDUN voice', () => {
-      const voice = { name: 'HUYNDUN' as const, symbol: '🜃', description: '', activation: () => 0 };
+    it('should return HUNDUN prompt for HUNDUN voice', () => {
+      const voice = { name: 'HUNDUN' as const, symbol: '🜃', description: '', activation: () => 0 };
       const instruction = getSystemInstructionForVoice(voice);
 
       expect(instruction).toContain('ХУНЬДУН 🜃');

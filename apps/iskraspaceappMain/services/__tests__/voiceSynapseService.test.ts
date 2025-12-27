@@ -100,7 +100,7 @@ describe('voiceSynapseService', () => {
 
     it('returns conflict partners for SAM', () => {
       const conflicts = getConflictPartners('SAM');
-      expect(conflicts).toContain('HUYNDUN');
+      expect(conflicts).toContain('HUNDUN');
     });
   });
 
@@ -115,12 +115,12 @@ describe('voiceSynapseService', () => {
       expect(kainPino).toBeDefined();
     });
 
-    it('detects SAM-HUYNDUN conflict with high clarity and chaos', () => {
+    it('detects SAM-HUNDUN conflict with high clarity and chaos', () => {
       const metrics = createMetrics({ clarity: 0.6, chaos: 0.6 });
       const conflicts = detectActiveConflicts(metrics);
 
       const samHuyndun = conflicts.find(c =>
-        c.voices.includes('SAM') && c.voices.includes('HUYNDUN')
+        c.voices.includes('SAM') && c.voices.includes('HUNDUN')
       );
       expect(samHuyndun).toBeDefined();
     });
@@ -231,7 +231,7 @@ describe('voiceSynapseService', () => {
       const sequence = getRecommendedSequence('новая идея', metrics);
 
       expect(sequence).toContain('PINO');
-      expect(sequence).toContain('HUYNDUN');
+      expect(sequence).toContain('HUNDUN');
     });
 
     it('overrides with crisis sequence when crisis detected', () => {
