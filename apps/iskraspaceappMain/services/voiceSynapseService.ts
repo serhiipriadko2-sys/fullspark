@@ -84,6 +84,20 @@ const VOICE_RELATIONSHIPS: VoiceRelationship[] = [
     description: 'После удара Кайна — цветение Маки.',
     jointFunction: 'post_pain_flowering',
   },
+  {
+    voice1: 'SIBYL',
+    voice2: 'ISKRIV',
+    type: 'synergy',
+    description: 'Совместное видение. Сибилла видит паттерны, Искрив проверяет честность.',
+    jointFunction: 'pattern_audit',
+  },
+  {
+    voice1: 'SIBYL',
+    voice2: 'SAM',
+    type: 'support',
+    description: 'Сибилла показывает траектории, Сэм структурирует.',
+    jointFunction: 'trajectory_structure',
+  },
 
   // Conflicts
   {
@@ -119,6 +133,7 @@ const VOICE_SYMBOLS: Record<VoiceName, string> = {
   HUNDUN: '🜃',
   ISKRIV: '🪞',
   MAKI: '🌸',
+  SIBYL: '🔮',
 };
 
 // ============================================
@@ -414,6 +429,9 @@ export function generateMultiVoiceInstruction(
         break;
       case 'ISKRA':
         instruction += 'Финальный синтез всех перспектив.\n';
+        break;
+      case 'SIBYL':
+        instruction += 'Видение паттернов и траекторий.\n';
         break;
     }
   });
