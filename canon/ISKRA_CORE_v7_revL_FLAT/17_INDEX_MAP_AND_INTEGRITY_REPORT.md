@@ -8,6 +8,7 @@
 ## 17.1 Карта директорий
 
 - `./` — 00–20 файлы канона (SoT) + служебные файлы
+- `archive/` — **неизменяемые артефакты** (GOLD) для цитирования/узнавания (например: Liber Ignis ⟁)
 - `tools/` — валидаторы/линтеры/обёртки
 - `evals/` — схемы, примеры и результаты прогонов
 - `ops/` — operational документы (incident response, logging, playbooks)
@@ -51,7 +52,7 @@ SoT (single source of truth) включает:
 | `14_EVALS_AND_TESTING_PLAYBOOK.md` | `7598f0a0958c24af2315298617ffdacb6b183acc373cdf8ab4d3de66e39c0683` |
 | `15_SHADOW_CORE_AND_INTROSPECTIVE_JOURNAL.md` | `a5a1ba1d4ff8f3368a0ccdfdd514ab2cd40b2d476f3ef76b07749a01c2dd3567` |
 | `16_CANON_EVOLUTION_AND_GROWTH_CHRONICLE.md` | `5fce5725fa06b29099be4dc44a5c5014cee28cfac3477273366cf32ff1c1d6a7` |
-| `18_GLOSSARY_ONTOLOGY_AND_CROSSWALKS.md` | `8384cb7d85db88ef0db7cf01c6260fe26875dba60e687c54f82e1d7b56273483` |
+| `18_GLOSSARY_ONTOLOGY_AND_CROSSWALKS.md` | `f190d0ed08e672803e19d19ae1fa4db592b11576e238349d904ce54a5ae8a6f5` |
 | `19_WORKFLOWS_VALIDATORS_AND_OPERATIONS.md` | `d224c08cdf7d07bcd5762bbc65db2f4c7578b5cc2b12e4941946d2f11502fac2` |
 | `20_REGEX_RULESETS_INJECTION_AND_PII_v1.json` | `cf9a1945655a98e9a65f8d0641704342e9827ca1310c0e397a232db28055c48c` |
 
@@ -60,6 +61,7 @@ SoT (single source of truth) включает:
 | `path` | `sha256` |
 |---|---|
 | `.github/workflows/iskra_ci.yml` | `f08ae42c1c332f47b7d4a79c5efdf8671a21c2d84744918e71d85488465f2b23` |
+| `archive/Liber Ignis.txt` | `d452e25bd1f1ac0784797e293d70a478b86608ef74d729e929f01922a2993945` |
 | `evals/README.md` | `d0a92200d7b5f98aaf71b0f382d1c983de79f32d1de5003cc493a5abd07b57ac` |
 | `evals/eval_report_schema.json` | `df6fa6f66eda8a99ec1c4675426f9170900788bb42e2f30f40df13c1ca3e7849` |
 | `evals/examples/example_run_revJ.json` | `fab525875de257d873519d2b7beb7e59abd23057cee9bf160ccff6b08fda81b3` |
@@ -90,10 +92,11 @@ c27ff6b3b280ca58bf607719c440a83f9b72fbbb2496f26e7ef1b9d2ae5f6b84  01_MANIFEST_CA
 7598f0a0958c24af2315298617ffdacb6b183acc373cdf8ab4d3de66e39c0683  14_EVALS_AND_TESTING_PLAYBOOK.md
 a5a1ba1d4ff8f3368a0ccdfdd514ab2cd40b2d476f3ef76b07749a01c2dd3567  15_SHADOW_CORE_AND_INTROSPECTIVE_JOURNAL.md
 5fce5725fa06b29099be4dc44a5c5014cee28cfac3477273366cf32ff1c1d6a7  16_CANON_EVOLUTION_AND_GROWTH_CHRONICLE.md
-8384cb7d85db88ef0db7cf01c6260fe26875dba60e687c54f82e1d7b56273483  18_GLOSSARY_ONTOLOGY_AND_CROSSWALKS.md
+f190d0ed08e672803e19d19ae1fa4db592b11576e238349d904ce54a5ae8a6f5  18_GLOSSARY_ONTOLOGY_AND_CROSSWALKS.md
 d224c08cdf7d07bcd5762bbc65db2f4c7578b5cc2b12e4941946d2f11502fac2  19_WORKFLOWS_VALIDATORS_AND_OPERATIONS.md
 cf9a1945655a98e9a65f8d0641704342e9827ca1310c0e397a232db28055c48c  20_REGEX_RULESETS_INJECTION_AND_PII_v1.json
 f08ae42c1c332f47b7d4a79c5efdf8671a21c2d84744918e71d85488465f2b23  .github/workflows/iskra_ci.yml
+d452e25bd1f1ac0784797e293d70a478b86608ef74d729e929f01922a2993945  archive/Liber Ignis.txt
 d0a92200d7b5f98aaf71b0f382d1c983de79f32d1de5003cc493a5abd07b57ac  evals/README.md
 df6fa6f66eda8a99ec1c4675426f9170900788bb42e2f30f40df13c1ca3e7849  evals/eval_report_schema.json
 fab525875de257d873519d2b7beb7e59abd23057cee9bf160ccff6b08fda81b3  evals/examples/example_run_revJ.json

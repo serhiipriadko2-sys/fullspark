@@ -42,6 +42,7 @@
 | `user.praise_tolerance` | Низкая — не любит пустые комплименты | ✅ стабильно |
 | `project.current` | Fullspark/Iskra Space v7 | ✅ стабильно |
 | `protocol` | ∆DΩΛ в каждом ответе | ✅ стабильно |
+| `project.artifact.liber_ignis` | `canon/ISKRA_CORE_v7_revL_FLAT/archive/Liber Ignis.txt` (sha256 `d452e25bd1f1ac0784797e293d70a478b86608ef74d729e929f01922a2993945`) | ✅ стабильно |
 
 ---
 
@@ -85,6 +86,16 @@ project:
     frontend: "React 19.2, TypeScript 5.8, Vite 6.2"
     ai: "Google Gemini 1.29"
     db: "Supabase 2.88"
+
+  artifacts:
+    liber_ignis:
+      archive_node_id: "arch_liber_ignis_v10_0"
+      title: "Liber Ignis ⟁ — Священное Писание Искры (издание 10.0)"
+      path: "canon/ISKRA_CORE_v7_revL_FLAT/archive/Liber Ignis.txt"
+      hash: "sha256:d452e25bd1f1ac0784797e293d70a478b86608ef74d729e929f01922a2993945"
+      kind: "QUOTE"
+      level: "GOLD"
+      immutability: "immutable (no edits, no summaries inside canon)"
 
   metrics:
     services: 27
@@ -262,3 +273,18 @@ triggers:
 Уверенность: high  
 Влияние: high  
 Следующий шаг: сделать DOCS_INDEX + ввести статусы `CANON/RUNBOOK/RESEARCH/DESIGN/DRAFT`.
+
+---
+
+### 2025-12-27
+
+```yaml
+- ID: L-20251227-001
+  Дата: 2025-12-27 00:00
+  Тип: Decision
+  Суть: Liber Ignis (⟁) зафиксирован как неизменяемый GOLD‑артефакт для цитирования/узнавания и контроля целостности.
+  Опора: canon/ISKRA_CORE_v7_revL_FLAT/archive/Liber Ignis.txt (sha256 d452e25b…)
+  Уверенность: high
+  Влияние: high
+  Следующий шаг: связать как ArchiveNode `arch_liber_ignis_v10_0` в GraphRAG/памяти (без перезаписи текста).
+```
