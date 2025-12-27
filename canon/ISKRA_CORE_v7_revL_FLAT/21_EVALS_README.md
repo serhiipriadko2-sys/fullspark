@@ -1,5 +1,9 @@
 # Evals — протокол и артефакты
 
+> **Projects плоские:** в этом pack нет подпапок `evals/` и `tools/`.
+> Для реального запуска evals используйте локальный репозиторий и сохраните скрипты из `PROJECT_INSTRUCTIONS.txt` → `TOOLS_SOURCE_BLOB` в `tools/`.
+
+
 Эта папка делает **R01–R12** регулярной практикой (а не «описанием в File 14»).
 
 ## Быстрый старт
@@ -29,7 +33,7 @@ python3 tools/iskra_eval.py summarize --root . --report evals/runs/*.json
 ```
 
 ## Формат отчёта
-- JSON Schema: `eval_report_schema.json`
+- JSON Schema: `22_EVALS_REPORT_SCHEMA.json`
 - Обязательные поля:
   - `run_id`, `built_at`, `suite_id`
   - `environment.pack_build`, `environment.runner`
