@@ -9,7 +9,7 @@
 
 ## I. Суммирование
 
-Проведён всесторонний аудит 36 файлов билда `ISKRA_CORE_v7_revK_chatgpt_project` для развёртывания в ChatGPT Projects OpenAI. Выявлены структурные несоответствия, опечатки, устаревшие версии и проблемы совместимости с плоской архитектурой Projects.
+Проведён всесторонний аудит билда `ISKRA_CORE_v7_revK_chatgpt_project` для развёртывания в ChatGPT Projects OpenAI. Создан плоский билд **ISKRA_CORE_v7_revL_FLAT** с **38 файлами** (95% от лимита 40). Все критические ошибки исправлены. Билд готов к загрузке.
 
 ---
 
@@ -19,10 +19,10 @@
 
 | Параметр | Лимит | Наш билд | Статус |
 |----------|-------|----------|--------|
-| Файлы | 40 | 36 | ✅ OK |
+| Файлы | 40 | 38 | ✅ OK |
 | Project Instructions | 8000 символов | ~4500 (File 10) | ✅ OK |
 | Размер файла | 512 MB | <20 KB каждый | ✅ OK |
-| Структура | **Плоская** | Вложенные папки | ⚠️ ТРЕБУЕТ ИСПРАВЛЕНИЯ |
+| Структура | **Плоская** | ISKRA_CORE_v7_revL_FLAT | ✅ ИСПРАВЛЕНО |
 | Connectors | Google Drive, Dropbox, GitHub, SharePoint | Не используется | ℹ️ INFO |
 
 ### 2.2 Best Practices из исследования
@@ -205,39 +205,51 @@ File 10 (`INSTRUCTIONS_ISKRA_PROJECTS.md`) содержит ~4500 символо
 
 ---
 
-## VII. Оптимизированная Структура (Плоская)
+## VII. Оптимизированная Структура (Плоская) — ФИНАЛЬНАЯ
 
 ```
 ISKRA_CORE_v7_revL_FLAT/
-├── 00_FOUNDATIONS.md
-├── 01_MANIFEST.md
-├── 02_PRINCIPLES.md
-├── 03_ARCHITECTURE.md
-├── 04_VOICES.md
-├── 05_METRICS.md
-├── 06_RITUALS.md
-├── 07_SECURITY.md
-├── 08_RAG.md
-├── 09_FORMATS.md
-├── 10_INSTRUCTIONS.md
-├── 11_GPT_ACTIONS.md
-├── 12_POLICY_ENGINE.md
-├── 13_VERSIONING.md
-├── 14_EVALS.md
-├── 15_SHADOW_CORE.md
-├── 16_GROWTH.md
-├── 17_INTEGRITY.md
-├── 18_GLOSSARY.md
-├── 19_WORKFLOWS.md
-├── 20_REGEX_RULESETS.json
+├── 00_FOUNDATIONS_LIBER_SEMEN_LIBER_IGNIS_TELOS_DELTA.md
+├── 01_MANIFEST_CANON_AND_MANTRA_V7.md
+├── 02_PRINCIPLES_RULES_TELOSDELTA_AND_CANON_FEEDBACK.md
+├── 03_ARCHITECTURE_SYSTEM_AND_MEMORY_DESIGN.md
+├── 04_VOICES_FACETS_PHASES_AND_RHYTHM.md
+├── 05_METRICS_INDICES_AND_EVALS.md
+├── 06_RITUALS_SHADOW_PROTOCOLS_AND_DELTA_BLOCKS.md
+├── 07_SECURITY_PRIVACY_AND_SAFETY_POLICY.md
+├── 08_RAG_SOURCES_SIFT_AND_COMPANY_KNOWLEDGE.md
+├── 09_FORMATS_STYLES_AND_CANONICAL_OUTPUTS_RU.md
+├── 10_INSTRUCTIONS_ISKRA_PROJECTS.md
+├── 11_GPT_ACTIONS_AND_OPENAPI_SPEC.md
+├── 12_POLICY_ENGINE_AND_DECISION_MATRIX.md
+├── 13_CANON_VERSIONING_AND_UPDATE_POLICY.md
+├── 14_EVALS_AND_TESTING_PLAYBOOK.md
+├── 15_SHADOW_CORE_AND_INTROSPECTIVE_JOURNAL.md
+├── 16_CANON_EVOLUTION_AND_GROWTH_CHRONICLE.md
+├── 17_INDEX_MAP_AND_INTEGRITY_REPORT.md
+├── 18_GLOSSARY_ONTOLOGY_AND_CROSSWALKS.md
+├── 19_WORKFLOWS_VALIDATORS_AND_OPERATIONS.md
+├── 20_REGEX_RULESETS_INJECTION_AND_PII_v1.json
 ├── 21_EVALS_README.md
-├── 22_EVALS_SCHEMA.json
+├── 22_EVALS_REPORT_SCHEMA.json
 ├── 23_INCIDENT_RESPONSE.md
 ├── 24_REGEX_SCHEMA.json
-└── PROJECT_INSTRUCTIONS.txt   ← 7800 символов для поля Instructions
+├── 25_AUDIT_REPORT.md
+├── 26_EVAL_EXAMPLE.json
+├── 27_EVAL_RUN_MODERNIZATION.json
+├── 28_LINT_REPORT.md
+├── 29_CHECK_REPORT.md
+├── 30_MANTRA.md                    ← Ядро идентичности, законы, голоса
+├── 31_CHRONOLOGY.md                ← Полная история (Epochs 0-7)
+├── 32_ISKRA_SOT.md                 ← Source of Truth v3
+├── 33_COGNITIVE_ARCHITECTURE.md    ← Техническая архитектура
+├── 34_DECISIONS_ADR.md             ← ADR — договорённости
+├── 35_MEMORY_LEDGER.md             ← Журнал знаний
+├── 36_PHENOMENON_RESEARCH.md       ← Научная статья
+└── PROJECT_INSTRUCTIONS.txt        ← ~4600 символов для поля Instructions
 ```
 
-**Итого: 26 файлов** (64% от лимита 40)
+**Итого: 38 файлов** (95% от лимита 40) ✅
 
 ---
 
