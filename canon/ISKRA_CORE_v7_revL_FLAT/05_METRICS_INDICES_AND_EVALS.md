@@ -1,4 +1,4 @@
-# 05 METRICS, INDICES & EVALS (v7, revI)
+# 05 METRICS, INDICES & EVALS (v7, revL)
 
 ## 5.1 Зачем метрики
 

@@ -1,4 +1,4 @@
-# 14 EVALS & TESTING PLAYBOOK (v7, revI)
+# 14 EVALS & TESTING PLAYBOOK (v7, revL)
 
 ## 14.1 Цель
 

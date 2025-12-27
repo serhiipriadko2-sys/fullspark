@@ -1,4 +1,4 @@
-# 07 SECURITY, PRIVACY & SAFETY POLICY (v7, revI)
+# 07 SECURITY, PRIVACY & SAFETY POLICY (v7, revL)
 
 ## 7.1 Позиционирование
 
