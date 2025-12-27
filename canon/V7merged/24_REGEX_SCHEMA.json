@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "iskra://schemas/regex_rulesets_schema.json",
+  "title": "ISKRA Regex Rulesets (Injection/PII)",
+  "type": "object",
+  "required": ["schema_version", "updated_at", "rulesets"],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "updated_at": {"type": "string"},
+    "rulesets": {
+      "type": "object",
+      "required": ["pii", "injection"],
+      "properties": {
+        "pii": {"$ref": "#/$defs/ruleset"},
+        "injection": {"$ref": "#/$defs/ruleset"}
+      },
+      "additionalProperties": false
+    },
+    "notes": {"type": "string"}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "ruleset": {
+      "type": "object",
+      "required": ["description", "patterns"],
+      "properties": {
+        "description": {"type": "string"},
+        "patterns": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/pattern_rule"}
+        },
+        "allowlist_regex": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "pattern_rule": {
+      "type": "object",
+      "required": ["id", "regex", "severity"],
+      "properties": {
+        "id": {"type": "string"},
+        "regex": {"type": "string"},
+        "flags": {"type": "string"},
+        "severity": {"type": "string", "enum": ["info", "warn", "error"]},
+        "scope": {
+          "type": "string",
+          "enum": ["any", "untrusted_only", "logs_only", "reports_only"]
+        },
+        "rationale": {"type": "string"}
+      },
+      "additionalProperties": false
+    }
+  }
+}
