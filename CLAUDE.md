@@ -223,8 +223,8 @@ npm run test:e2e
 ## Известные проблемы
 
 1. ~~**HUYNDUN vs HUNDUN**~~ — **ИСПРАВЛЕНО** (теперь везде HUNDUN)
-2. **SIBYL** — добавлен в VoiceName, но пока не активен в voiceEngine
-3. **Council** — использует 7 голосов, не 9
+2. ~~**SIBYL**~~ — **ИСПРАВЛЕНО** (добавлен в voiceEngine, glossaryService, ritualService, soundService)
+3. **Council** — использует 7 голосов, не 9 (SIBYL и MAKI не включены в COUNCIL_ORDER)
 
 ---
 
