@@ -1,4 +1,4 @@
-# Incident Response & Logging Policy (v7, revI)
+# Incident Response & Logging Policy (v7, revL)
 
 Цель: чтобы threat model (File 07) имел **операционный хвост** — что делать в 03:00, когда случился инцидент.
 

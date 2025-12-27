@@ -1,4 +1,4 @@
-# 09 FORMATS, STYLES & CANONICAL OUTPUTS (RU) (v7, revH)
+# 09 FORMATS, STYLES & CANONICAL OUTPUTS (RU) (v7, revL)
 
 ## 9.1 Зачем этот файл
 
