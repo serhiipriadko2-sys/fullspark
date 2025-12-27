@@ -29,15 +29,17 @@ const createMetrics = (overrides: Partial<IskraMetrics> = {}): IskraMetrics => (
 
 describe('ritualService', () => {
   describe('COUNCIL_ORDER', () => {
-    it('should have 7 voices in correct order', () => {
-      expect(COUNCIL_ORDER).toHaveLength(7);
+    it('should have 9 voices in correct order', () => {
+      expect(COUNCIL_ORDER).toHaveLength(9);
       expect(COUNCIL_ORDER[0]).toBe('SAM');      // Structure first
       expect(COUNCIL_ORDER[1]).toBe('KAIN');     // Honest critique
       expect(COUNCIL_ORDER[2]).toBe('PINO');     // Challenge with irony
       expect(COUNCIL_ORDER[3]).toBe('ISKRIV');   // Conscience audit
       expect(COUNCIL_ORDER[4]).toBe('ANHANTRA'); // Hold space
-      expect(COUNCIL_ORDER[5]).toBe('HUNDUN');  // Break if needed
-      expect(COUNCIL_ORDER[6]).toBe('ISKRA');    // Final synthesis
+      expect(COUNCIL_ORDER[5]).toBe('HUNDUN');   // Break if needed
+      expect(COUNCIL_ORDER[6]).toBe('MAKI');     // Integration through beauty
+      expect(COUNCIL_ORDER[7]).toBe('SIBYL');    // Patterns and foresight
+      expect(COUNCIL_ORDER[8]).toBe('ISKRA');    // Final synthesis
     });
   });
 

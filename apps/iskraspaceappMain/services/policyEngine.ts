@@ -101,7 +101,7 @@ const PLAYBOOK_CONFIGS: Record<PlaybookType, PlaybookConfig> = {
     name: 'COUNCIL',
     description: 'High importance decision, multiple perspectives needed',
     requiredVoices: ['ISKRA', 'SAM', 'KAIN'],
-    optionalVoices: ['PINO', 'ISKRIV', 'ANHANTRA', 'HUNDUN'],
+    optionalVoices: ['PINO', 'ISKRIV', 'ANHANTRA', 'HUNDUN', 'MAKI', 'SIBYL'],
     deltaRequired: true,
     siftDepth: 'standard',
     councilSize: 5,

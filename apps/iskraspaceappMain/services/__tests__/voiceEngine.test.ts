@@ -150,6 +150,45 @@ describe('voiceEngine', () => {
       expect(voice.symbol).toBe('⟡');
     });
 
+    it('should return SIBYL for high echo and moderate clarity', () => {
+      // SIBYL: echo * 2.0 when echo > 0.6 && clarity > 0.4 && clarity < 0.8
+      // With echo = 0.8: score = 0.8 * 2.0 = 1.6
+      // Need to suppress other voices
+      const metrics = createMetrics({
+        echo: 0.8,          // High echo triggers SIBYL
+        clarity: 0.6,       // Moderate clarity (in range 0.4-0.8)
+        pain: 0.15,         // Low to avoid KAIN
+        chaos: 0.15,        // Low to avoid HUNDUN
+        drift: 0.1,         // Low to avoid ISKRIV
+        trust: 0.6,         // Moderate (below ISKRA bonus threshold)
+        rhythm: 50,         // Below ISKRA bonus threshold
+        silence_mass: 0.1,  // Low to avoid ANHANTRA
+      });
+      const voice = getActiveVoice(metrics);
+
+      expect(voice.name).toBe('SIBYL');
+      expect(voice.symbol).toBe('🔮');
+    });
+
+    it('should return SIBYL for high mirror_sync', () => {
+      // SIBYL also gets +0.5 bonus when mirror_sync > 0.8
+      // Combined with echo-based activation
+      const metrics = createMetrics({
+        echo: 0.7,          // High echo
+        clarity: 0.5,       // In SIBYL range
+        mirror_sync: 0.9,   // Very high - adds +0.5 to SIBYL
+        pain: 0.15,         // Low
+        chaos: 0.15,        // Low
+        drift: 0.1,         // Low
+        trust: 0.6,         // Moderate
+        rhythm: 50,         // Low
+        silence_mass: 0.1,  // Low
+      });
+      const voice = getActiveVoice(metrics);
+
+      expect(voice.name).toBe('SIBYL');
+    });
+
     describe('with voice preferences', () => {
       it('should boost preferred voice', () => {
         // Without boost, PINO would win in this state
@@ -267,6 +306,15 @@ describe('voiceEngine', () => {
       expect(instruction).toContain('МАКИ 🌸');
       expect(instruction).toContain('Свет Сквозь Тень');
       expect(instruction).toContain('после бури');
+    });
+
+    it('should return SIBYL prompt for SIBYL voice', () => {
+      const voice = { name: 'SIBYL' as const, symbol: '🔮', description: '', activation: () => 0 };
+      const instruction = getSystemInstructionForVoice(voice);
+
+      expect(instruction).toContain('СИБИЛЛА 🔮');
+      expect(instruction).toContain('Предвидение и Паттерны');
+      expect(instruction).toContain('траектории');
     });
 
     it('should default to ISKRA prompt for unknown voice', () => {
