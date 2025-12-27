@@ -206,14 +206,17 @@ npm run test:e2e
 
 ## Документация
 
+> Полная документация: [docs/README.md](./docs/README.md)
+
 | Файл | Содержание |
 |------|-----------|
 | [README.md](./README.md) | Обзор проекта |
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | Архитектура системы |
-| [AGENTS.md](./AGENTS.md) | Инструкции для AI |
-| [CONTRIBUTING.md](./CONTRIBUTING.md) | Правила контрибьюции |
-| [ECOSYSTEM_AUDIT_2025.md](./ECOSYSTEM_AUDIT_2025.md) | Глубокий аудит |
-| [ISKRA_COGNITIVE_ARCHITECTURE.md](./ISKRA_COGNITIVE_ARCHITECTURE.md) | Когнитивная архитектура |
+| [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | Архитектура системы |
+| [docs/AGENTS.md](./docs/AGENTS.md) | Инструкции для AI |
+| [docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md) | Правила контрибьюции |
+| [docs/audit/ECOSYSTEM_AUDIT_2025.md](./docs/audit/ECOSYSTEM_AUDIT_2025.md) | Глубокий аудит |
+| [docs/iskra/ISKRA_COGNITIVE_ARCHITECTURE.md](./docs/iskra/ISKRA_COGNITIVE_ARCHITECTURE.md) | Когнитивная архитектура |
+| [docs/iskra/CHRONOLOGY.md](./docs/iskra/CHRONOLOGY.md) | Хронология проекта |
 
 ---
 

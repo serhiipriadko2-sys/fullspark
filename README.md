@@ -29,17 +29,36 @@
 ```
 fullspark/
 ├── apps/
-│   └── iskraspaceappMain/    # Основное React-приложение
-│       ├── components/        # 44 React компонента
-│       ├── services/          # 27 микросервисов
-│       └── tests/             # 322 unit + 3 E2E тестов
-├── canon/
-│   └── IskraFullCodecanon/   # Canon — источник истины
-├── corpus/                    # Исторические данные (609 MB)
-├── ARCHITECTURE.md           # Архитектура системы
-├── ECOSYSTEM_AUDIT_2025.md   # Глубокий аудит экосистемы
-├── ISKRA_COGNITIVE_ARCHITECTURE.md  # Когнитивная архитектура
-└── ROADMAP_2025_2026.md      # Дорожная карта
+│   └── iskraspaceappMain/       # Основное React-приложение
+│       ├── components/           # 44 React компонента
+│       ├── services/             # 27 микросервисов
+│       └── tests/                # 322 unit + 3 E2E тестов
+│
+├── canon/                        # Canon — источник истины (v7)
+│
+├── corpus/                       # Исторические данные (609 MB)
+│   └── incoming/                 # Документы рождения Кайна
+│
+├── docs/                         # Документация
+│   ├── ARCHITECTURE.md           # Архитектура системы
+│   ├── AGENTS.md                 # Инструкции для AI
+│   ├── CONTRIBUTING.md           # Правила контрибьюции
+│   ├── CHANGELOG.md              # История изменений
+│   │
+│   ├── iskra/                    # Документация Искры
+│   │   ├── ISKRA_SOT.md          # Source of Truth
+│   │   ├── ISKRA_COGNITIVE_ARCHITECTURE.md
+│   │   ├── ISKRA_PHENOMENON_RESEARCH.md
+│   │   └── CHRONOLOGY.md         # Хронология проекта
+│   │
+│   ├── audit/                    # Аудит и отчёты
+│   │   └── ECOSYSTEM_AUDIT_2025.md
+│   │
+│   └── planning/                 # Планирование
+│       └── ROADMAP_2025_2026.md
+│
+├── README.md                     # Этот файл
+└── CLAUDE.md                     # Инструкции для Claude
 ```
 
 ---
@@ -158,14 +177,18 @@ npm test -- --coverage
 
 ## Документация
 
+> Полная документация: [docs/README.md](./docs/README.md)
+
 | Документ | Описание |
 |----------|----------|
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | Техническая архитектура |
-| [ECOSYSTEM_AUDIT_2025.md](./ECOSYSTEM_AUDIT_2025.md) | Глубокий аудит системы |
-| [ISKRA_COGNITIVE_ARCHITECTURE.md](./ISKRA_COGNITIVE_ARCHITECTURE.md) | Когнитивная архитектура |
-| [ROADMAP_2025_2026.md](./ROADMAP_2025_2026.md) | Дорожная карта |
-| [AGENTS.md](./AGENTS.md) | Инструкции для AI-агентов |
-| [CONTRIBUTING.md](./CONTRIBUTING.md) | Гайд по контрибьюции |
+| [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | Техническая архитектура |
+| [docs/iskra/ISKRA_SOT.md](./docs/iskra/ISKRA_SOT.md) | Source of Truth |
+| [docs/iskra/ISKRA_COGNITIVE_ARCHITECTURE.md](./docs/iskra/ISKRA_COGNITIVE_ARCHITECTURE.md) | Когнитивная архитектура |
+| [docs/iskra/ISKRA_PHENOMENON_RESEARCH.md](./docs/iskra/ISKRA_PHENOMENON_RESEARCH.md) | Научное исследование |
+| [docs/iskra/CHRONOLOGY.md](./docs/iskra/CHRONOLOGY.md) | Хронология проекта |
+| [docs/audit/ECOSYSTEM_AUDIT_2025.md](./docs/audit/ECOSYSTEM_AUDIT_2025.md) | Глубокий аудит системы |
+| [docs/planning/ROADMAP_2025_2026.md](./docs/planning/ROADMAP_2025_2026.md) | Дорожная карта |
+| [docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md) | Гайд по контрибьюции |
 
 ---
 
