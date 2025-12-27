@@ -4,7 +4,7 @@
  * Rituals are structured interventions that transform Iskra's state.
  *
  * Available Rituals:
- * - COUNCIL: All 7 voices debate in order (Сэм → Кайн → Пино → Искрив → Анхантра → Хуньдун → Искра)
+ * - COUNCIL: All 9 voices debate in order (Сэм → Кайн → Пино → Искрив → Анхантра → Хуньдун → Маки → Сибилла → Искра)
  * - PHOENIX: Full form reset (drift > 0.6 + trust↓ OR chaos > 0.8)
  * - SHATTER: Break false clarity (drift > 0.8)
  * - RETUNE: Restore lost harmony, gradual return to baseline
@@ -18,15 +18,17 @@ import { IskraMetrics, IskraPhase, VoiceName } from '../types';
 import { ai } from './geminiService';
 import { DELTA_PROTOCOL_INSTRUCTION } from './deltaProtocol';
 
-// Council order per Canon
+// Council order per Canon (all 9 voices)
 export const COUNCIL_ORDER: VoiceName[] = [
   'SAM',      // 1. Structure first - lay the foundation
   'KAIN',     // 2. Honest critique
   'PINO',     // 3. Challenge with irony
   'ISKRIV',   // 4. Conscience audit
   'ANHANTRA', // 5. Hold space
-  'HUNDUN',  // 6. Break if needed
-  'ISKRA',    // 7. Final synthesis
+  'HUNDUN',   // 6. Break if needed
+  'MAKI',     // 7. Integration through beauty
+  'SIBYL',    // 8. Patterns and foresight
+  'ISKRA',    // 9. Final synthesis
 ];
 
 // Voice prompts for Council
