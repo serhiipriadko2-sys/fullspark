@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { IskraAIService } from '../services/geminiService';
 import { memoryService } from '../services/memoryService';
+import { userMetricsService } from '../services/userMetricsService';
 import { SparkleIcon, XIcon, TriangleIcon, FlameIcon } from './icons';
 import { soundService } from '../services/soundService';
 import Loader from './Loader';
@@ -188,7 +189,11 @@ const FocusSession: React.FC<FocusSessionProps> = ({ onClose }) => {
     const handleComplete = () => {
         setStatus('COMPLETED');
         soundService.playRitualConnect();
-        
+
+        // Save focus minutes to user metrics (25 min session)
+        const focusMinutes = Math.round((25 * 60 - timeLeft) / 60);
+        userMetricsService.addFocusMinutes(focusMinutes);
+
         // Save the artifact if exists
         if (artifact) {
             memoryService.addArchiveEntry({

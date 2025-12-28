@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { IskraAIService } from '../services/geminiService';
-import { DailyAdvice, Task, RitualTag, Habit, IskraMetrics, IskraPhase } from '../types';
+import { userMetricsService } from '../services/userMetricsService';
+import { DailyAdvice, Task, RitualTag, Habit, IskraMetrics, IskraPhase, UserDailyMetrics } from '../types';
 import { storageService } from '../services/storageService';
 import Loader from './Loader';
 import BreathingExercise from './BreathingExercise';
-import { 
+import {
     LightbulbIcon, ClockIcon, ChevronRightIcon,
     FlameIcon, DropletsIcon, SunIcon, ScaleIcon, TriangleIcon
 } from './icons';
@@ -152,6 +153,10 @@ const MetricRing: React.FC<{
 const DayPulse: React.FC<DayPulseProps> = ({ metrics, phase, onStartFocus }) => {
     const [advice, setAdvice] = useState<DailyAdvice | null>(null);
     const [isAdviceLoading, setIsAdviceLoading] = useState<boolean>(true);
+    // Реальные метрики пользователя (НЕ рандомные!)
+    const [userMetrics, setUserMetrics] = useState<UserDailyMetrics>(() =>
+        userMetricsService.getUserDailyMetrics()
+    );
     const [topTasks] = useState<Task[]>(() => {
       try {
         const allTasks = storageService.getTasks();
@@ -170,6 +175,9 @@ const DayPulse: React.FC<DayPulseProps> = ({ metrics, phase, onStartFocus }) => 
 
     useEffect(() => {
         setHabits(storageService.getHabits());
+        // Обновляем пользовательские метрики при загрузке
+        setUserMetrics(userMetricsService.getUserDailyMetrics());
+
         const fetchAdvice = async () => {
             try {
                 const result = await service.getDailyAdvice(topTasks);
@@ -187,9 +195,12 @@ const DayPulse: React.FC<DayPulseProps> = ({ metrics, phase, onStartFocus }) => 
         const updated = habits.map(h => h.id === id ? { ...h, completedToday: !h.completedToday, streak: !h.completedToday ? h.streak + 1 : Math.max(0, h.streak - 1) } : h);
         setHabits(updated);
         storageService.saveHabits(updated);
+        // Обновляем метрики после изменения привычек
+        setUserMetrics(userMetricsService.getUserDailyMetrics());
     };
 
-    const mainScore = advice?.deltaScore ?? 75;
+    // Используем реальный ∆-Ритм из userMetrics
+    const mainScore = userMetrics.deltaScore;
     const isMobile = windowWidth < 1024;
     const ringSize = isMobile ? 220 : 280;
 
@@ -229,55 +240,55 @@ const DayPulse: React.FC<DayPulseProps> = ({ metrics, phase, onStartFocus }) => 
                             </div>
                         </MetricRing>
                         
-                        {/* Satellites - Desktop: Absolute around ring. 4 Metrics now. */}
+                        {/* Satellites - Desktop: Absolute around ring. 4 Real User Metrics */}
                         {!isMobile && (
                             <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-                                {/* Top Left: Focus - Floating organically */}
+                                {/* Top Left: Focus - From FocusSession */}
                                 <div className="absolute top-4 left-0 animate-float">
                                     <div className="glass-panel px-3 py-1 rounded-full text-xs font-mono text-accent border-accent/20 backdrop-blur-md shadow-lg">
-                                        Фокус {advice?.focus}%
+                                        Фокус {userMetrics.focus}%
                                     </div>
                                 </div>
-                                {/* Top Right: Habits - Floating with delay */}
+                                {/* Top Right: Habits - From completed habits */}
                                 <div className="absolute top-4 right-0 animate-float-delayed">
                                     <div className="glass-panel px-3 py-1 rounded-full text-xs font-mono text-purple-400 border-purple-400/20 backdrop-blur-md shadow-lg">
-                                        Привычки {advice?.habits}%
+                                        Привычки {userMetrics.habits}%
                                     </div>
                                 </div>
-                                {/* Bottom Left: Sleep - Floating with different delay */}
+                                {/* Bottom Left: Sleep - User input */}
                                 <div className="absolute bottom-10 left-0 -translate-x-4 animate-float-delayed-2">
                                     <div className="glass-panel px-3 py-1 rounded-full text-xs font-mono text-success border-success/20 backdrop-blur-md shadow-lg">
-                                        Сон {advice?.sleep}%
+                                        Сон {userMetrics.sleep}%
                                     </div>
                                 </div>
-                                {/* Bottom Right: Energy - Floating */}
+                                {/* Bottom Right: Energy - From Journal */}
                                 <div className="absolute bottom-10 right-0 translate-x-4 animate-float">
                                     <div className="glass-panel px-3 py-1 rounded-full text-xs font-mono text-warning border-warning/20 backdrop-blur-md shadow-lg">
-                                        Сила {advice?.energy}%
+                                        Сила {userMetrics.energy}%
                                     </div>
                                 </div>
                             </div>
                         )}
                     </div>
 
-                    {/* Mobile Satellites Row (4 items) */}
+                    {/* Mobile Satellites Row (4 Real User Metrics) */}
                     {isMobile && (
                         <div className="grid grid-cols-4 w-full max-w-sm px-2 gap-2">
                             <div className="flex flex-col items-center glass-card py-2 px-1">
                                 <span className="text-[9px] text-text-muted uppercase tracking-wider mb-1">Фокус</span>
-                                <span className="text-base font-mono text-accent">{advice?.focus}%</span>
+                                <span className="text-base font-mono text-accent">{userMetrics.focus}%</span>
                             </div>
                             <div className="flex flex-col items-center glass-card py-2 px-1">
                                 <span className="text-[9px] text-text-muted uppercase tracking-wider mb-1">Сон</span>
-                                <span className="text-base font-mono text-success">{advice?.sleep}%</span>
+                                <span className="text-base font-mono text-success">{userMetrics.sleep}%</span>
                             </div>
                             <div className="flex flex-col items-center glass-card py-2 px-1">
                                 <span className="text-[9px] text-text-muted uppercase tracking-wider mb-1">Сила</span>
-                                <span className="text-base font-mono text-warning">{advice?.energy}%</span>
+                                <span className="text-base font-mono text-warning">{userMetrics.energy}%</span>
                             </div>
                             <div className="flex flex-col items-center glass-card py-2 px-1">
                                 <span className="text-[9px] text-text-muted uppercase tracking-wider mb-1">Прив.</span>
-                                <span className="text-base font-mono text-purple-400">{advice?.habits}%</span>
+                                <span className="text-base font-mono text-purple-400">{userMetrics.habits}%</span>
                             </div>
                         </div>
                     )}
