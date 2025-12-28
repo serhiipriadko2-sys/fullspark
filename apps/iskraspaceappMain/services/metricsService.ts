@@ -1,5 +1,5 @@
 
-import { IskraMetrics, IskraPhase } from '../types';
+import { IskraMetrics, IskraPhase, MetaMetrics } from '../types';
 import { metricsConfig } from '../config/metricsConfig';
 import { clamp } from '../utils/metrics';
 
