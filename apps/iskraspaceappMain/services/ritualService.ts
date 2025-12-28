@@ -15,7 +15,7 @@
  */
 
 import { IskraMetrics, IskraPhase, VoiceName } from '../types';
-import { ai } from './geminiService';
+import { getAI } from './geminiService';
 import { DELTA_PROTOCOL_INSTRUCTION } from './deltaProtocol';
 
 // Council order per Canon (all 9 voices)
@@ -121,7 +121,7 @@ ${DELTA_PROTOCOL_INSTRUCTION}`;
     const prompt = `${systemBase}\n\n${COUNCIL_VOICE_PROMPTS[voice]}\n\nДай свой взгляд на тему.`;
 
     try {
-      const response = await ai.models.generateContent({
+      const response = await getAI().models.generateContent({
         model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
