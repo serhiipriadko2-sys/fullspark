@@ -91,8 +91,17 @@ export interface TranscriptionMessage {
 }
 
 // New: Defines the structure for Iskra's internal metrics.
+/**
+ * IskraMetrics — ВНУТРЕННЕЕ состояние Искры (AI-companion)
+ *
+ * Это метрики ИСКРЫ, а не пользователя!
+ * Обновляются через: metricsService.calculateMetricsUpdate(userText)
+ * Используются для: выбора голоса, фазы, поведения AI
+ *
+ * НЕ ПУТАТЬ с UserDailyMetrics!
+ */
 export interface IskraMetrics {
-  rhythm: number; // 0-100
+  rhythm: number; // 0-100 (внутренний ритм Искры, НЕ пользователя)
   trust: number;  // 0-1
   clarity: number;// 0-1
   pain: number;   // 0-1
@@ -103,6 +112,29 @@ export interface IskraMetrics {
   mirror_sync: number; // 0-1 (Derived: alignment)
   interrupt: number; // 0-1
   ctxSwitch: number; // 0-1
+}
+
+/**
+ * UserDailyMetrics — ПОЛЬЗОВАТЕЛЬСКИЕ метрики дня
+ *
+ * Это метрики ПОЛЬЗОВАТЕЛЯ, формирующие его ∆-Ритм!
+ *
+ * Источники данных:
+ * - focus: FocusSession (накопленное время фокуса)
+ * - sleep: Ввод пользователя / HealthKit интеграция
+ * - energy: JournalEntry.userMetrics.energy (самооценка)
+ * - habits: % выполненных привычек за день
+ *
+ * ∆-Ритм (deltaScore) = weighted_average(focus, sleep, energy, habits)
+ *
+ * НЕ ПУТАТЬ с IskraMetrics!
+ */
+export interface UserDailyMetrics {
+  focus: number;      // 0-100, из FocusSession
+  sleep: number;      // 0-100, ввод пользователя / HealthKit
+  energy: number;     // 0-100, из Journal.userMetrics
+  habits: number;     // 0-100, % выполненных привычек
+  deltaScore: number; // 0-100, вычисляемый ∆-Ритм
 }
 
 export interface DeltaSignature {
