@@ -8,7 +8,7 @@
  * @see supabase_graphrag_migration.sql (database schema)
  */
 
-import { supabaseClient } from '../lib/supabaseClient';
+import { supabase as supabaseClient } from './supabaseClient';
 import type { IskraMetrics } from '../types';
 import type {
   MemoryLayer,
@@ -425,7 +425,7 @@ class GraphServiceSupabase {
     const nodesByLayer: Record<string, number> = {};
     const nodesByType: Record<string, number> = {};
 
-    (nodes || []).forEach(node => {
+    (nodes || []).forEach((node: { id: string; layer: string; type: string }) => {
       nodesByLayer[node.layer] = (nodesByLayer[node.layer] || 0) + 1;
       nodesByType[node.type] = (nodesByType[node.type] || 0) + 1;
     });

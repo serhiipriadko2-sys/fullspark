@@ -10,6 +10,17 @@ export const ai: GoogleGenAI | null = API_KEY ? new GoogleGenAI({ apiKey: API_KE
 const model = "gemini-2.5-flash";
 const OFFLINE_MODE = !ai || process.env.VITEST === 'true';
 
+/**
+ * Get the AI client, throwing an error if not available.
+ * Call only after OFFLINE_MODE check returns false.
+ */
+export function getAI(): GoogleGenAI {
+  if (!ai) {
+    throw new Error('AI client not initialized - API_KEY missing');
+  }
+  return ai;
+}
+
 const OFFLINE_ADVICE: DailyAdvice & { evidence?: Evidence[] } = {
     deltaScore: 78,
     sleep: 68,
@@ -213,7 +224,7 @@ export class IskraAIService {
             
             const prompt = `На основе этих задач пользователя: "${taskTitles}" и его текущего ∆-Ритма: ${baseAdvice.deltaScore}%, сгенерируй короткий (1-2 предложения), мудрый инсайт и краткое философское объяснение ("почему это важно"). Ответ должен быть в формате JSON.`;
     
-            const response = await withRetry(() => ai.models.generateContent({
+            const response = await withRetry(() => getAI().models.generateContent({
                 model: model,
                 contents: prompt,
                 config: {
@@ -265,7 +276,7 @@ export class IskraAIService {
 - DELTA: трансформация, новый опыт, выход из зоны комфорта.
 Ответ должен быть в формате JSON.`;
 
-        const response = await withRetry(() => ai.models.generateContent({
+        const response = await withRetry(() => getAI().models.generateContent({
             model: model,
             contents: prompt,
             config: {
@@ -304,7 +315,7 @@ export class IskraAIService {
     try {
         const prompt = `Сгенерируй один глубокий, рефлексивный вопрос для записи в дневник. Вопрос должен быть на русском языке. Также предоставь краткое философское объяснение, почему этот вопрос важен для самопознания.`;
 
-        const response = await withRetry(() => ai.models.generateContent({
+        const response = await withRetry(() => getAI().models.generateContent({
             model: model,
             contents: prompt,
             config: {
@@ -353,7 +364,7 @@ export class IskraAIService {
 
 Запись: "${text.substring(0, 1000)}..."`;
 
-          const response = await withRetry(() => ai.models.generateContent({
+          const response = await withRetry(() => getAI().models.generateContent({
               model: model,
               contents: prompt,
               config: {
@@ -401,7 +412,7 @@ Use these metrics as "bodily pressure" to adjust your tone subtly. Do not mentio
       }
 
       try {
-        const response = await ai.models.generateContentStream({
+        const response = await getAI().models.generateContentStream({
           model: model,
         contents: contents,
         config: {
@@ -519,7 +530,7 @@ SIFT Depth: ${config.siftDepth}
     }));
 
     try {
-      const response = await ai.models.generateContentStream({
+      const response = await getAI().models.generateContentStream({
         model: model,
         contents: contents,
         config: {
@@ -625,7 +636,7 @@ Chaos: ${metrics.chaos.toFixed(2)} | Drift: ${metrics.drift.toFixed(2)} | Clarit
     }
 
     try {
-      const response = await ai.models.generateContentStream({
+      const response = await getAI().models.generateContentStream({
         model: model,
         contents: prompt,
         config: {
@@ -654,7 +665,7 @@ Chaos: ${metrics.chaos.toFixed(2)} | Drift: ${metrics.drift.toFixed(2)} | Clarit
 
       try {
           // Embeddings don't usually use 'systemInstruction' or 'responseSchema'
-          const result = await withRetry(() => ai.models.embedContent({
+          const result = await withRetry(() => getAI().models.embedContent({
               model: "text-embedding-004",
               contents: text,
           })) as EmbedContentResponse;
@@ -687,7 +698,7 @@ Chaos: ${metrics.chaos.toFixed(2)} | Drift: ${metrics.drift.toFixed(2)} | Clarit
     }
 
     try {
-        const response = await withRetry(() => ai.models.generateContent({
+        const response = await withRetry(() => getAI().models.generateContent({
             model: model,
             contents: prompt,
             config: {
@@ -750,7 +761,7 @@ Chaos: ${metrics.chaos.toFixed(2)} | Drift: ${metrics.drift.toFixed(2)} | Clarit
     }
 
     try {
-      const response = await withRetry(() => ai.models.generateContent({
+      const response = await withRetry(() => getAI().models.generateContent({
         model: model,
         contents: prompt,
         config: {
@@ -804,7 +815,7 @@ Chaos: ${metrics.chaos.toFixed(2)} | Drift: ${metrics.drift.toFixed(2)} | Clarit
         }
 
         try {
-            const response = await withRetry(() => ai.models.generateContent({
+            const response = await withRetry(() => getAI().models.generateContent({
                 model: model,
                 contents: prompt,
               config: {
