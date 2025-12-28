@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import ChatWindow from './ChatWindow';
 import { IskraAIService } from '../services/geminiService';
 import { searchService } from '../services/searchService';
-import { Message, IskraMetrics, Voice, VoiceName, Evidence, VoicePreferences } from '../types';
+import { Message, IskraMetrics, Voice, VoiceName, SearchResult, VoicePreferences } from '../types';
 import { getActiveVoice } from '../services/voiceEngine';
 import { storageService } from '../services/storageService';
 import MiniMetricsDisplay from './MiniMetricsDisplay';
@@ -17,7 +17,7 @@ interface ChatViewProps {
   onUserInput: (input: string) => void;
 }
 
-// List of selectable voices
+// List of selectable voices (all 9 canonical voices)
 const AVAILABLE_VOICES: { name: VoiceName | 'AUTO', label: string }[] = [
     { name: 'AUTO', label: 'Авто (По состоянию)' },
     { name: 'ISKRA', label: '⟡ Искра (Синтез)' },
@@ -28,6 +28,7 @@ const AVAILABLE_VOICES: { name: VoiceName | 'AUTO', label: string }[] = [
     { name: 'HUNDUN', label: '🜃 Хуньдун (Хаос)' },
     { name: 'ISKRIV', label: '🪞 Искрив (Совесть)' },
     { name: 'MAKI', label: '🌸 Маки (Свет)' },
+    { name: 'SIBYL', label: '🔮 Сибилла (Предвидение)' },
 ];
 
 const VOICE_COLORS: Record<VoiceName, string> = {
@@ -38,7 +39,8 @@ const VOICE_COLORS: Record<VoiceName, string> = {
     'ANHANTRA': 'border-blue-300/20 shadow-glow-electric',
     'HUNDUN': 'border-purple-500/40 shadow-glow-electric',
     'ISKRIV': 'border-white/20 shadow-soft',
-    'MAKI': 'border-green-300/30 shadow-glow-electric'
+    'MAKI': 'border-green-300/30 shadow-glow-electric',
+    'SIBYL': 'border-violet-400/30 shadow-glow-electric',
 };
 
 const ChatView: React.FC<ChatViewProps> = ({ metrics, onUserInput }) => {
@@ -205,7 +207,7 @@ const ChatView: React.FC<ChatViewProps> = ({ metrics, onUserInput }) => {
         let resultText = `Найдено ${searchResults.length} узлов памяти по запросу "${searchQuery}":\n\n`;
         
         if (searchResults.length > 0) {
-          searchResults.slice(0, 5).forEach((node: Evidence, index: number) => {
+          searchResults.slice(0, 5).forEach((node: SearchResult, index: number) => {
             resultText += `${index + 1}. **${node.title || 'Без названия'}** (*${node.type}${node.layer ? `/${node.layer}` : ''}*)\n`;
             resultText += `   - Фрагмент: "${node.snippet}"\n\n`;
           });

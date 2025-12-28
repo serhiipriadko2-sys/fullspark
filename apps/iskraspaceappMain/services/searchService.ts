@@ -1,7 +1,7 @@
 
 import { storageService } from './storageService';
 import { memoryService } from './memoryService';
-import { MemoryNode, MemoryNodeLayer, SearchFilters, Evidence, Task, JournalEntry } from '../types';
+import { MemoryNode, MemoryNodeLayer, SearchFilters, SearchResult, Task, JournalEntry } from '../types';
 import { IskraAIService } from './geminiService';
 
 /**
@@ -10,7 +10,7 @@ import { IskraAIService } from './geminiService';
 class SearchService {
   private ready = false;
   private lexIndex: {
-    docs: { id: string; type: Evidence['type']; layer?: MemoryNodeLayer; text: string; title?: string; tags?: string[]; ts?: number }[];
+    docs: { id: string; type: SearchResult['type']; layer?: MemoryNodeLayer; text: string; title?: string; tags?: string[]; ts?: number }[];
     vocab: Map<string, number>;
   } = { docs: [], vocab: new Map() };
 
@@ -95,7 +95,7 @@ class SearchService {
     return (start > 0 ? '…' : '') + text.slice(start, end) + (end < text.length ? '…' : '');
   }
 
-  async searchHybrid(query: string, filters: SearchFilters = {}): Promise<Evidence[]> {
+  async searchHybrid(query: string, filters: SearchFilters = {}): Promise<SearchResult[]> {
     if (!this.ready) {
         await this.build();
     }

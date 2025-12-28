@@ -312,6 +312,8 @@ export interface MemoryNode {
   trust_level?: number; // 0.0 to 1.0
   tags?: string[];
   section?: string; // e.g., "Security/SIFT"
+  // Primary SIFT block (shorthand for first evidence block)
+  sift?: SIFTBlock;
 }
 
 export interface MantraNode {
@@ -354,7 +356,8 @@ export type SearchFilters = {
   layer?: MemoryNodeLayer[];
 };
 
-export interface Evidence {
+// SearchResult - результат поиска (не путать с Evidence для SIFT)
+export interface SearchResult {
   id: string;
   type: SearchableDocType;
   layer?: MemoryNodeLayer;
@@ -362,4 +365,4 @@ export interface Evidence {
   snippet: string;
   score: number;
   meta?: Record<string, any>;
-};
+}
