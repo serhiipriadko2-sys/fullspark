@@ -195,7 +195,7 @@ export function checkRitualTriggers(metrics: IskraMetrics): RitualTriggerResult 
 /**
  * Executes PHOENIX ritual - full reset
  */
-export function executePhoenix(currentMetrics: IskraMetrics): IskraMetrics {
+export function executePhoenix(_currentMetrics: IskraMetrics): IskraMetrics {
   return {
     rhythm: 50,
     trust: 0.5,
@@ -424,7 +424,7 @@ export function getRule21Progress(commitmentId: string): { progress: number; str
  * 88 = 8 phases × 11 (master number) - protection of core values
  * When invoked, strongly reinforces trust and reduces all destabilizing metrics.
  */
-export function executeRule88(currentMetrics: IskraMetrics, boundaries: string[] = []): IskraMetrics {
+export function executeRule88(currentMetrics: IskraMetrics, _boundaries: string[] = []): IskraMetrics {
   // Sacred protection: boost trust, reduce chaos/drift/pain
   return {
     ...currentMetrics,
@@ -447,7 +447,7 @@ export function executeRule88(currentMetrics: IskraMetrics, boundaries: string[]
  * 4. Рост (Growth) - Development and learning
  * 5. Безопасность (Safety) - Security and trust
  */
-export async function executeSrez5(metrics: IskraMetrics, context?: string): Promise<Srez5Report> {
+export async function executeSrez5(metrics: IskraMetrics, _context?: string): Promise<Srez5Report> {
   const clarityScore = (metrics.clarity + (1 - metrics.chaos)) / 2;
   const honestyScore = (1 - metrics.drift + metrics.mirror_sync) / 2;
   const actionScore = metrics.rhythm / 100;
@@ -531,7 +531,7 @@ export async function executeSrez5(metrics: IskraMetrics, context?: string): Pro
  */
 export function checkExtendedRitualTriggers(
   metrics: IskraMetrics,
-  options?: {
+  _options?: {
     hasActiveRule21?: boolean;
     lastRetuneTime?: Date;
     consecutiveBadSessions?: number;

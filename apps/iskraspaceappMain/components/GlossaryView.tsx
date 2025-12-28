@@ -17,7 +17,6 @@ import {
   getCategories,
   GlossaryTerm,
   TermCategory,
-  SearchResult,
 } from '../services/glossaryService';
 
 interface GlossaryViewProps {
@@ -51,7 +50,7 @@ const GlossaryView: React.FC<GlossaryViewProps> = ({ onClose, onTermSelect }) =>
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<TermCategory | null>(null);
   const [selectedTerm, setSelectedTerm] = useState<GlossaryTerm | null>(null);
-  const [showRelated, setShowRelated] = useState(false);
+  const [, setShowRelated] = useState(false);
 
   const categories = useMemo(() => getCategories(), []);
 
@@ -155,7 +154,7 @@ const GlossaryView: React.FC<GlossaryViewProps> = ({ onClose, onTermSelect }) =>
               Ничего не найдено. Попробуйте другой запрос.
             </div>
           ) : (
-            filteredTerms.map(({ term, score }) => (
+            filteredTerms.map(({ term }) => (
               <div
                 key={term.id}
                 onClick={() => handleTermClick(term)}

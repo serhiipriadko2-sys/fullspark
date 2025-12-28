@@ -3,9 +3,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { IskraAIService } from '../services/geminiService';
 import { memoryService } from '../services/memoryService';
 import { userMetricsService } from '../services/userMetricsService';
-import { SparkleIcon, XIcon, TriangleIcon, FlameIcon } from './icons';
+import { XIcon, TriangleIcon, FlameIcon } from './icons';
 import { soundService } from '../services/soundService';
-import Loader from './Loader';
 
 const service = new IskraAIService();
 

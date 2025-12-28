@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { Rule8Service, Rule8Context, PendingCommitment, KeyFact } from '../rule8Service';
+import { Rule8Service } from '../rule8Service';
 import type { Message } from '../../types';
 
 describe('Rule8Service', () => {

@@ -139,7 +139,7 @@ describe('EvidenceService', () => {
 
   describe('createSIFTEvidence', () => {
     it('should create SIFT evidence with HYP label for 0 sources', () => {
-      const evidence1 = evidenceService.createEvidence('canon', '07', '7.4');
+      evidenceService.createEvidence('canon', '07', '7.4');
       const sift = evidenceService.createSIFTEvidence(
         'Security patterns exist',
         'HYP',

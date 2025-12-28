@@ -2,7 +2,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Message } from '../types';
 import InputField from './InputField';
-import { SparkleIcon, UserIcon, TriangleIcon, ActivityIcon } from './icons';
+import { SparkleIcon, UserIcon, TriangleIcon } from './icons';
 import { soundService } from '../services/soundService';
 import { parseIskraResponse } from '../utils/deltaValidator';
 

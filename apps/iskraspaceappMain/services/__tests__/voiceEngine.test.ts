@@ -2,7 +2,7 @@
  * Tests for Voice Engine - Liber Vox Implementation
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { getActiveVoice, getSystemInstructionForVoice } from '../voiceEngine';
 import { IskraMetrics, VoicePreferences } from '../../types';
 

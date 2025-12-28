@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { memoryService } from '../services/memoryService';
 import { searchService } from '../services/searchService';
 import { MemoryNode, MemoryNodeType, SearchResult } from '../types';
-import { SparkleIcon, XIcon, LayersIcon, DatabaseIcon, PlusIcon, TriangleIcon, FilePlus2Icon, TrashIcon } from './icons';
+import { XIcon, LayersIcon, DatabaseIcon, PlusIcon, FilePlus2Icon } from './icons';
 import Loader from './Loader';
 import MemoryGraph from './MemoryGraph';
 

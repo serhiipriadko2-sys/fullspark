@@ -225,7 +225,7 @@ export function recommendCollaboration(
   metrics: IskraMetrics
 ): CollaborationResult {
   const synergies = getSynergyPartners(primaryVoice);
-  const conflicts = getConflictPartners(primaryVoice);
+  getConflictPartners(primaryVoice);
   const activeConflicts = detectActiveConflicts(metrics);
 
   // Filter out voices we're in active conflict with

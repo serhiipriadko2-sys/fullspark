@@ -7,8 +7,8 @@
  * @see canon/ISKRA_CORE_v7_revK_chatgpt_project/20_REGEX_RULESETS_INJECTION_AND_PII_v1.json
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
-import { securityService, SecurityCheckResult, Finding } from '../securityService';
+import { describe, it, expect } from 'vitest';
+import { securityService } from '../securityService';
 
 describe('SecurityService', () => {
   describe('initialization', () => {

@@ -7,7 +7,6 @@ import {
   evaluateResponse,
   evaluateBatch,
   generateEvalReport,
-  type EvalResult,
 } from '../evalService';
 
 describe('evalService', () => {

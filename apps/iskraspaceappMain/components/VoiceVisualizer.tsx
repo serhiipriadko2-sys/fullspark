@@ -41,29 +41,24 @@ const VoiceVisualizer: React.FC<VoiceVisualizerProps> = ({ status, activeColor }
       // Animation parameters based on status
       let baseRadius = 80;
       let amplitude = 10;
-      let frequency = 0.05;
       let speed = 0.05;
       let layers = 3;
 
       if (status === 'SPEAKING') {
           amplitude = 30;
-          frequency = 0.2;
           speed = 0.15;
           layers = 5;
       } else if (status === 'LISTENING') {
           baseRadius = 70;
           amplitude = 5;
-          frequency = 0.02;
           speed = 0.02;
       } else if (status === 'CONNECTING') {
            amplitude = 2;
-           frequency = 0.1;
            speed = 0.1;
            layers = 2;
       } else {
           // IDLE
           amplitude = 2;
-          frequency = 0.01;
           speed = 0.01;
           layers = 1;
       }

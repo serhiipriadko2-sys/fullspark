@@ -5,7 +5,7 @@
  * This service wraps AI responses and enforces the protocol.
  */
 
-import { validateDeltaSignature, generateDeltaBlock, enforceDeltaProtocol } from './deltaProtocol';
+import { validateDeltaSignature, generateDeltaBlock } from './deltaProtocol';
 import { IskraMetrics, VoiceName } from '../types';
 
 export interface EnforcementResult {
