@@ -410,7 +410,7 @@ Use these metrics as "bodily pressure" to adjust your tone subtly. Do not mentio
       });
 
       for await (const chunk of response) {
-        yield chunk.text;
+        yield chunk.text ?? '';
       }
     } catch (error) {
       console.error("Error in chat stream from Gemini:", error);
@@ -528,8 +528,9 @@ SIFT Depth: ${config.siftDepth}
       });
 
       for await (const chunk of response) {
-        fullResponse += chunk.text;
-        yield chunk.text;
+        const text = chunk.text ?? '';
+        fullResponse += text;
+        yield text;
       }
 
       // Evaluate the complete response
@@ -633,7 +634,7 @@ Chaos: ${metrics.chaos.toFixed(2)} | Drift: ${metrics.drift.toFixed(2)} | Clarit
       });
 
       for await (const chunk of response) {
-        yield chunk.text;
+        yield chunk.text ?? '';
       }
     } catch (error) {
       console.error("Error fetching rune interpretation from Gemini:", error);
