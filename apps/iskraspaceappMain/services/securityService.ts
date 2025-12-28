@@ -54,9 +54,9 @@ class SecurityService {
   private allowlistPatterns: RegExp[] = [];
 
   constructor() {
-    // Load rulesets from File 20
-    this.piiRuleset = securityRulesets.rulesets.pii;
-    this.injectionRuleset = securityRulesets.rulesets.injection;
+    // Load rulesets from File 20 (cast to fix severity type from JSON)
+    this.piiRuleset = securityRulesets.rulesets.pii as Ruleset;
+    this.injectionRuleset = securityRulesets.rulesets.injection as Ruleset;
 
     // Compile PII patterns (strip Python-style inline flags)
     this.piiPatterns = this.piiRuleset.patterns.map(p =>
@@ -166,7 +166,7 @@ class SecurityService {
   public sanitizeInput(text: string): string {
     let sanitized = text;
 
-    this.piiRuleset.patterns.forEach((pattern, idx) => {
+    this.piiRuleset.patterns.forEach((_pattern, idx) => {
       const regex = this.piiPatterns[idx];
       regex.lastIndex = 0;
 

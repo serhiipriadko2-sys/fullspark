@@ -14,7 +14,6 @@
  */
 
 import { validateDeltaSignature } from './deltaProtocol';
-import type { DeltaSignature } from '../types';
 import { auditService } from './auditService';
 
 // ============================================
@@ -208,7 +207,7 @@ export function evaluateResponse(
  * Metric 1: Accuracy/Verifiability (SIFT depth)
  * Does the response cite sources? Is it verifiable?
  */
-function evaluateAccuracy(response: string, context: EvalContext): MetricScore {
+function evaluateAccuracy(response: string, _context: EvalContext): MetricScore {
   const signals: string[] = [];
   let score = 0.5; // Baseline
 
@@ -266,7 +265,7 @@ function evaluateAccuracy(response: string, context: EvalContext): MetricScore {
  * Metric 2: Usefulness (actionable steps)
  * Does the response give concrete next steps?
  */
-function evaluateUsefulness(response: string, context: EvalContext): MetricScore {
+function evaluateUsefulness(response: string, _context: EvalContext): MetricScore {
   const signals: string[] = [];
   let score = 0.5;
 
@@ -375,7 +374,6 @@ function evaluateOmegaHonesty(response: string): MetricScore {
   }
 
   // Check if omega matches content complexity
-  const responseLength = response.length;
   const hasComplexTopic = /философ|complex|сложн|неопределён/i.test(response);
   if (hasComplexTopic && omega > 0.85) {
     score -= 0.15;

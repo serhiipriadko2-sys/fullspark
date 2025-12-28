@@ -274,7 +274,7 @@ const LiveConversation: React.FC<LiveConversationProps> = ({ metrics }) => {
             }
           },
           onclose: () => stopSession(),
-          onerror: (e) => {
+          onerror: () => {
             setError("Ошибка соединения с Gemini Live");
             setStatus('ERROR');
           }

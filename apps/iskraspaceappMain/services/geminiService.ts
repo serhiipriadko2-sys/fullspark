@@ -1,8 +1,7 @@
-import { GoogleGenAI, Type, Modality, Content, GenerateContentResponse, EmbedContentResponse } from "@google/genai";
-import { DailyAdvice, PlanTop3, JournalPrompt, RitualTag, TranscriptionMessage, ConversationAnalysis, Message, Voice, DeepResearchReport, MemoryNode, Evidence, Task, IskraMetrics } from '../types';
+import { GoogleGenAI, Type, Content, GenerateContentResponse, EmbedContentResponse } from "@google/genai";
+import { DailyAdvice, PlanTop3, JournalPrompt, TranscriptionMessage, ConversationAnalysis, Message, Voice, DeepResearchReport, MemoryNode, Evidence, Task, IskraMetrics } from '../types';
 import { getSystemInstructionForVoice } from "./voiceEngine";
-import { searchService } from "./searchService";
-import { deltaProtocol, enforceDeltaProtocol, DELTA_PROTOCOL_INSTRUCTION } from "./deltaProtocol";
+import { DELTA_PROTOCOL_INSTRUCTION } from "./deltaProtocol";
 import { evaluateResponse, EvalResult, EvalContext } from "./evalService";
 import { policyEngine, PolicyDecision, PlaybookType } from "./policyEngine";
 
@@ -411,7 +410,7 @@ Use these metrics as "bodily pressure" to adjust your tone subtly. Do not mentio
       });
 
       for await (const chunk of response) {
-        yield chunk.text;
+        yield chunk.text ?? '';
       }
     } catch (error) {
       console.error("Error in chat stream from Gemini:", error);
@@ -529,8 +528,9 @@ SIFT Depth: ${config.siftDepth}
       });
 
       for await (const chunk of response) {
-        fullResponse += chunk.text;
-        yield chunk.text;
+        const text = chunk.text ?? '';
+        fullResponse += text;
+        yield text;
       }
 
       // Evaluate the complete response
@@ -551,7 +551,7 @@ SIFT Depth: ${config.siftDepth}
   /**
    * Build playbook-specific context instructions
    */
-  private buildPlaybookContext(playbook: PlaybookType, config: typeof policyEngine extends { getConfig: (p: PlaybookType) => infer R } ? R : never, metrics: IskraMetrics): string {
+  private buildPlaybookContext(playbook: PlaybookType, _config: typeof policyEngine extends { getConfig: (p: PlaybookType) => infer R } ? R : never, metrics: IskraMetrics): string {
     const baseMetrics = `
 [SYSTEM METRICS]
 Rhythm: ${metrics.rhythm.toFixed(0)}% | Trust: ${metrics.trust.toFixed(2)} | Pain: ${metrics.pain.toFixed(2)}
@@ -634,7 +634,7 @@ Chaos: ${metrics.chaos.toFixed(2)} | Drift: ${metrics.drift.toFixed(2)} | Clarit
       });
 
       for await (const chunk of response) {
-        yield chunk.text;
+        yield chunk.text ?? '';
       }
     } catch (error) {
       console.error("Error fetching rune interpretation from Gemini:", error);
@@ -642,7 +642,7 @@ Chaos: ${metrics.chaos.toFixed(2)} | Drift: ${metrics.drift.toFixed(2)} | Clarit
     }
   }
   
-  async getTextToSpeech(text: string, voiceName: string = 'ISKRA'): Promise<string> {
+  async getTextToSpeech(_text: string, _voiceName: string = 'ISKRA'): Promise<string> {
     // MOCKED to prevent rate limit errors. Returns a silent 1-second WAV file.
     // In a real implementation, 'voiceName' would be used to select the specific TTS voice model or variant.
     const silentWavBase64 = "UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAAABkYXRhAAAAAA==";

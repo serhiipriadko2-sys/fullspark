@@ -8,7 +8,7 @@ import { getActiveVoice } from '../services/voiceEngine';
 import { storageService } from '../services/storageService';
 import MiniMetricsDisplay from './MiniMetricsDisplay';
 import { decode, decodeAudioData } from '../css/audioUtils';
-import { Volume2Icon, VolumeXIcon, SparkleIcon, SmileIcon, XIcon } from './icons';
+import { Volume2Icon, VolumeXIcon, SparkleIcon, XIcon } from './icons';
 
 const service = new IskraAIService();
 

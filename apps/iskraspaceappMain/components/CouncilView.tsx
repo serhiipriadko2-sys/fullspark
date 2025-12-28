@@ -122,7 +122,7 @@ const CouncilView: React.FC<CouncilViewProps> = ({ onClose }) => {
         {(isRunning || responses.length > 0) && (
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-4">
-              {COUNCIL_ORDER.map((voice, index) => {
+              {COUNCIL_ORDER.map((voice, _index) => {
                 const isActive = currentVoice === voice;
                 const isComplete = responses.some(r => r.voice === voice);
                 return (

@@ -5,7 +5,7 @@ import { storageService } from '../services/storageService';
 import { soundService } from '../services/soundService';
 import { Task, RitualTag } from '../types';
 import Loader from './Loader';
-import { FlameIcon, DropletsIcon, SunIcon, ScaleIcon, TriangleIcon, TrashIcon, ListTodoIcon, ClockIcon, GripVerticalIcon } from './icons';
+import { FlameIcon, DropletsIcon, SunIcon, ScaleIcon, TriangleIcon, TrashIcon, ClockIcon, GripVerticalIcon } from './icons';
 
 const service = new IskraAIService();
 
@@ -230,7 +230,7 @@ const Planner: React.FC = () => {
         // Add a ghost class or style if needed
     };
 
-    const handleDragEnter = (e: React.DragEvent, position: number) => {
+    const handleDragEnter = (_e: React.DragEvent, position: number) => {
         dragOverItem.current = position;
     };
 

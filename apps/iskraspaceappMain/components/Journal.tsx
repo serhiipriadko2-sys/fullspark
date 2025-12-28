@@ -4,7 +4,7 @@ import { IskraAIService } from '../services/geminiService';
 import { storageService } from '../services/storageService';
 import { JournalPrompt, JournalEntry } from '../types';
 import Loader from './Loader';
-import { SparkleIcon, XIcon, ChevronRightIcon, Undo2Icon, ActivityIcon } from './icons';
+import { SparkleIcon, XIcon, ChevronRightIcon, Undo2Icon } from './icons';
 
 const service = new IskraAIService();
 

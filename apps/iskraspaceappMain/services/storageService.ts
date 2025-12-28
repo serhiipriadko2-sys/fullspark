@@ -1,5 +1,5 @@
 
-import { Task, JournalEntry, DuoSharePrefs, DuoCanvasNote, Habit, MemoryNode, VoicePreferences, VoiceName } from '../types';
+import { Task, JournalEntry, DuoSharePrefs, DuoCanvasNote, Habit, VoicePreferences, VoiceName } from '../types';
 import { memoryService } from './memoryService';
 
 const TASKS_KEY = 'iskra-space-tasks';

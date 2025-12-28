@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Sidebar, { MobileMenu } from './components/Sidebar';
 import DayPulse from './components/DayPulse';
 import Planner from './components/Planner';
