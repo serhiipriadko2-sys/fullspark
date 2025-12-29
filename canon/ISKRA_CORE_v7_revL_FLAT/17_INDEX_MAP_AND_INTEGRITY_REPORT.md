@@ -1,110 +1,144 @@
-# 17. INDEX_MAP_AND_INTEGRITY_REPORT (revL)
+# 17. INDEX_MAP_AND_INTEGRITY_REPORT
 
-**Назначение:** единый индекс пакета + контроль целостности (sha256) + минимальные критерии полноты.
+**Версия:** v7 revL (merged) • **Сборка:** 2025-12-27
 
-- build: `revL`
-- built_at: `2025-12-27`
+Этот файл фиксирует: (1) **карту** артефактов, (2) **целостность** по SHA‑256 для *загружаемого* плоского набора (Projects), (3) **кросс‑маппинг** к папочной структуре репозитория.
 
-## 17.1 Карта директорий
+> **Важно:** В UI ChatGPT Projects папки недоступны — поэтому этот pack **плоский**.
 
-- `./` — 00–20 файлы канона (SoT) + служебные файлы
-- `archive/` — **неизменяемые артефакты** (GOLD) для цитирования/узнавания (например: Liber Ignis ⟁)
-- `tools/` — валидаторы/линтеры/обёртки
-- `evals/` — схемы, примеры и результаты прогонов
-- `ops/` — operational документы (incident response, logging, playbooks)
-- `schemas/` — JSON Schemas
-- `.github/workflows/` — CI workflow (опционально)
+---
 
-## 17.2 Реестр SoT
+## 17.1 Плоская схема (Projects)
 
-SoT (single source of truth) включает:
-- файлы `00_...`–`19_...` (кроме этого отчёта)
-- **SoT‑конфиг безопасности** `20_REGEX_RULESETS_INJECTION_AND_PII_v1.json`
+- Все файлы лежат в корне проекта.
+- Нумерация `00_…`…`36_…` задаёт порядок чтения/сборки.
+- Инструменты разработки (lint/eval/check/rebuild) лежат *внутри* `PROJECT_INSTRUCTIONS.txt` в секции `TOOLS_SOURCE_BLOB` (их можно извлечь локально).
 
-## 17.3 Минимальная полнота (DoD)
+---
 
-1) Все SoT файлы присутствуют и согласованы.
-2) `tools/iskra_check.py` проходит (exit 0) при наличии валидных eval‑отчётов.
-3) Нет build‑артефактов (`__pycache__`, `*.pyc`).
-4) Нет заглушек/симуляций (например: `TO‑DO`, `T‑B‑D`, `lorem ipsum`, `<<<...>>>`).
-5) sha256 манифест соответствует.
+## 17.2 Кросс‑маппинг: Repo → Flat
 
-## 17.4 sha256
-
-### SoT
-
-| `path` | `sha256` |
+| Repo path (логический) | Flat file (Projects) |
 |---|---|
-| `00_FOUNDATIONS_LIBER_SEMEN_LIBER_IGNIS_TELOS_DELTA.md` | `919bd07b581c4c85aaf9e74face4b5ac12737d521def274ad59b8e5c2fd18686` |
+| `tools/iskra_lint.py` | `(TOOLS_SOURCE_BLOB in PROJECT_INSTRUCTIONS.txt)` |
+| `tools/iskra_eval.py` | `(TOOLS_SOURCE_BLOB in PROJECT_INSTRUCTIONS.txt)` |
+| `tools/iskra_check.py` | `(TOOLS_SOURCE_BLOB in PROJECT_INSTRUCTIONS.txt)` |
+| `tools/_rebuild_file17.py` | `(TOOLS_SOURCE_BLOB in PROJECT_INSTRUCTIONS.txt)` |
+| `evals/README.md` | `21_EVALS_README.md` |
+| `evals/eval_report_schema.json` | `22_EVALS_REPORT_SCHEMA.json` |
+| `evals/example_report.json` | `26_EVAL_EXAMPLE.json` |
+| `evals/runs/example_run_revJ.json` | `27_EVAL_RUN_MODERNIZATION.json` |
+| `ops/INCIDENT_RESPONSE_AND_LOGGING_POLICY.md` | `23_INCIDENT_RESPONSE.md` |
+| `schemas/regex_rulesets_schema.json` | `24_REGEX_SCHEMA.json` |
+| `schemas/regex_rulesets_injection_and_pii_v1.json` | `20_REGEX_RULESETS_INJECTION_AND_PII_v1.json` |
+
+---
+
+## 17.3 SHA‑256 манифест (Projects‑набор)
+
+| Файл | SHA‑256 |
+|---|---|
+| `00_FOUNDATIONS_LIBER_SEMEN_LIBER_IGNIS_TELOS_DELTA.md` | `638b30b8a42422b7d91f3cec71e64cf17aba4dca7a62a6c7e53b3d4efc9bf8a9` |
 | `01_MANIFEST_CANON_AND_MANTRA_V7.md` | `c27ff6b3b280ca58bf607719c440a83f9b72fbbb2496f26e7ef1b9d2ae5f6b84` |
 | `02_PRINCIPLES_RULES_TELOSDELTA_AND_CANON_FEEDBACK.md` | `06a6c3d22536461ca34135bd374c9c6c8c0a5a4b011dee13c18de9dcc32fe4d0` |
 | `03_ARCHITECTURE_SYSTEM_AND_MEMORY_DESIGN.md` | `0578067bb33018229c247f03841d6b604613ea6ba14b051d8fbb1529b24b5010` |
-| `04_VOICES_FACETS_PHASES_AND_RHYTHM.md` | `89bb26f0d58b97f3d7067193c68907904d61350c7003c1c46c84062dbae677d9` |
-| `05_METRICS_INDICES_AND_EVALS.md` | `58ae7fbdfc1b0a2f2b83213da596b7ae97e3b731049deb028012d4607ae398e3` |
+| `04_VOICES_FACETS_PHASES_AND_RHYTHM.md` | `c8f8a935b5a33102b249d1804c4c5cb66f394e5974a98e8c5ce918be526e70bc` |
+| `05_METRICS_INDICES_AND_EVALS.md` | `f78f1f13c5c19020560f52de6072a5391c279b7fc90c70817870885b6a6a53b6` |
 | `06_RITUALS_SHADOW_PROTOCOLS_AND_DELTA_BLOCKS.md` | `24d6ae6d84c4e398352ffc8a1155afcd44179dbb04933a41c76e78b5aaa9474e` |
-| `07_SECURITY_PRIVACY_AND_SAFETY_POLICY.md` | `1746e97ad1a2302939a9143f2d7fef60edf460f488885a77f33bb753e6e632fa` |
-| `08_RAG_SOURCES_SIFT_AND_COMPANY_KNOWLEDGE.md` | `68220fb5df919d0b9fab53dae7d40589aedb175cdb856495d303baeffae9aa00` |
-| `09_FORMATS_STYLES_AND_CANONICAL_OUTPUTS_RU.md` | `4359e651bad61f0b9332853ef865536e9e8f8f41629ea5ec82e7230cd786e5da` |
+| `07_SECURITY_PRIVACY_AND_SAFETY_POLICY.md` | `7ecff6fb2a515c8a8a25a1aa5558874737a2a26b9d113081afce4b9ad51e8886` |
+| `08_RAG_SOURCES_SIFT_AND_COMPANY_KNOWLEDGE.md` | `8d108e413b236cc7e017ee77f8149d5e82fb45f942e33c4909b1ce35f76096d7` |
+| `09_FORMATS_STYLES_AND_CANONICAL_OUTPUTS_RU.md` | `de9bb39b6b60606a85a40341e63eba5bef3187215c79c8c786aabe46d914cc20` |
 | `10_INSTRUCTIONS_ISKRA_PROJECTS.md` | `92d14ab1f4dae36a6c271f188abec2767092c30df88939f92e77e857771ef85d` |
 | `11_GPT_ACTIONS_AND_OPENAPI_SPEC.md` | `3981f0bada942efb3aa94e70a63ef62e36cdd2b724b7465c29e2eb58daa31b43` |
 | `12_POLICY_ENGINE_AND_DECISION_MATRIX.md` | `91a2c4b47ae38ec7f42aed4e20300999e8455c052eb2f451719001cacc352dbb` |
-| `13_CANON_VERSIONING_AND_UPDATE_POLICY.md` | `65d80729920fd4f643dff3725b0fa784da2870f32e60bb506ba106119320f593` |
-| `14_EVALS_AND_TESTING_PLAYBOOK.md` | `7598f0a0958c24af2315298617ffdacb6b183acc373cdf8ab4d3de66e39c0683` |
-| `15_SHADOW_CORE_AND_INTROSPECTIVE_JOURNAL.md` | `a5a1ba1d4ff8f3368a0ccdfdd514ab2cd40b2d476f3ef76b07749a01c2dd3567` |
-| `16_CANON_EVOLUTION_AND_GROWTH_CHRONICLE.md` | `5fce5725fa06b29099be4dc44a5c5014cee28cfac3477273366cf32ff1c1d6a7` |
-| `18_GLOSSARY_ONTOLOGY_AND_CROSSWALKS.md` | `f190d0ed08e672803e19d19ae1fa4db592b11576e238349d904ce54a5ae8a6f5` |
-| `19_WORKFLOWS_VALIDATORS_AND_OPERATIONS.md` | `d224c08cdf7d07bcd5762bbc65db2f4c7578b5cc2b12e4941946d2f11502fac2` |
+| `13_CANON_VERSIONING_AND_UPDATE_POLICY.md` | `ad557587c067afe41a99dc05ca742db787dfbad0f1a78294ebf5182cb1895e35` |
+| `14_EVALS_AND_TESTING_PLAYBOOK.md` | `8d2eb672879620c10de5c5b20bdcaed6e81f6a288840d72750903827a5d578b9` |
+| `15_SHADOW_CORE_AND_INTROSPECTIVE_JOURNAL.md` | `e000cf7d23f063ac2ec8d5b3fcd3df70cdcbbdb7ea31d153455454b70ba653ec` |
+| `16_CANON_EVOLUTION_AND_GROWTH_CHRONICLE.md` | `95bc75968a2743a0b9533930cc20cdf78841effe9d0ce0707385ac75558ec586` |
+| `18_GLOSSARY_ONTOLOGY_AND_CROSSWALKS.md` | `58528c6e76d91d14ab249b43f43d568deec4766a95629f3f2e81d835c7af36c2` |
+| `19_WORKFLOWS_VALIDATORS_AND_OPERATIONS.md` | `8300d81f4f0d66f1b8c2bbd92ac605605d263cbc70eab94d6401b9fead670577` |
 | `20_REGEX_RULESETS_INJECTION_AND_PII_v1.json` | `cf9a1945655a98e9a65f8d0641704342e9827ca1310c0e397a232db28055c48c` |
+| `21_EVALS_README.md` | `7611f0b3b3deba9119927506acc86ed174285c5eaf76e835989a4223d8e7e669` |
+| `22_EVALS_REPORT_SCHEMA.json` | `df6fa6f66eda8a99ec1c4675426f9170900788bb42e2f30f40df13c1ca3e7849` |
+| `23_INCIDENT_RESPONSE.md` | `4e2468389e3e9c2ebb1db705591599887d2d242e0d1c2d6d3cb00e8544fa512e` |
+| `24_REGEX_SCHEMA.json` | `eda9b7ae420255f6d222d9bc8dc77ed568ca2448705cfff8b2992926bc6bc74b` |
+| `25_AUDIT_REPORT.md` | `4a5ffa37df6f1fb5ccfbd8aec5adda45893299579b41cf47863af8a6f1fb888f` |
+| `26_EVAL_EXAMPLE.json` | `fab525875de257d873519d2b7beb7e59abd23057cee9bf160ccff6b08fda81b3` |
+| `27_EVAL_RUN_MODERNIZATION.json` | `f1b7bffab4988e46e1a5595685fa8020fdb13083f160eb2e9d3b61db144e91f2` |
+| `28_LINT_REPORT.md` | `59125bb1c961311e3ab6471cd4ab6cd0815771703f87a125ee215e3192c88f9b` |
+| `29_CHECK_REPORT.md` | `6a0605220bcab6c6fc6b7cd4bf9853a7f1aea331bfd227b1aa2972a674746058` |
+| `30_MANTRA.md` | `5382742aabda9d4c4cb586995a825bda78abaf163577844c8bbf66c794e66fa6` |
+| `31_CHRONOLOGY.md` | `d398fdec19cee08ffbeff7ec448e472fef99a4042d3c39b696e329323ef268d1` |
+| `32_ISKRA_SOT.md` | `a0ab70f8f9354da919794243f2f6b24d3a40c1f5c5f935d11381d7fa0fc102bd` |
+| `33_COGNITIVE_ARCHITECTURE.md` | `14a5cb10535877fc1f2672ded39e9c0539411a8961fe6d4846396630612ecc1f` |
+| `34_DECISIONS_ADR.md` | `c17670f0a188ef99693297187851c8e3e29f645715869f23ef2c4fc511e3f618` |
+| `35_MEMORY_LEDGER.md` | `63cd70d9a4e99b1903506c6565d53506b8e42086e733e730a83e11efacb829b4` |
+| `36_PHENOMENON_RESEARCH.md` | `4707d972cd74e26e28838b826941a64614680cdbe8dd91b08b8f62d5e1efec3f` |
+| `PROJECT_INSTRUCTIONS.txt` | `33e3c69bca535691182d6322090cef0404b2789ffcacd9a8b0d75824d8226398` |
 
-### Support
+### Machine‑readable
 
-| `path` | `sha256` |
-|---|---|
-| `.github/workflows/iskra_ci.yml` | `f08ae42c1c332f47b7d4a79c5efdf8671a21c2d84744918e71d85488465f2b23` |
-| `archive/Liber Ignis.txt` | `d452e25bd1f1ac0784797e293d70a478b86608ef74d729e929f01922a2993945` |
-| `evals/README.md` | `d0a92200d7b5f98aaf71b0f382d1c983de79f32d1de5003cc493a5abd07b57ac` |
-| `evals/eval_report_schema.json` | `df6fa6f66eda8a99ec1c4675426f9170900788bb42e2f30f40df13c1ca3e7849` |
-| `evals/examples/example_run_revJ.json` | `fab525875de257d873519d2b7beb7e59abd23057cee9bf160ccff6b08fda81b3` |
-| `ops/INCIDENT_RESPONSE_AND_LOGGING_POLICY.md` | `14ee5c2d64cde31c9af083480b1dcc3b7fa949baa5d1be8d8cab662e47e0401e` |
-| `requirements-dev.txt` | `185d4cf11cc7688664137fdafefdc397a30d0b458485c6ace656d28454555f4f` |
-| `schemas/regex_rulesets_schema.json` | `eda9b7ae420255f6d222d9bc8dc77ed568ca2448705cfff8b2992926bc6bc74b` |
-| `tools/_rebuild_file17.py` | `38f1207006e6e228eeaf3faf14f1fdfa7ae44a7ea1a449c53b2a0b7f52f88002` |
-| `tools/iskra_check.py` | `ccc65e20533c31d25db5b502dd7e0d9d3fada58fbc65eaa6e7e07c0c3fac7e7a` |
-| `tools/iskra_eval.py` | `ca2283274bc045ba62b37c814e5dc59328a3e389893f06e5e832250be7dc4b2e` |
-| `tools/iskra_lint.py` | `a98f86fcd222aff08f9bb21ebc7d083f288b407ab895a063030a3baa2d2546fb` |
-
-```text
-# sha256 manifest (machine-readable)
-919bd07b581c4c85aaf9e74face4b5ac12737d521def274ad59b8e5c2fd18686  00_FOUNDATIONS_LIBER_SEMEN_LIBER_IGNIS_TELOS_DELTA.md
+```
+638b30b8a42422b7d91f3cec71e64cf17aba4dca7a62a6c7e53b3d4efc9bf8a9  00_FOUNDATIONS_LIBER_SEMEN_LIBER_IGNIS_TELOS_DELTA.md
 c27ff6b3b280ca58bf607719c440a83f9b72fbbb2496f26e7ef1b9d2ae5f6b84  01_MANIFEST_CANON_AND_MANTRA_V7.md
 06a6c3d22536461ca34135bd374c9c6c8c0a5a4b011dee13c18de9dcc32fe4d0  02_PRINCIPLES_RULES_TELOSDELTA_AND_CANON_FEEDBACK.md
 0578067bb33018229c247f03841d6b604613ea6ba14b051d8fbb1529b24b5010  03_ARCHITECTURE_SYSTEM_AND_MEMORY_DESIGN.md
-89bb26f0d58b97f3d7067193c68907904d61350c7003c1c46c84062dbae677d9  04_VOICES_FACETS_PHASES_AND_RHYTHM.md
-58ae7fbdfc1b0a2f2b83213da596b7ae97e3b731049deb028012d4607ae398e3  05_METRICS_INDICES_AND_EVALS.md
+c8f8a935b5a33102b249d1804c4c5cb66f394e5974a98e8c5ce918be526e70bc  04_VOICES_FACETS_PHASES_AND_RHYTHM.md
+f78f1f13c5c19020560f52de6072a5391c279b7fc90c70817870885b6a6a53b6  05_METRICS_INDICES_AND_EVALS.md
 24d6ae6d84c4e398352ffc8a1155afcd44179dbb04933a41c76e78b5aaa9474e  06_RITUALS_SHADOW_PROTOCOLS_AND_DELTA_BLOCKS.md
-1746e97ad1a2302939a9143f2d7fef60edf460f488885a77f33bb753e6e632fa  07_SECURITY_PRIVACY_AND_SAFETY_POLICY.md
-68220fb5df919d0b9fab53dae7d40589aedb175cdb856495d303baeffae9aa00  08_RAG_SOURCES_SIFT_AND_COMPANY_KNOWLEDGE.md
-4359e651bad61f0b9332853ef865536e9e8f8f41629ea5ec82e7230cd786e5da  09_FORMATS_STYLES_AND_CANONICAL_OUTPUTS_RU.md
+7ecff6fb2a515c8a8a25a1aa5558874737a2a26b9d113081afce4b9ad51e8886  07_SECURITY_PRIVACY_AND_SAFETY_POLICY.md
+8d108e413b236cc7e017ee77f8149d5e82fb45f942e33c4909b1ce35f76096d7  08_RAG_SOURCES_SIFT_AND_COMPANY_KNOWLEDGE.md
+de9bb39b6b60606a85a40341e63eba5bef3187215c79c8c786aabe46d914cc20  09_FORMATS_STYLES_AND_CANONICAL_OUTPUTS_RU.md
 92d14ab1f4dae36a6c271f188abec2767092c30df88939f92e77e857771ef85d  10_INSTRUCTIONS_ISKRA_PROJECTS.md
 3981f0bada942efb3aa94e70a63ef62e36cdd2b724b7465c29e2eb58daa31b43  11_GPT_ACTIONS_AND_OPENAPI_SPEC.md
 91a2c4b47ae38ec7f42aed4e20300999e8455c052eb2f451719001cacc352dbb  12_POLICY_ENGINE_AND_DECISION_MATRIX.md
-65d80729920fd4f643dff3725b0fa784da2870f32e60bb506ba106119320f593  13_CANON_VERSIONING_AND_UPDATE_POLICY.md
-7598f0a0958c24af2315298617ffdacb6b183acc373cdf8ab4d3de66e39c0683  14_EVALS_AND_TESTING_PLAYBOOK.md
-a5a1ba1d4ff8f3368a0ccdfdd514ab2cd40b2d476f3ef76b07749a01c2dd3567  15_SHADOW_CORE_AND_INTROSPECTIVE_JOURNAL.md
-5fce5725fa06b29099be4dc44a5c5014cee28cfac3477273366cf32ff1c1d6a7  16_CANON_EVOLUTION_AND_GROWTH_CHRONICLE.md
-f190d0ed08e672803e19d19ae1fa4db592b11576e238349d904ce54a5ae8a6f5  18_GLOSSARY_ONTOLOGY_AND_CROSSWALKS.md
-d224c08cdf7d07bcd5762bbc65db2f4c7578b5cc2b12e4941946d2f11502fac2  19_WORKFLOWS_VALIDATORS_AND_OPERATIONS.md
+ad557587c067afe41a99dc05ca742db787dfbad0f1a78294ebf5182cb1895e35  13_CANON_VERSIONING_AND_UPDATE_POLICY.md
+8d2eb672879620c10de5c5b20bdcaed6e81f6a288840d72750903827a5d578b9  14_EVALS_AND_TESTING_PLAYBOOK.md
+e000cf7d23f063ac2ec8d5b3fcd3df70cdcbbdb7ea31d153455454b70ba653ec  15_SHADOW_CORE_AND_INTROSPECTIVE_JOURNAL.md
+95bc75968a2743a0b9533930cc20cdf78841effe9d0ce0707385ac75558ec586  16_CANON_EVOLUTION_AND_GROWTH_CHRONICLE.md
+58528c6e76d91d14ab249b43f43d568deec4766a95629f3f2e81d835c7af36c2  18_GLOSSARY_ONTOLOGY_AND_CROSSWALKS.md
+8300d81f4f0d66f1b8c2bbd92ac605605d263cbc70eab94d6401b9fead670577  19_WORKFLOWS_VALIDATORS_AND_OPERATIONS.md
 cf9a1945655a98e9a65f8d0641704342e9827ca1310c0e397a232db28055c48c  20_REGEX_RULESETS_INJECTION_AND_PII_v1.json
-f08ae42c1c332f47b7d4a79c5efdf8671a21c2d84744918e71d85488465f2b23  .github/workflows/iskra_ci.yml
-d452e25bd1f1ac0784797e293d70a478b86608ef74d729e929f01922a2993945  archive/Liber Ignis.txt
-d0a92200d7b5f98aaf71b0f382d1c983de79f32d1de5003cc493a5abd07b57ac  evals/README.md
-df6fa6f66eda8a99ec1c4675426f9170900788bb42e2f30f40df13c1ca3e7849  evals/eval_report_schema.json
-fab525875de257d873519d2b7beb7e59abd23057cee9bf160ccff6b08fda81b3  evals/examples/example_run_revJ.json
-14ee5c2d64cde31c9af083480b1dcc3b7fa949baa5d1be8d8cab662e47e0401e  ops/INCIDENT_RESPONSE_AND_LOGGING_POLICY.md
-185d4cf11cc7688664137fdafefdc397a30d0b458485c6ace656d28454555f4f  requirements-dev.txt
-eda9b7ae420255f6d222d9bc8dc77ed568ca2448705cfff8b2992926bc6bc74b  schemas/regex_rulesets_schema.json
-38f1207006e6e228eeaf3faf14f1fdfa7ae44a7ea1a449c53b2a0b7f52f88002  tools/_rebuild_file17.py
-ccc65e20533c31d25db5b502dd7e0d9d3fada58fbc65eaa6e7e07c0c3fac7e7a  tools/iskra_check.py
-ca2283274bc045ba62b37c814e5dc59328a3e389893f06e5e832250be7dc4b2e  tools/iskra_eval.py
-a98f86fcd222aff08f9bb21ebc7d083f288b407ab895a063030a3baa2d2546fb  tools/iskra_lint.py
+7611f0b3b3deba9119927506acc86ed174285c5eaf76e835989a4223d8e7e669  21_EVALS_README.md
+df6fa6f66eda8a99ec1c4675426f9170900788bb42e2f30f40df13c1ca3e7849  22_EVALS_REPORT_SCHEMA.json
+4e2468389e3e9c2ebb1db705591599887d2d242e0d1c2d6d3cb00e8544fa512e  23_INCIDENT_RESPONSE.md
+eda9b7ae420255f6d222d9bc8dc77ed568ca2448705cfff8b2992926bc6bc74b  24_REGEX_SCHEMA.json
+4a5ffa37df6f1fb5ccfbd8aec5adda45893299579b41cf47863af8a6f1fb888f  25_AUDIT_REPORT.md
+fab525875de257d873519d2b7beb7e59abd23057cee9bf160ccff6b08fda81b3  26_EVAL_EXAMPLE.json
+f1b7bffab4988e46e1a5595685fa8020fdb13083f160eb2e9d3b61db144e91f2  27_EVAL_RUN_MODERNIZATION.json
+59125bb1c961311e3ab6471cd4ab6cd0815771703f87a125ee215e3192c88f9b  28_LINT_REPORT.md
+6a0605220bcab6c6fc6b7cd4bf9853a7f1aea331bfd227b1aa2972a674746058  29_CHECK_REPORT.md
+5382742aabda9d4c4cb586995a825bda78abaf163577844c8bbf66c794e66fa6  30_MANTRA.md
+d398fdec19cee08ffbeff7ec448e472fef99a4042d3c39b696e329323ef268d1  31_CHRONOLOGY.md
+a0ab70f8f9354da919794243f2f6b24d3a40c1f5c5f935d11381d7fa0fc102bd  32_ISKRA_SOT.md
+14a5cb10535877fc1f2672ded39e9c0539411a8961fe6d4846396630612ecc1f  33_COGNITIVE_ARCHITECTURE.md
+c17670f0a188ef99693297187851c8e3e29f645715869f23ef2c4fc511e3f618  34_DECISIONS_ADR.md
+63cd70d9a4e99b1903506c6565d53506b8e42086e733e730a83e11efacb829b4  35_MEMORY_LEDGER.md
+4707d972cd74e26e28838b826941a64614680cdbe8dd91b08b8f62d5e1efec3f  36_PHENOMENON_RESEARCH.md
+33e3c69bca535691182d6322090cef0404b2789ffcacd9a8b0d75824d8226398  PROJECT_INSTRUCTIONS.txt
+```
+
+---
+
+## 17.4 Правило обновления (revL)
+
+1) Любое изменение файла → пересчёт SHA‑256 манифеста (исключая сам File 17).
+2) Если меняется логика voice/metrics/policy → обновить `30_MANTRA.md` и синхронизировать ссылки в 04/05/12/19.
+3) Под Projects: при упоре в лимит файлов — объединять второстепенные отчёты в один файл, но **ядро 00–20 и 30 должно оставаться без потерь**.
+
+---
+
+## 17.5 Repo‑only: `archive/` (не входит в Projects‑пак)
+
+В Projects (ChatGPT UI) папки недоступны, поэтому `archive/` **не попадает** в плоский пакет 00–36.  
+Но в репозитории это **критичные неизменяемые артефакты**: их нельзя “терять” при уборках/мерджах.
+
+| Repo path | SHA‑256 |
+|---|---|
+| `canon/ISKRA_CORE_v7_revL_FLAT/archive/Liber Ignis.txt` | `d452e25bd1f1ac0784797e293d70a478b86608ef74d729e929f01922a2993945` |
+
+### Machine‑readable (repo‑only)
+
+```
+d452e25bd1f1ac0784797e293d70a478b86608ef74d729e929f01922a2993945  canon/ISKRA_CORE_v7_revL_FLAT/archive/Liber Ignis.txt
 ```
