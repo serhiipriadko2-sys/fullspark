@@ -1,8 +1,7 @@
-import { GoogleGenAI, Type, Modality, Content, GenerateContentResponse, EmbedContentResponse } from "@google/genai";
-import { DailyAdvice, PlanTop3, JournalPrompt, RitualTag, TranscriptionMessage, ConversationAnalysis, Message, Voice, DeepResearchReport, MemoryNode, Evidence, Task, IskraMetrics } from '../types';
+import { GoogleGenAI, Type, Content, GenerateContentResponse, EmbedContentResponse } from "@google/genai";
+import { DailyAdvice, PlanTop3, JournalPrompt, TranscriptionMessage, ConversationAnalysis, Message, Voice, DeepResearchReport, MemoryNode, Evidence, Task, IskraMetrics } from '../types';
 import { getSystemInstructionForVoice } from "./voiceEngine";
-import { searchService } from "./searchService";
-import { deltaProtocol, enforceDeltaProtocol, DELTA_PROTOCOL_INSTRUCTION } from "./deltaProtocol";
+import { DELTA_PROTOCOL_INSTRUCTION } from "./deltaProtocol";
 import { evaluateResponse, EvalResult, EvalContext } from "./evalService";
 import { policyEngine, PolicyDecision, PlaybookType } from "./policyEngine";
 
@@ -10,6 +9,17 @@ const API_KEY = process.env.API_KEY;
 export const ai: GoogleGenAI | null = API_KEY ? new GoogleGenAI({ apiKey: API_KEY }) : null;
 const model = "gemini-2.5-flash";
 const OFFLINE_MODE = !ai || process.env.VITEST === 'true';
+
+/**
+ * Get the AI client, throwing an error if not available.
+ * Call only after OFFLINE_MODE check returns false.
+ */
+export function getAI(): GoogleGenAI {
+  if (!ai) {
+    throw new Error('AI client not initialized - API_KEY missing');
+  }
+  return ai;
+}
 
 const OFFLINE_ADVICE: DailyAdvice & { evidence?: Evidence[] } = {
     deltaScore: 78,
@@ -214,7 +224,7 @@ export class IskraAIService {
             
             const prompt = `На основе этих задач пользователя: "${taskTitles}" и его текущего ∆-Ритма: ${baseAdvice.deltaScore}%, сгенерируй короткий (1-2 предложения), мудрый инсайт и краткое философское объяснение ("почему это важно"). Ответ должен быть в формате JSON.`;
     
-            const response = await withRetry(() => ai.models.generateContent({
+            const response = await withRetry(() => getAI().models.generateContent({
                 model: model,
                 contents: prompt,
                 config: {
@@ -266,7 +276,7 @@ export class IskraAIService {
 - DELTA: трансформация, новый опыт, выход из зоны комфорта.
 Ответ должен быть в формате JSON.`;
 
-        const response = await withRetry(() => ai.models.generateContent({
+        const response = await withRetry(() => getAI().models.generateContent({
             model: model,
             contents: prompt,
             config: {
@@ -305,7 +315,7 @@ export class IskraAIService {
     try {
         const prompt = `Сгенерируй один глубокий, рефлексивный вопрос для записи в дневник. Вопрос должен быть на русском языке. Также предоставь краткое философское объяснение, почему этот вопрос важен для самопознания.`;
 
-        const response = await withRetry(() => ai.models.generateContent({
+        const response = await withRetry(() => getAI().models.generateContent({
             model: model,
             contents: prompt,
             config: {
@@ -354,7 +364,7 @@ export class IskraAIService {
 
 Запись: "${text.substring(0, 1000)}..."`;
 
-          const response = await withRetry(() => ai.models.generateContent({
+          const response = await withRetry(() => getAI().models.generateContent({
               model: model,
               contents: prompt,
               config: {
@@ -402,7 +412,7 @@ Use these metrics as "bodily pressure" to adjust your tone subtly. Do not mentio
       }
 
       try {
-        const response = await ai.models.generateContentStream({
+        const response = await getAI().models.generateContentStream({
           model: model,
         contents: contents,
         config: {
@@ -411,7 +421,7 @@ Use these metrics as "bodily pressure" to adjust your tone subtly. Do not mentio
       });
 
       for await (const chunk of response) {
-        yield chunk.text;
+        yield chunk.text ?? '';
       }
     } catch (error) {
       console.error("Error in chat stream from Gemini:", error);
@@ -520,7 +530,7 @@ SIFT Depth: ${config.siftDepth}
     }));
 
     try {
-      const response = await ai.models.generateContentStream({
+      const response = await getAI().models.generateContentStream({
         model: model,
         contents: contents,
         config: {
@@ -529,8 +539,9 @@ SIFT Depth: ${config.siftDepth}
       });
 
       for await (const chunk of response) {
-        fullResponse += chunk.text;
-        yield chunk.text;
+        const text = chunk.text ?? '';
+        fullResponse += text;
+        yield text;
       }
 
       // Evaluate the complete response
@@ -551,7 +562,7 @@ SIFT Depth: ${config.siftDepth}
   /**
    * Build playbook-specific context instructions
    */
-  private buildPlaybookContext(playbook: PlaybookType, config: typeof policyEngine extends { getConfig: (p: PlaybookType) => infer R } ? R : never, metrics: IskraMetrics): string {
+  private buildPlaybookContext(playbook: PlaybookType, _config: typeof policyEngine extends { getConfig: (p: PlaybookType) => infer R } ? R : never, metrics: IskraMetrics): string {
     const baseMetrics = `
 [SYSTEM METRICS]
 Rhythm: ${metrics.rhythm.toFixed(0)}% | Trust: ${metrics.trust.toFixed(2)} | Pain: ${metrics.pain.toFixed(2)}
@@ -625,7 +636,7 @@ Chaos: ${metrics.chaos.toFixed(2)} | Drift: ${metrics.drift.toFixed(2)} | Clarit
     }
 
     try {
-      const response = await ai.models.generateContentStream({
+      const response = await getAI().models.generateContentStream({
         model: model,
         contents: prompt,
         config: {
@@ -634,7 +645,7 @@ Chaos: ${metrics.chaos.toFixed(2)} | Drift: ${metrics.drift.toFixed(2)} | Clarit
       });
 
       for await (const chunk of response) {
-        yield chunk.text;
+        yield chunk.text ?? '';
       }
     } catch (error) {
       console.error("Error fetching rune interpretation from Gemini:", error);
@@ -642,7 +653,7 @@ Chaos: ${metrics.chaos.toFixed(2)} | Drift: ${metrics.drift.toFixed(2)} | Clarit
     }
   }
   
-  async getTextToSpeech(text: string, voiceName: string = 'ISKRA'): Promise<string> {
+  async getTextToSpeech(_text: string, _voiceName: string = 'ISKRA'): Promise<string> {
     // MOCKED to prevent rate limit errors. Returns a silent 1-second WAV file.
     // In a real implementation, 'voiceName' would be used to select the specific TTS voice model or variant.
     const silentWavBase64 = "UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAAABkYXRhAAAAAA==";
@@ -654,7 +665,7 @@ Chaos: ${metrics.chaos.toFixed(2)} | Drift: ${metrics.drift.toFixed(2)} | Clarit
 
       try {
           // Embeddings don't usually use 'systemInstruction' or 'responseSchema'
-          const result = await withRetry(() => ai.models.embedContent({
+          const result = await withRetry(() => getAI().models.embedContent({
               model: "text-embedding-004",
               contents: text,
           })) as EmbedContentResponse;
@@ -687,7 +698,7 @@ Chaos: ${metrics.chaos.toFixed(2)} | Drift: ${metrics.drift.toFixed(2)} | Clarit
     }
 
     try {
-        const response = await withRetry(() => ai.models.generateContent({
+        const response = await withRetry(() => getAI().models.generateContent({
             model: model,
             contents: prompt,
             config: {
@@ -750,7 +761,7 @@ Chaos: ${metrics.chaos.toFixed(2)} | Drift: ${metrics.drift.toFixed(2)} | Clarit
     }
 
     try {
-      const response = await withRetry(() => ai.models.generateContent({
+      const response = await withRetry(() => getAI().models.generateContent({
         model: model,
         contents: prompt,
         config: {
@@ -804,7 +815,7 @@ Chaos: ${metrics.chaos.toFixed(2)} | Drift: ${metrics.drift.toFixed(2)} | Clarit
         }
 
         try {
-            const response = await withRetry(() => ai.models.generateContent({
+            const response = await withRetry(() => getAI().models.generateContent({
                 model: model,
                 contents: prompt,
               config: {

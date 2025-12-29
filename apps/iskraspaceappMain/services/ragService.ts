@@ -14,7 +14,7 @@
 import { searchService } from './searchService';
 import { memoryService } from './memoryService';
 import { evidenceService } from './evidenceService';
-import { Evidence, MemoryNode, Message, SIFTBlock, SIFTEvidence, EvidenceContour } from '../types';
+import { Evidence, Message, SIFTBlock, SIFTEvidence, EvidenceContour, MemoryNodeLayer } from '../types';
 
 // ============================================
 // TYPES
@@ -592,12 +592,13 @@ export async function buildRAGContextWithSIFT(
 }> {
   const enableReQuery = options.enableReQuery !== false; // Default: true
   let iteration = 0;
-  let currentContext = await buildRAGContext(query, options);
+  let currentContext = await buildRAGContext(query, { ...options, layers: options.layers as MemoryNodeLayer[] | undefined });
   let conflictsResolved = 0;
   let unresolvedConflicts: SourceConflict[] = [];
 
   // If no conflicts or re-query disabled, return immediately
-  if (!enableReQuery || !currentContext.conflictTable || currentContext.conflictTable.length === 0) {
+  const initialConflicts = currentContext.conflictTable || [];
+  if (!enableReQuery || initialConflicts.length === 0) {
     return {
       ...currentContext,
       sift_iterations: 0,
@@ -607,13 +608,14 @@ export async function buildRAGContextWithSIFT(
   }
 
   // Multi-step SIFT loop
-  while (iteration < MAX_SIFT_ITERATIONS && currentContext.conflictTable.length > 0) {
+  let conflictTable = currentContext.conflictTable || [];
+  while (iteration < MAX_SIFT_ITERATIONS && conflictTable.length > 0) {
     iteration++;
 
-    console.log(`[SIFT] Iteration ${iteration}: Found ${currentContext.conflictTable.length} conflicts`);
+    console.log(`[SIFT] Iteration ${iteration}: Found ${conflictTable.length} conflicts`);
 
     // Generate verification queries for each conflict
-    const verificationQueries = currentContext.conflictTable.map(conflict => {
+    const verificationQueries = conflictTable.map(conflict => {
       // Extract key terms from claim
       const claim = conflict.claim;
       const keyTerms = claim
@@ -631,7 +633,7 @@ export async function buildRAGContextWithSIFT(
     for (const verifyQuery of verificationQueries) {
       try {
         const verifyResults = await searchService.searchHybrid(verifyQuery, {
-          layer: options.layers,
+          layer: options.layers as MemoryNodeLayer[] | undefined,
         });
 
         // Add new sources not already in current memories
@@ -661,7 +663,7 @@ export async function buildRAGContextWithSIFT(
     // If no new sources found, break (can't resolve further)
     if (additionalMemories.length === 0) {
       console.log(`[SIFT] No new sources found, stopping at iteration ${iteration}`);
-      unresolvedConflicts = currentContext.conflictTable;
+      unresolvedConflicts = conflictTable;
       break;
     }
 
@@ -672,7 +674,7 @@ export async function buildRAGContextWithSIFT(
     const newConflictTable = detectConflicts(mergedMemories);
 
     // Count resolved conflicts
-    const previousConflicts = currentContext.conflictTable.length;
+    const previousConflicts = conflictTable.length;
     const newConflicts = newConflictTable.length;
     const resolvedThisIteration = previousConflicts - newConflicts;
 
@@ -699,6 +701,7 @@ export async function buildRAGContextWithSIFT(
       conflictTable: newConflictTable,
       sourcePriority,
     };
+    conflictTable = newConflictTable;
 
     // If all conflicts resolved, break early
     if (newConflictTable.length === 0) {

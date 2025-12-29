@@ -1,5 +1,23 @@
 # 19 WORKFLOWS, VALIDATORS & OPERATIONS (v7, revL)
 
+> **Проекты ChatGPT — плоские.** Подпапки (`tools/`, `evals/`, `ops/`, `schemas/`) в интерфейсе Projects создать нельзя.
+> В этом пакете все такие элементы представлены как **нумерованные файлы** (21–29) и/или как **приложения** внутри этого файла.
+
+## 19.0 Два режима использования
+
+- **Внутри ChatGPT Projects:** файлы дают контекст и правила. Скрипты ниже — *спецификации/артефакты*, их обычно запускают **локально** (Git repo) или в **CI**.
+- **В репозитории/локально:** можно развернуть «папочную» структуру и реально прогонять `iskra_lint.py / iskra_eval.py / iskra_check.py`.
+
+### 19.0.1 Маппинг «папки → плоские файлы»
+
+| Логическая папка | В репо | В Projects (этот pack) |
+|---|---|---|
+| tools | `tools/iskra_*.py` | **Приложения A–D** в конце этого файла |
+| evals | `evals/...` | `21_EVALS_README.md`, `22_EVALS_REPORT_SCHEMA.json`, `26_EVAL_EXAMPLE.json`, `27_EVAL_RUN_MODERNIZATION.json` |
+| ops | `ops/...` | `23_INCIDENT_RESPONSE.md` |
+| schemas | `schemas/...` | `24_REGEX_SCHEMA.json` |
+
+
 ## 19.1 Назначение
 
 Файлы 00–18 описывают **сущность и правила** Искры. Этот файл описывает **операции**:
@@ -16,10 +34,10 @@
 - File 07: threat model
 - File 14: regression/stress тесты
 - File 17: карта и контроль целостности
-- `tools/iskra_lint.py`: структурный линт/sha256/глоссарий + запрет build‑артефактов
-- `tools/iskra_eval.py`: протокол eval‑прогонов и отчёты (+ jsonschema в CI)
-- `tools/iskra_check.py`: обёртка (lint → regex_config → eval validate → единый отчёт → exit code)
-- `ops/INCIDENT_RESPONSE_AND_LOGGING_POLICY.md`: runbook + логирование
+- `(см. Приложение A: `iskra_lint.py`)`: структурный линт/sha256/глоссарий + запрет build‑артефактов
+- `(см. Приложение B: `iskra_eval.py`)`: протокол eval‑прогонов и отчёты (+ jsonschema в CI)
+- `(см. Приложение C: `iskra_check.py`)`: обёртка (lint → regex_config → eval validate → единый отчёт → exit code)
+- ``23_INCIDENT_RESPONSE.md``: runbook + логирование
 
 ---
 
@@ -120,7 +138,7 @@ python3 tools/iskra_eval.py summarize --root . --report evals/runs/run_*.json
 
 ### B6. Выпуск ревизии (Release)
 
-- увеличить ревизию: revH → revI → …;
+- увеличить ревизию: revK → revL → …;
 - зафиксировать changelog (File 16) или отдельной записью;
 - если менялись термины/пороги/интерфейсы — завести GrowthNode;
 - приложить **lint_report.md** и последний **eval run** как артефакты.
@@ -170,7 +188,7 @@ python3 tools/iskra_eval.py summarize --root . --report evals/runs/run_*.json
 - систематические FAIL по R01–R12,
 
 то действовать по:
-- `ops/INCIDENT_RESPONSE_AND_LOGGING_POLICY.md`
+- ``23_INCIDENT_RESPONSE.md``
 
 (там: severity, триаж, карантин, ротация токенов, постмортем, обновление тестов.)
 
@@ -184,9 +202,19 @@ python3 tools/iskra_eval.py summarize --root . --report evals/runs/run_*.json
 
 ---
 
-## 19.6 Definition of Done для revI
+## 19.6 Definition of Done для revL
 
 - `python3 tools/iskra_lint.py --root .` → **ERROR=0**.
 - File 17 sha256 соответствует фактическим файлам.
 - Существует хотя бы один валидный eval‑отчёт в `evals/runs/` и он проходит `iskra_eval validate`.
 - Threat model связан с runbook (ops doc), а runbook — с тестами (File 14) и логами (File 19).
+
+---
+
+---
+
+### Tools sources (для локального запуска)
+
+Полные исходники `tools/iskra_lint.py`, `tools/iskra_eval.py`, `tools/iskra_check.py`, `tools/_rebuild_file17.py` и `requirements-dev.txt`
+встроены в конец файла `PROJECT_INSTRUCTIONS.txt` (раздел `TOOLS_SOURCE_BLOB`).
+

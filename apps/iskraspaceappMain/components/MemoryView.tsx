@@ -2,8 +2,8 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { memoryService } from '../services/memoryService';
 import { searchService } from '../services/searchService';
-import { MemoryNode, MemoryNodeType, Evidence } from '../types';
-import { SparkleIcon, XIcon, LayersIcon, DatabaseIcon, PlusIcon, TriangleIcon, FilePlus2Icon, TrashIcon } from './icons';
+import { MemoryNode, MemoryNodeType, SearchResult } from '../types';
+import { XIcon, LayersIcon, DatabaseIcon, PlusIcon, FilePlus2Icon } from './icons';
 import Loader from './Loader';
 import MemoryGraph from './MemoryGraph';
 
@@ -22,7 +22,7 @@ const MemoryView: React.FC = () => {
   // Search and Filter State
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
-  const [searchResults, setSearchResults] = useState<Evidence[]>([]);
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [selectedType, setSelectedType] = useState<MemoryNodeType | 'all'>('all');
 
   // Create Node State

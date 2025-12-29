@@ -54,26 +54,37 @@ class SecurityService {
   private allowlistPatterns: RegExp[] = [];
 
   constructor() {
-    // Load rulesets from File 20
-    this.piiRuleset = securityRulesets.rulesets.pii;
-    this.injectionRuleset = securityRulesets.rulesets.injection;
+    // Load rulesets from File 20 (cast to fix severity type from JSON)
+    this.piiRuleset = securityRulesets.rulesets.pii as Ruleset;
+    this.injectionRuleset = securityRulesets.rulesets.injection as Ruleset;
 
-    // Compile PII patterns
+    // Compile PII patterns (strip Python-style inline flags)
     this.piiPatterns = this.piiRuleset.patterns.map(p =>
-      new RegExp(p.regex, p.flags || 'g')
+      new RegExp(this.sanitizeRegex(p.regex), p.flags || 'g')
     );
 
-    // Compile Injection patterns
+    // Compile Injection patterns (strip Python-style inline flags)
     this.injectionPatterns = this.injectionRuleset.patterns.map(p =>
-      new RegExp(p.regex, p.flags || 'gims')
+      new RegExp(this.sanitizeRegex(p.regex), p.flags || 'gims')
     );
 
-    // Compile allowlist patterns
+    // Compile allowlist patterns (strip Python-style inline flags)
     const allAllowlists = [
       ...this.piiRuleset.allowlist_regex,
       ...this.injectionRuleset.allowlist_regex
     ];
-    this.allowlistPatterns = allAllowlists.map(a => new RegExp(a, 'g'));
+    this.allowlistPatterns = allAllowlists.map(a =>
+      new RegExp(this.sanitizeRegex(a), 'gi')
+    );
+  }
+
+  /**
+   * Strip Python-style inline flags from regex (not supported in JS)
+   * Converts patterns like (?i)pattern to just pattern (flags handled separately)
+   */
+  private sanitizeRegex(pattern: string): string {
+    // Remove Python-style inline flags: (?i), (?m), (?s), (?ims), etc.
+    return pattern.replace(/^\(\?[imsx]+\)/i, '');
   }
 
   /**
@@ -155,7 +166,7 @@ class SecurityService {
   public sanitizeInput(text: string): string {
     let sanitized = text;
 
-    this.piiRuleset.patterns.forEach((pattern, idx) => {
+    this.piiRuleset.patterns.forEach((_pattern, idx) => {
       const regex = this.piiPatterns[idx];
       regex.lastIndex = 0;
 

@@ -5,7 +5,7 @@ import { searchService } from '../services/searchService';
 import { memoryService } from '../services/memoryService';
 import { IskraMetrics, DeepResearchReport, MemoryNode } from '../types';
 import Loader from './Loader';
-import { FileSearchIcon, BrainCircuitIcon, TriangleIcon, SparkleIcon } from './icons';
+import { FileSearchIcon, TriangleIcon, SparkleIcon } from './icons';
 import MiniMetricsDisplay from './MiniMetricsDisplay';
 import { getActiveVoice } from '../services/voiceEngine';
 
@@ -27,7 +27,7 @@ const NeuralScanner: React.FC<{ nodes: MemoryNode[]; mode: ResearchMode }> = ({ 
             <div className={`absolute inset-0 bg-grid-white/[0.02] bg-[length:20px_20px]`} />
             <div className="absolute inset-0 flex items-center justify-center">
                  <div className={`w-full max-w-md grid grid-cols-6 gap-2 opacity-80`}>
-                     {nodes.slice(0, 24).map((node, i) => (
+                     {nodes.slice(0, 24).map((_node, i) => (
                          <div 
                             key={i} 
                             className={`w-2 h-2 rounded-full animate-pulse ${colorClass} ${glowClass}`}

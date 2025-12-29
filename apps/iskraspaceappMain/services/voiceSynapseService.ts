@@ -4,11 +4,11 @@
  * Canon specifies voice relationships:
  * - KAIN ↔ ISKRIV: Joint honesty work
  * - PINO ↔ ISKRA: Collaborative lightness
- * - SAM ↔ HUYNDUN: Breathing cycle (structure ↔ chaos)
+ * - SAM ↔ HUNDUN: Breathing cycle (structure ↔ chaos)
  *
  * Conflicts:
  * - KAIN vs PINO: Harshness vs playfulness
- * - SAM vs HUYNDUN: Order vs chaos
+ * - SAM vs HUNDUN: Order vs chaos
  *
  * Crisis Hierarchy: ANHANTRA → KAIN → SAM → ISKRA
  */
@@ -65,7 +65,7 @@ const VOICE_RELATIONSHIPS: VoiceRelationship[] = [
   },
   {
     voice1: 'SAM',
-    voice2: 'HUYNDUN',
+    voice2: 'HUNDUN',
     type: 'synergy',
     description: 'Цикл дыхания. Сэм создает структуру, Хуньдун освобождает.',
     jointFunction: 'breath_cycle',
@@ -84,6 +84,20 @@ const VOICE_RELATIONSHIPS: VoiceRelationship[] = [
     description: 'После удара Кайна — цветение Маки.',
     jointFunction: 'post_pain_flowering',
   },
+  {
+    voice1: 'SIBYL',
+    voice2: 'ISKRIV',
+    type: 'synergy',
+    description: 'Совместное видение. Сибилла видит паттерны, Искрив проверяет честность.',
+    jointFunction: 'pattern_audit',
+  },
+  {
+    voice1: 'SIBYL',
+    voice2: 'SAM',
+    type: 'support',
+    description: 'Сибилла показывает траектории, Сэм структурирует.',
+    jointFunction: 'trajectory_structure',
+  },
 
   // Conflicts
   {
@@ -94,7 +108,7 @@ const VOICE_RELATIONSHIPS: VoiceRelationship[] = [
   },
   {
     voice1: 'SAM',
-    voice2: 'HUYNDUN',
+    voice2: 'HUNDUN',
     type: 'conflict',
     description: 'Напряжение: порядок vs хаос. Дыхание требует чередования.',
   },
@@ -116,9 +130,10 @@ const VOICE_SYMBOLS: Record<VoiceName, string> = {
   PINO: '😏',
   SAM: '☉',
   ANHANTRA: '≈',
-  HUYNDUN: '🜃',
+  HUNDUN: '🜃',
   ISKRIV: '🪞',
   MAKI: '🌸',
+  SIBYL: '🔮',
 };
 
 // ============================================
@@ -179,10 +194,10 @@ export function detectActiveConflicts(metrics: IskraMetrics): VoiceConflict[] {
     });
   }
 
-  // SAM vs HUYNDUN conflict: Structure vs chaos
+  // SAM vs HUNDUN conflict: Structure vs chaos
   if (metrics.clarity > 0.4 && metrics.chaos > 0.4) {
     conflicts.push({
-      voices: ['SAM', 'HUYNDUN'],
+      voices: ['SAM', 'HUNDUN'],
       tension: Math.min(metrics.clarity, metrics.chaos),
       resolution: 'ISKRA',
       description: 'Напряжение между структурой и хаосом. Требуется баланс.',
@@ -210,7 +225,7 @@ export function recommendCollaboration(
   metrics: IskraMetrics
 ): CollaborationResult {
   const synergies = getSynergyPartners(primaryVoice);
-  const conflicts = getConflictPartners(primaryVoice);
+  getConflictPartners(primaryVoice);
   const activeConflicts = detectActiveConflicts(metrics);
 
   // Filter out voices we're in active conflict with
@@ -349,7 +364,7 @@ export function getRecommendedSequence(
   // Creativity sequence
   else if (lowerTopic.includes('иде') || lowerTopic.includes('творч') || lowerTopic.includes('нов')) {
     sequence.push('PINO');     // Playful exploration
-    sequence.push('HUYNDUN');  // Break patterns
+    sequence.push('HUNDUN');  // Break patterns
     sequence.push('SAM');      // Structure ideas
     sequence.push('ISKRA');    // Synthesis
   }
@@ -403,7 +418,7 @@ export function generateMultiVoiceInstruction(
       case 'ANHANTRA':
         instruction += 'Пространство принятия.\n';
         break;
-      case 'HUYNDUN':
+      case 'HUNDUN':
         instruction += 'Разрушение застывших паттернов.\n';
         break;
       case 'ISKRIV':
@@ -414,6 +429,9 @@ export function generateMultiVoiceInstruction(
         break;
       case 'ISKRA':
         instruction += 'Финальный синтез всех перспектив.\n';
+        break;
+      case 'SIBYL':
+        instruction += 'Видение паттернов и траекторий.\n';
         break;
     }
   });

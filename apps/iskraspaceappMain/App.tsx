@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Sidebar, { MobileMenu } from './components/Sidebar';
 import DayPulse from './components/DayPulse';
 import Planner from './components/Planner';
@@ -22,11 +22,9 @@ import ShadowView from './components/ShadowView';
 import OnboardingTour, { TourStep } from './components/OnboardingTour';
 import Ambience from './components/Ambience';
 import ErrorBoundary from './components/ErrorBoundary';
-import { SparkleIcon } from './components/icons';
 import { IskraMetrics, IskraPhase } from './types';
 import { calculateRhythmIndex, clamp, calculateDerivedMetrics } from './utils/metrics';
 import { deltaConfig } from './config/deltaConfig';
-import { memoryService } from './services/memoryService';
 import { metricsService } from './services/metricsService';
 import { canonService } from './services/canonService';
 import { storageService } from './services/storageService';

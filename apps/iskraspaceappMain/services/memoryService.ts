@@ -1,5 +1,5 @@
 
-import { MemoryNode, MemoryNodeType, MantraNode, IntegrityReport } from '../types';
+import { MemoryNode, MantraNode, IntegrityReport } from '../types';
 
 const ARCHIVE_KEY = 'iskra-space-archive';
 const SHADOW_KEY = 'iskra-space-shadow';

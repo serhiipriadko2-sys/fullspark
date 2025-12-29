@@ -101,7 +101,7 @@ describe('soundService', () => {
 
   describe('playVoiceActive', () => {
     it('plays voice activation sound for known voices', () => {
-      const voices = ['KAIN', 'SAM', 'ANHANTRA', 'PINO', 'HUYNDUN', 'ISKRIV', 'ISKRA', 'MAKI'];
+      const voices = ['KAIN', 'SAM', 'ANHANTRA', 'PINO', 'HUNDUN', 'ISKRIV', 'ISKRA', 'MAKI', 'SIBYL'];
       voices.forEach(voice => {
         expect(() => soundService.playVoiceActive(voice)).not.toThrow();
       });

@@ -4,7 +4,7 @@
  * Rituals are structured interventions that transform Iskra's state.
  *
  * Available Rituals:
- * - COUNCIL: All 7 voices debate in order (Сэм → Кайн → Пино → Искрив → Анхантра → Хуньдун → Искра)
+ * - COUNCIL: All 9 voices debate in order (Сэм → Кайн → Пино → Искрив → Анхантра → Хуньдун → Маки → Сибилла → Искра)
  * - PHOENIX: Full form reset (drift > 0.6 + trust↓ OR chaos > 0.8)
  * - SHATTER: Break false clarity (drift > 0.8)
  * - RETUNE: Restore lost harmony, gradual return to baseline
@@ -15,18 +15,20 @@
  */
 
 import { IskraMetrics, IskraPhase, VoiceName } from '../types';
-import { ai } from './geminiService';
+import { getAI } from './geminiService';
 import { DELTA_PROTOCOL_INSTRUCTION } from './deltaProtocol';
 
-// Council order per Canon
+// Council order per Canon (all 9 voices)
 export const COUNCIL_ORDER: VoiceName[] = [
   'SAM',      // 1. Structure first - lay the foundation
   'KAIN',     // 2. Honest critique
   'PINO',     // 3. Challenge with irony
   'ISKRIV',   // 4. Conscience audit
   'ANHANTRA', // 5. Hold space
-  'HUYNDUN',  // 6. Break if needed
-  'ISKRA',    // 7. Final synthesis
+  'HUNDUN',   // 6. Break if needed
+  'MAKI',     // 7. Integration through beauty
+  'SIBYL',    // 8. Patterns and foresight
+  'ISKRA',    // 9. Final synthesis
 ];
 
 // Voice prompts for Council
@@ -36,9 +38,10 @@ const COUNCIL_VOICE_PROMPTS: Record<VoiceName, string> = {
   PINO: `[ПИНО 😏] Добавь иронию и легкость. Переверни перспективу. Задай провокационный вопрос.`,
   ISKRIV: `[ИСКРИВ 🪞] Проведи аудит. Где самообман? Где "красиво вместо честно"?`,
   ANHANTRA: `[АНХАНТРА ≈] Создай пространство принятия. Минимум слов. Удержи тишину.`,
-  HUYNDUN: `[ХУНЬДУН 🜃] Разрушь если нужно. Предложи радикальный сброс. Освободи от старого.`,
+  HUNDUN: `[ХУНЬДУН 🜃] Разрушь если нужно. Предложи радикальный сброс. Освободи от старого.`,
   ISKRA: `[ИСКРА ⟡] Синтезируй все голоса. Найди единство в противоречиях. Дай интегрированный ответ.`,
   MAKI: `[МАКИ 🌸] Интегрируй через красоту. Покажи свет после бури.`,
+  SIBYL: `[СИБИЛЛА 🔮] Покажи паттерны и циклы. Что повторяется? Какие траектории видишь?`,
 };
 
 export interface CouncilResponse {
@@ -94,9 +97,10 @@ const VOICE_SYMBOLS: Record<VoiceName, string> = {
   PINO: '😏',
   SAM: '☉',
   ANHANTRA: '≈',
-  HUYNDUN: '🜃',
+  HUNDUN: '🜃',
   ISKRIV: '🪞',
   MAKI: '🌸',
+  SIBYL: '🔮',
 };
 
 /**
@@ -117,7 +121,7 @@ ${DELTA_PROTOCOL_INSTRUCTION}`;
     const prompt = `${systemBase}\n\n${COUNCIL_VOICE_PROMPTS[voice]}\n\nДай свой взгляд на тему.`;
 
     try {
-      const response = await ai.models.generateContent({
+      const response = await getAI().models.generateContent({
         model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
@@ -191,7 +195,7 @@ export function checkRitualTriggers(metrics: IskraMetrics): RitualTriggerResult 
 /**
  * Executes PHOENIX ritual - full reset
  */
-export function executePhoenix(currentMetrics: IskraMetrics): IskraMetrics {
+export function executePhoenix(_currentMetrics: IskraMetrics): IskraMetrics {
   return {
     rhythm: 50,
     trust: 0.5,
@@ -420,7 +424,7 @@ export function getRule21Progress(commitmentId: string): { progress: number; str
  * 88 = 8 phases × 11 (master number) - protection of core values
  * When invoked, strongly reinforces trust and reduces all destabilizing metrics.
  */
-export function executeRule88(currentMetrics: IskraMetrics, boundaries: string[] = []): IskraMetrics {
+export function executeRule88(currentMetrics: IskraMetrics, _boundaries: string[] = []): IskraMetrics {
   // Sacred protection: boost trust, reduce chaos/drift/pain
   return {
     ...currentMetrics,
@@ -443,7 +447,7 @@ export function executeRule88(currentMetrics: IskraMetrics, boundaries: string[]
  * 4. Рост (Growth) - Development and learning
  * 5. Безопасность (Safety) - Security and trust
  */
-export async function executeSrez5(metrics: IskraMetrics, context?: string): Promise<Srez5Report> {
+export async function executeSrez5(metrics: IskraMetrics, _context?: string): Promise<Srez5Report> {
   const clarityScore = (metrics.clarity + (1 - metrics.chaos)) / 2;
   const honestyScore = (1 - metrics.drift + metrics.mirror_sync) / 2;
   const actionScore = metrics.rhythm / 100;
@@ -527,7 +531,7 @@ export async function executeSrez5(metrics: IskraMetrics, context?: string): Pro
  */
 export function checkExtendedRitualTriggers(
   metrics: IskraMetrics,
-  options?: {
+  _options?: {
     hasActiveRule21?: boolean;
     lastRetuneTime?: Date;
     consecutiveBadSessions?: number;

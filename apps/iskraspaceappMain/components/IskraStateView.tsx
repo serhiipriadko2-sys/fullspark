@@ -6,7 +6,7 @@ import { SessionStatus } from './LiveConversation';
 import { calculateDerivedMetrics } from '../utils/metrics';
 import { getActiveVoice } from '../services/voiceEngine';
 import { storageService } from '../services/storageService';
-import { SparkleIcon, ActivityIcon, FlameIcon, TriangleIcon, BrainCircuitIcon } from './icons';
+import { ActivityIcon, FlameIcon, TriangleIcon, BrainCircuitIcon } from './icons';
 import { soundService } from '../services/soundService';
 
 interface IskraStateViewProps {

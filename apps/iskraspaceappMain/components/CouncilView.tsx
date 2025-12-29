@@ -20,9 +20,10 @@ const VOICE_COLORS: Record<VoiceName, string> = {
   PINO: 'text-warning border-warning/30 bg-warning/5',
   SAM: 'text-accent border-accent/30 bg-accent/5',
   ANHANTRA: 'text-info border-info/30 bg-info/5',
-  HUYNDUN: 'text-purple-400 border-purple-400/30 bg-purple-400/5',
+  HUNDUN: 'text-purple-400 border-purple-400/30 bg-purple-400/5',
   ISKRIV: 'text-slate-300 border-slate-300/30 bg-slate-300/5',
   MAKI: 'text-pink-400 border-pink-400/30 bg-pink-400/5',
+  SIBYL: 'text-violet-400 border-violet-400/30 bg-violet-400/5',
 };
 
 const VOICE_NAMES_RU: Record<VoiceName, string> = {
@@ -31,9 +32,10 @@ const VOICE_NAMES_RU: Record<VoiceName, string> = {
   PINO: 'Пино',
   SAM: 'Сэм',
   ANHANTRA: 'Анхантра',
-  HUYNDUN: 'Хуньдун',
+  HUNDUN: 'Хуньдун',
   ISKRIV: 'Искрив',
   MAKI: 'Маки',
+  SIBYL: 'Сибилла',
 };
 
 const CouncilView: React.FC<CouncilViewProps> = ({ onClose }) => {
@@ -120,7 +122,7 @@ const CouncilView: React.FC<CouncilViewProps> = ({ onClose }) => {
         {(isRunning || responses.length > 0) && (
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-4">
-              {COUNCIL_ORDER.map((voice, index) => {
+              {COUNCIL_ORDER.map((voice, _index) => {
                 const isActive = currentVoice === voice;
                 const isComplete = responses.some(r => r.voice === voice);
                 return (

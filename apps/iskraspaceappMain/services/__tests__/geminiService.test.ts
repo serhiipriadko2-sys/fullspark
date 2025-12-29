@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { IskraMetrics, Voice, Message } from '../../types';
+import { IskraMetrics, Voice } from '../../types';
 
 // =============================================================================
 // PART 1: Mocked API Tests (with API_KEY set, VITEST overridden)
@@ -89,27 +89,34 @@ vi.mock('../deltaProtocol', () => ({
 // Import after mocks
 import { IskraAIService } from '../geminiService';
 
-const createMetrics = (overrides: Partial<IskraMetrics> = {}): IskraMetrics => ({
-  rhythm: 75,
-  trust: 0.8,
-  clarity: 0.7,
-  pain: 0.2,
-  drift: 0.2,
-  chaos: 0.3,
-  echo: 0.4,
-  silence_mass: 0.2,
-  mirror_sync: 0.7,
-  interrupt: 0,
-  ctxSwitch: 0,
-  ...overrides,
-});
+// Helper functions reserved for future test expansion
+/* istanbul ignore next */
+void function _createMetrics(overrides: Partial<IskraMetrics> = {}): IskraMetrics {
+  return {
+    rhythm: 75,
+    trust: 0.8,
+    clarity: 0.7,
+    pain: 0.2,
+    drift: 0.2,
+    chaos: 0.3,
+    echo: 0.4,
+    silence_mass: 0.2,
+    mirror_sync: 0.7,
+    interrupt: 0,
+    ctxSwitch: 0,
+    ...overrides,
+  };
+};
 
-const createVoice = (): Voice => ({
-  name: 'ISKRA',
-  description: 'Test voice',
-  symbol: '⟡',
-  activation: () => 1.0,
-});
+/* istanbul ignore next */
+void function _createVoice(): Voice {
+  return {
+    name: 'ISKRA',
+    description: 'Test voice',
+    symbol: '⟡',
+    activation: () => 1.0,
+  };
+};
 
 describe('IskraAIService', () => {
   let service: IskraAIService;

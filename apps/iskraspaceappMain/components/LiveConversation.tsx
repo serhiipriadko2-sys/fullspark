@@ -12,7 +12,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { LiveServerMessage, Modality, Blob } from '@google/genai';
 import { decode, decodeAudioData, encode } from '../css/audioUtils';
 import { TranscriptionMessage, ConversationAnalysis, IskraMetrics, DeltaReportData, MemoryNode } from '../types';
-import { IskraAIService, ai } from '../services/geminiService';
+import { IskraAIService, getAI } from '../services/geminiService';
 import { memoryService } from '../services/memoryService';
 import { SparkleIcon } from './icons';
 import IskraMetricsDisplay from './IskraMetricsDisplay';
@@ -206,7 +206,7 @@ const LiveConversation: React.FC<LiveConversationProps> = ({ metrics }) => {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaStreamRef.current = stream;
 
-      const sessionPromise = ai.live.connect({
+      const sessionPromise = getAI().live.connect({
         model: 'gemini-2.5-flash-native-audio-preview-09-2025',
         callbacks: {
           onopen: () => {
@@ -224,7 +224,7 @@ const LiveConversation: React.FC<LiveConversationProps> = ({ metrics }) => {
             scriptProcessorRef.current.connect(inputCtx.destination);
           },
           onmessage: async (message: LiveServerMessage) => {
-            const base64Audio = message.serverContent?.modelTurn?.parts[0]?.inlineData?.data;
+            const base64Audio = message.serverContent?.modelTurn?.parts?.[0]?.inlineData?.data;
             if (base64Audio) {
               if (status !== 'SPEAKING') setStatus('SPEAKING');
 
@@ -274,7 +274,7 @@ const LiveConversation: React.FC<LiveConversationProps> = ({ metrics }) => {
             }
           },
           onclose: () => stopSession(),
-          onerror: (e) => {
+          onerror: () => {
             setError("Ошибка соединения с Gemini Live");
             setStatus('ERROR');
           }

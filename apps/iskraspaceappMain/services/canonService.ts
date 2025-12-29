@@ -22,7 +22,7 @@ class CanonService {
                     layer: 'archive',
                     doc_type: 'canon',
                     content: doc.content,
-                    tags: ['canon', `_type:${nodeType}`, doc.filename.split('/').pop()?.replace(/\.md|\.txt|\.csv/, '')],
+                    tags: ['canon', `_type:${nodeType}`, doc.filename.split('/').pop()?.replace(/\.md|\.txt|\.csv/, '') || 'unknown'],
                     evidence: [{
                         source: 'Internal Canon Document',
                         inference: 'This document is part of the core knowledge base of Iskra.',

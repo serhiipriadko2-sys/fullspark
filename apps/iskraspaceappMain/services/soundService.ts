@@ -103,10 +103,11 @@ class SoundService {
           'SAM': 660,
           'ANHANTRA': 110,
           'PINO': 880,
-          'HUYNDUN': 80,
+          'HUNDUN': 80,
           'ISKRIV': 700,
           'ISKRA': 440,
-          'MAKI': 520
+          'MAKI': 520,
+          'SIBYL': 333
       };
       const f = freqs[voice] || 440;
       this.playTone(f, 'triangle', 0.3, 0.1);

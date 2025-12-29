@@ -13,9 +13,7 @@ import {
   EvalResult,
   EvalMetrics,
   EvalGrade,
-  EvalFlag,
   evaluateBatch,
-  generateEvalReport,
 } from '../services/evalService';
 
 interface EvalDashboardProps {
@@ -55,8 +53,8 @@ const EvalDashboard: React.FC<EvalDashboardProps> = ({ results = [], onClose }) 
   const summary = useMemo(() => {
     if (results.length === 0) return null;
 
-    const batchResult = evaluateBatch(
-      results.map(r => ({ response: '', context: {} }))
+    evaluateBatch(
+      results.map(_r => ({ response: '', context: {} }))
     );
 
     // Manually calculate from our results
