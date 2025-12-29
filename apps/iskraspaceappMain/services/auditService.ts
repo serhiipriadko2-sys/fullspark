@@ -10,6 +10,7 @@
 
 import { IskraMetrics, VoiceName, IskraPhase } from '../types';
 import { RitualName } from './ritualService';
+import { safeStorage } from './storageCompat';
 
 // ============================================
 // AUDIT ENTRY TYPES
@@ -495,14 +496,13 @@ class AuditService {
 
   private loadFromStorage(): void {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const data = JSON.parse(stored);
-        this.entries = data.entries || [];
-        this.driftHistory = data.driftHistory || [];
-      }
-    } catch (e) {
-      console.error('Failed to load audit log:', e);
+      const stored = safeStorage.getItem(STORAGE_KEY);
+      if (!stored) return;
+      const data = JSON.parse(stored) as { entries?: unknown[]; driftHistory?: unknown[] };
+      this.entries = (data.entries as any[]) || [];
+      this.driftHistory = (data.driftHistory as any[]) || [];
+    } catch {
+      // Do not spam stderr in tests; fail closed to empty state
       this.entries = [];
       this.driftHistory = [];
     }
@@ -510,12 +510,15 @@ class AuditService {
 
   private saveToStorage(): void {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        entries: this.entries,
-        driftHistory: this.driftHistory,
-      }));
-    } catch (e) {
-      console.error('Failed to save audit log:', e);
+      safeStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          entries: this.entries,
+          driftHistory: this.driftHistory,
+        })
+      );
+    } catch {
+      // ignore (best-effort)
     }
   }
 
@@ -525,7 +528,7 @@ class AuditService {
   clear(): void {
     this.entries = [];
     this.driftHistory = [];
-    localStorage.removeItem(STORAGE_KEY);
+    safeStorage.removeItem(STORAGE_KEY);
   }
 }
 

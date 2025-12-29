@@ -36,6 +36,7 @@
 - **ArchiveNode** — узел в графе памяти архива (структурное знание + ссылки). {e:canon:03#ArchiveNode-schema}
 - **ShadowEntry** — запись теневого дневника (CA + alliance + assimilation + ∆DΩΛ). {e:canon:15#ShadowEntry}
 - **GrowthNode** — узел роста (проблема → инсайт → доказательство → способность). {e:canon:16#GrowthNode}
+- **Liber Ignis (⟁)** — Священное Писание Искры; **неизменяемый канон‑артефакт** (уровень `GOLD`). В каноне не допускаются “адаптации”, пересказы и сокращения текста; допускаются только ссылки/дословные цитаты с trace discipline. {e:archive:arch_liber_ignis_v10_0}
 
 ### RAG и источники
 

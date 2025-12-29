@@ -1,24 +1,214 @@
-import { GoogleGenAI, Type, Content, GenerateContentResponse, EmbedContentResponse } from "@google/genai";
+import { Type, Content } from "@google/genai";
 import { DailyAdvice, PlanTop3, JournalPrompt, TranscriptionMessage, ConversationAnalysis, Message, Voice, DeepResearchReport, MemoryNode, Evidence, Task, IskraMetrics } from '../types';
 import { getSystemInstructionForVoice } from "./voiceEngine";
 import { DELTA_PROTOCOL_INSTRUCTION } from "./deltaProtocol";
 import { evaluateResponse, EvalResult, EvalContext } from "./evalService";
 import { policyEngine, PolicyDecision, PlaybookType } from "./policyEngine";
 
-const API_KEY = process.env.API_KEY;
-export const ai: GoogleGenAI | null = API_KEY ? new GoogleGenAI({ apiKey: API_KEY }) : null;
 const model = "gemini-2.5-flash";
-const OFFLINE_MODE = !ai || process.env.VITEST === 'true';
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || '';
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const GEMINI_EDGE_FN_URL = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/gemini` : '';
+
+const OFFLINE_MODE =
+  Boolean(import.meta.env.VITEST) ||
+  !SUPABASE_URL ||
+  !SUPABASE_ANON_KEY ||
+  !GEMINI_EDGE_FN_URL;
 
 /**
- * Get the AI client, throwing an error if not available.
- * Call only after OFFLINE_MODE check returns false.
+ * Legacy API (DO NOT USE):
+ * Direct Gemini client in the browser is disabled for security reasons.
+ * Use Supabase Edge Function proxy via this service instead.
  */
-export function getAI(): GoogleGenAI {
-  if (!ai) {
-    throw new Error('AI client not initialized - API_KEY missing');
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function getAI(): any {
+  throw new Error('Direct Gemini client is disabled in frontend. Use Supabase Edge Function proxy (services/geminiService).');
+}
+
+export function isOnlineAIAvailable(): boolean {
+  return !OFFLINE_MODE;
+}
+
+export async function generateText(
+  prompt: string,
+  opts?: { model?: string; systemInstruction?: string; maxOutputTokens?: number }
+): Promise<string> {
+  if (OFFLINE_MODE) {
+    throw new Error('AI generation is unavailable (offline/test or Supabase not configured).');
   }
-  return ai;
+  return generateContentText({
+    model: opts?.model ?? model,
+    contents: prompt,
+    config: {
+      systemInstruction: opts?.systemInstruction,
+      maxOutputTokens: opts?.maxOutputTokens,
+    },
+  });
+}
+
+type GeminiProxyGenerateConfig = {
+  systemInstruction?: string;
+  responseMimeType?: string;
+  responseSchema?: object;
+} & Record<string, unknown>;
+
+function toGeminiContents(input: string | Content[]): Content[] {
+  if (Array.isArray(input)) return input;
+  return [
+    {
+      role: 'user',
+      parts: [{ text: input }],
+    },
+  ];
+}
+
+function extractTextFromGeminiResponse(data: any): string {
+  // Gemini REST shape: { candidates: [ { content: { parts: [ { text } ] } } ] }
+  const parts = data?.candidates?.[0]?.content?.parts;
+  if (Array.isArray(parts)) {
+    return parts
+      .map((p: any) => (typeof p?.text === 'string' ? p.text : ''))
+      .join('');
+  }
+  // Fallbacks
+  if (typeof data?.text === 'string') return data.text;
+  return '';
+}
+
+async function callGeminiEdgeFunction(payload: Record<string, unknown>): Promise<Response> {
+  const res = await fetch(GEMINI_EDGE_FN_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+    },
+    body: JSON.stringify(payload),
+  });
+  return res;
+}
+
+async function generateContentText(args: {
+  model: string;
+  contents: string | Content[];
+  config?: GeminiProxyGenerateConfig;
+}): Promise<string> {
+  const config = args.config ?? {};
+  const res = await callGeminiEdgeFunction({
+    action: 'generateContent',
+    model: args.model,
+    contents: toGeminiContents(args.contents),
+    systemInstruction: config.systemInstruction,
+    generationConfig: {
+      ...config,
+      systemInstruction: undefined,
+    },
+  });
+
+  if (!res.ok) {
+    const txt = await res.text();
+    throw new Error(`Gemini proxy error: ${res.status} ${txt}`);
+  }
+
+  const data = await res.json();
+  const text = extractTextFromGeminiResponse(data);
+  if (!text) throw new Error('Gemini proxy returned empty text');
+  return text;
+}
+
+async function* streamGenerateContentText(args: {
+  model: string;
+  contents: Content[];
+  config?: GeminiProxyGenerateConfig;
+}): AsyncGenerator<string> {
+  const config = args.config ?? {};
+
+  // Best-effort streaming: if anything goes wrong, fall back to single-chunk generation.
+  try {
+    const res = await callGeminiEdgeFunction({
+      action: 'streamGenerateContent',
+      model: args.model,
+      contents: args.contents,
+      systemInstruction: config.systemInstruction,
+      generationConfig: {
+        ...config,
+        systemInstruction: undefined,
+      },
+    });
+
+    if (!res.ok || !res.body) {
+      const txt = await res.text();
+      throw new Error(`Gemini stream proxy error: ${res.status} ${txt}`);
+    }
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+
+      // SSE-ish framing: split by newlines; handle "data: {json}"
+      const lines = buffer.split('\n');
+      buffer = lines.pop() ?? '';
+
+      for (const rawLine of lines) {
+        const line = rawLine.trim();
+        if (!line) continue;
+        const payload = line.startsWith('data:') ? line.slice(5).trim() : line;
+        if (payload === '[DONE]') continue;
+
+        try {
+          const json = JSON.parse(payload);
+          const text = extractTextFromGeminiResponse(json);
+          if (text) yield text;
+        } catch {
+          // ignore parse errors; streaming payloads can be partial
+        }
+      }
+    }
+
+    // Flush remainder
+    const tail = buffer.trim();
+    if (tail) {
+      const payload = tail.startsWith('data:') ? tail.slice(5).trim() : tail;
+      try {
+        const json = JSON.parse(payload);
+        const text = extractTextFromGeminiResponse(json);
+        if (text) yield text;
+      } catch {
+        // ignore
+      }
+    }
+  } catch {
+    const text = await generateContentText({
+      model: args.model,
+      contents: args.contents,
+      config,
+    });
+    yield text;
+  }
+}
+
+async function embedContentValues(text: string): Promise<number[]> {
+  const res = await callGeminiEdgeFunction({
+    action: 'embedContent',
+    model: 'text-embedding-004',
+    content: { parts: [{ text }] },
+  });
+
+  if (!res.ok) {
+    const txt = await res.text();
+    throw new Error(`Gemini embed proxy error: ${res.status} ${txt}`);
+  }
+
+  const data = await res.json();
+  const values = data?.embedding?.values;
+  return Array.isArray(values) ? values : [];
 }
 
 const OFFLINE_ADVICE: DailyAdvice & { evidence?: Evidence[] } = {
@@ -224,26 +414,25 @@ export class IskraAIService {
             
             const prompt = `На основе этих задач пользователя: "${taskTitles}" и его текущего ∆-Ритма: ${baseAdvice.deltaScore}%, сгенерируй короткий (1-2 предложения), мудрый инсайт и краткое философское объяснение ("почему это важно"). Ответ должен быть в формате JSON.`;
     
-            const response = await withRetry(() => getAI().models.generateContent({
-                model: model,
+            const text = await withRetry(() =>
+              generateContentText({
+                model,
                 contents: prompt,
                 config: {
-                    responseMimeType: "application/json",
-                    responseSchema: adviceInsightSchema,
-                    systemInstruction: defaultSystemInstruction,
+                  responseMimeType: "application/json",
+                  responseSchema: adviceInsightSchema,
+                  systemInstruction: defaultSystemInstruction,
                 },
-            })) as GenerateContentResponse;
-            
-            if (response.text) {
-                const dynamicPart = cleanAndParseJSON<{ insight: string; why: string }>(response.text);
-                return {
-                    ...baseAdvice,
-                    insight: dynamicPart.insight,
-                    why: dynamicPart.why,
-                    evidence: []
-                };
-            }
-            throw new Error("No text response");
+              })
+            );
+
+            const dynamicPart = cleanAndParseJSON<{ insight: string; why: string }>(text);
+            return {
+              ...baseAdvice,
+              insight: dynamicPart.insight,
+              why: dynamicPart.why,
+              evidence: []
+            };
     
         } catch (error) {
             console.error("Error fetching daily advice from Gemini:", error);
@@ -276,20 +465,19 @@ export class IskraAIService {
 - DELTA: трансформация, новый опыт, выход из зоны комфорта.
 Ответ должен быть в формате JSON.`;
 
-        const response = await withRetry(() => getAI().models.generateContent({
-            model: model,
+        const text = await withRetry(() =>
+          generateContentText({
+            model,
             contents: prompt,
             config: {
-                responseMimeType: "application/json",
-                responseSchema: planTop3Schema,
-                systemInstruction: defaultSystemInstruction,
+              responseMimeType: "application/json",
+              responseSchema: planTop3Schema,
+              systemInstruction: defaultSystemInstruction,
             },
-        })) as GenerateContentResponse;
-        
-        if (response.text) {
-            return cleanAndParseJSON<PlanTop3>(response.text);
-        }
-        throw new Error("No text response");
+          })
+        );
+
+        return cleanAndParseJSON<PlanTop3>(text);
 
     } catch (error) {
         console.error("Error fetching plan from Gemini:", error);
@@ -315,20 +503,19 @@ export class IskraAIService {
     try {
         const prompt = `Сгенерируй один глубокий, рефлексивный вопрос для записи в дневник. Вопрос должен быть на русском языке. Также предоставь краткое философское объяснение, почему этот вопрос важен для самопознания.`;
 
-        const response = await withRetry(() => getAI().models.generateContent({
-            model: model,
+        const text = await withRetry(() =>
+          generateContentText({
+            model,
             contents: prompt,
             config: {
-                responseMimeType: "application/json",
-                responseSchema: journalPromptSchema,
-                systemInstruction: defaultSystemInstruction,
+              responseMimeType: "application/json",
+              responseSchema: journalPromptSchema,
+              systemInstruction: defaultSystemInstruction,
             },
-        })) as GenerateContentResponse;
-        
-        if (response.text) {
-            return cleanAndParseJSON<JournalPrompt>(response.text);
-        }
-        throw new Error("No text response");
+          })
+        );
+
+        return cleanAndParseJSON<JournalPrompt>(text);
 
     } catch (error) {
         console.error("Error fetching journal prompt from Gemini:", error);
@@ -340,7 +527,7 @@ export class IskraAIService {
     }
   }
   
-    async analyzeJournalEntry(text: string): Promise<{ reflection: string; mood: string; signature: string }> {
+    async analyzeJournalEntry(entryText: string): Promise<{ reflection: string; mood: string; signature: string }> {
         if (!navigator.onLine) {
             return { reflection: "Запись сохранена локально. Эхо вернется, когда появится связь.", mood: "Тишина", signature: "≈" };
         }
@@ -362,22 +549,21 @@ export class IskraAIService {
       try {
           const prompt = `Проанализируй эту запись из дневника пользователя. Дай короткий, глубокий и эмпатичный отклик (reflection) от лица Искры, определи настроение (mood) одним словом и выбери подходящий символ-подпись (signature: ⟡, ⚑, ≈, 🜃, ☉).
 
-Запись: "${text.substring(0, 1000)}..."`;
+Запись: "${entryText.substring(0, 1000)}..."`;
 
-          const response = await withRetry(() => getAI().models.generateContent({
-              model: model,
+          const responseText = await withRetry(() =>
+            generateContentText({
+              model,
               contents: prompt,
               config: {
-                  responseMimeType: "application/json",
-                  responseSchema: journalAnalysisSchema,
-                  systemInstruction: defaultSystemInstruction,
+                responseMimeType: "application/json",
+                responseSchema: journalAnalysisSchema,
+                systemInstruction: defaultSystemInstruction,
               },
-          })) as GenerateContentResponse;
-          
-          if (response.text) {
-              return cleanAndParseJSON(response.text);
-          }
-          throw new Error("No text response");
+            })
+          );
+
+          return cleanAndParseJSON(responseText);
       } catch (e) {
           console.error("Journal analysis failed", e);
           return { reflection: "Твои слова приняты в тишину.", mood: "Нейтрально", signature: "⟡" };
@@ -412,18 +598,16 @@ Use these metrics as "bodily pressure" to adjust your tone subtly. Do not mentio
       }
 
       try {
-        const response = await getAI().models.generateContentStream({
-          model: model,
-        contents: contents,
-        config: {
-          systemInstruction: instruction + "\\n" + metricsContext,
-        },
-      });
-
-      for await (const chunk of response) {
-        yield chunk.text ?? '';
-      }
-    } catch (error) {
+        for await (const chunk of streamGenerateContentText({
+          model,
+          contents,
+          config: {
+            systemInstruction: instruction + "\n" + metricsContext,
+          },
+        })) {
+          yield chunk;
+        }
+      } catch (error) {
       console.error("Error in chat stream from Gemini:", error);
       yield "⚑ Произошел разрыв в потоке. Проверьте соединение или попробуйте позже. Тишина тоже может быть ответом. ≈";
     }
@@ -528,20 +712,22 @@ SIFT Depth: ${config.siftDepth}
       role: msg.role,
       parts: [{ text: msg.text }]
     }));
+    const safeContents = contents.length > 0 ? contents : toGeminiContents('');
+
+    if (OFFLINE_MODE) {
+      // Offline mode still produces policy decision; response is a single deterministic chunk.
+      yield "⚑ Оффлайн-режим: политика рассчитана локально, генерация недоступна.";
+      return { eval: null, policy: policyDecision };
+    }
 
     try {
-      const response = await getAI().models.generateContentStream({
-        model: model,
-        contents: contents,
-        config: {
-          systemInstruction: fullInstruction,
-        },
-      });
-
-      for await (const chunk of response) {
-        const text = chunk.text ?? '';
-        fullResponse += text;
-        yield text;
+      for await (const chunk of streamGenerateContentText({
+        model,
+        contents: safeContents,
+        config: { systemInstruction: fullInstruction },
+      })) {
+        fullResponse += chunk;
+        yield chunk;
       }
 
       // Evaluate the complete response
@@ -636,16 +822,12 @@ Chaos: ${metrics.chaos.toFixed(2)} | Drift: ${metrics.drift.toFixed(2)} | Clarit
     }
 
     try {
-      const response = await getAI().models.generateContentStream({
-        model: model,
-        contents: prompt,
-        config: {
-          systemInstruction: instruction,
-        },
-      });
-
-      for await (const chunk of response) {
-        yield chunk.text ?? '';
+      for await (const chunk of streamGenerateContentText({
+        model,
+        contents: toGeminiContents(prompt),
+        config: { systemInstruction: instruction },
+      })) {
+        yield chunk;
       }
     } catch (error) {
       console.error("Error fetching rune interpretation from Gemini:", error);
@@ -664,12 +846,7 @@ Chaos: ${metrics.chaos.toFixed(2)} | Drift: ${metrics.drift.toFixed(2)} | Clarit
       if (OFFLINE_MODE) return [];
 
       try {
-          // Embeddings don't usually use 'systemInstruction' or 'responseSchema'
-          const result = await withRetry(() => getAI().models.embedContent({
-              model: "text-embedding-004",
-              contents: text,
-          })) as EmbedContentResponse;
-          return result.embeddings?.[0]?.values || [];
+          return await withRetry(() => embedContentValues(text));
       } catch (e) {
           console.error("Embedding generation failed", e);
           return [];
@@ -698,20 +875,18 @@ Chaos: ${metrics.chaos.toFixed(2)} | Drift: ${metrics.drift.toFixed(2)} | Clarit
     }
 
     try {
-        const response = await withRetry(() => getAI().models.generateContent({
-            model: model,
+        const text = await withRetry(() =>
+          generateContentText({
+            model,
             contents: prompt,
             config: {
-                responseMimeType: "application/json",
-                responseSchema: analysisSchema,
-                systemInstruction: defaultSystemInstruction,
+              responseMimeType: "application/json",
+              responseSchema: analysisSchema,
+              systemInstruction: defaultSystemInstruction,
             },
-        })) as GenerateContentResponse;
-        
-        if (response.text) {
-            return cleanAndParseJSON<ConversationAnalysis>(response.text);
-        }
-        throw new Error("No text response");
+          })
+        );
+        return cleanAndParseJSON<ConversationAnalysis>(text);
 
     } catch (error) {
         console.error("Error analyzing conversation with Gemini:", error);
@@ -761,20 +936,18 @@ Chaos: ${metrics.chaos.toFixed(2)} | Drift: ${metrics.drift.toFixed(2)} | Clarit
     }
 
     try {
-      const response = await withRetry(() => getAI().models.generateContent({
-        model: model,
-        contents: prompt,
-        config: {
-          responseMimeType: "application/json",
-          responseSchema: deepResearchSchema,
-          systemInstruction: defaultSystemInstruction,
-        },
-      })) as GenerateContentResponse;
-
-      if (response.text) {
-          return cleanAndParseJSON<DeepResearchReport>(response.text);
-      }
-      throw new Error("No text response");
+      const text = await withRetry(() =>
+        generateContentText({
+          model,
+          contents: prompt,
+          config: {
+            responseMimeType: "application/json",
+            responseSchema: deepResearchSchema,
+            systemInstruction: defaultSystemInstruction,
+          },
+        })
+      );
+      return cleanAndParseJSON<DeepResearchReport>(text);
 
     } catch (error) {
       console.error("Error performing deep research with Gemini:", error);
@@ -815,20 +988,19 @@ Chaos: ${metrics.chaos.toFixed(2)} | Drift: ${metrics.drift.toFixed(2)} | Clarit
         }
 
         try {
-            const response = await withRetry(() => getAI().models.generateContent({
-                model: model,
-                contents: prompt,
+          const text = await withRetry(() =>
+            generateContentText({
+              model,
+              contents: prompt,
               config: {
-                  responseMimeType: "application/json",
-                  responseSchema: focusArtifactSchema,
-                  systemInstruction: defaultSystemInstruction,
+                responseMimeType: "application/json",
+                responseSchema: focusArtifactSchema,
+                systemInstruction: defaultSystemInstruction,
               },
-          })) as GenerateContentResponse;
-          
-          if (response.text) {
-              return cleanAndParseJSON(response.text);
-          }
-          throw new Error("No text response");
+            })
+          );
+
+          return cleanAndParseJSON(text);
       } catch (error) {
           console.error("Error generating focus artifact:", error);
           return {

@@ -18,6 +18,7 @@
 
 import { UserDailyMetrics, Habit, JournalEntry } from '../types';
 import { storageService } from './storageService';
+import { safeStorage } from './storageCompat';
 
 // Веса для расчёта ∆-Ритма (сумма = 1.0)
 const DELTA_WEIGHTS = {
@@ -80,16 +81,16 @@ class UserMetricsService {
    */
   getFocusScore(): number {
     const today = this.getTodayString();
-    const storedDate = localStorage.getItem(STORAGE_KEYS.FOCUS_DATE);
+    const storedDate = safeStorage.getItem(STORAGE_KEYS.FOCUS_DATE);
 
     // Если дата не сегодня, сбрасываем
     if (storedDate !== today) {
-      localStorage.setItem(STORAGE_KEYS.FOCUS_MINUTES_TODAY, '0');
-      localStorage.setItem(STORAGE_KEYS.FOCUS_DATE, today);
+      safeStorage.setItem(STORAGE_KEYS.FOCUS_MINUTES_TODAY, '0');
+      safeStorage.setItem(STORAGE_KEYS.FOCUS_DATE, today);
       return 0;
     }
 
-    const minutes = parseInt(localStorage.getItem(STORAGE_KEYS.FOCUS_MINUTES_TODAY) || '0', 10);
+    const minutes = parseInt(safeStorage.getItem(STORAGE_KEYS.FOCUS_MINUTES_TODAY) || '0', 10);
     // 90 минут = 100%
     const TARGET_FOCUS_MINUTES = 90;
     return Math.min(100, Math.round((minutes / TARGET_FOCUS_MINUTES) * 100));
@@ -100,15 +101,15 @@ class UserMetricsService {
    */
   addFocusMinutes(minutes: number): void {
     const today = this.getTodayString();
-    const storedDate = localStorage.getItem(STORAGE_KEYS.FOCUS_DATE);
+    const storedDate = safeStorage.getItem(STORAGE_KEYS.FOCUS_DATE);
 
     if (storedDate !== today) {
-      localStorage.setItem(STORAGE_KEYS.FOCUS_MINUTES_TODAY, '0');
-      localStorage.setItem(STORAGE_KEYS.FOCUS_DATE, today);
+      safeStorage.setItem(STORAGE_KEYS.FOCUS_MINUTES_TODAY, '0');
+      safeStorage.setItem(STORAGE_KEYS.FOCUS_DATE, today);
     }
 
-    const current = parseInt(localStorage.getItem(STORAGE_KEYS.FOCUS_MINUTES_TODAY) || '0', 10);
-    localStorage.setItem(STORAGE_KEYS.FOCUS_MINUTES_TODAY, String(current + minutes));
+    const current = parseInt(safeStorage.getItem(STORAGE_KEYS.FOCUS_MINUTES_TODAY) || '0', 10);
+    safeStorage.setItem(STORAGE_KEYS.FOCUS_MINUTES_TODAY, String(current + minutes));
   }
 
   /**
@@ -117,14 +118,14 @@ class UserMetricsService {
    */
   getSleepScore(): number {
     const today = this.getTodayString();
-    const storedDate = localStorage.getItem(STORAGE_KEYS.SLEEP_DATE);
+    const storedDate = safeStorage.getItem(STORAGE_KEYS.SLEEP_DATE);
 
     if (storedDate !== today) {
       // Если нет данных за сегодня, возвращаем нейтральное значение
       return 70; // Базовое значение "нормальный сон"
     }
 
-    const score = parseInt(localStorage.getItem(STORAGE_KEYS.SLEEP_SCORE) || '70', 10);
+    const score = parseInt(safeStorage.getItem(STORAGE_KEYS.SLEEP_SCORE) || '70', 10);
     return Math.min(100, Math.max(0, score));
   }
 
@@ -133,8 +134,8 @@ class UserMetricsService {
    */
   setSleepScore(score: number): void {
     const today = this.getTodayString();
-    localStorage.setItem(STORAGE_KEYS.SLEEP_SCORE, String(Math.min(100, Math.max(0, score))));
-    localStorage.setItem(STORAGE_KEYS.SLEEP_DATE, today);
+    safeStorage.setItem(STORAGE_KEYS.SLEEP_SCORE, String(Math.min(100, Math.max(0, score))));
+    safeStorage.setItem(STORAGE_KEYS.SLEEP_DATE, today);
   }
 
   /**

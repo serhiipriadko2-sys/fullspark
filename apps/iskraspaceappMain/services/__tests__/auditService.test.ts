@@ -23,6 +23,8 @@ const localStorageMock = (() => {
 
 Object.defineProperty(global, 'localStorage', {
   value: localStorageMock,
+  configurable: true,
+  writable: true,
 });
 
 import { auditService } from '../auditService';
@@ -48,6 +50,24 @@ describe('auditService', () => {
     localStorageMock.clear();
     auditService.clear();
     vi.clearAllMocks();
+  });
+
+  it('does not spam console.error when localStorage is missing (Node/Vitest)', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const original = (global as any).localStorage;
+
+    try {
+      // Simulate Node env without localStorage and re-import module
+      (global as any).localStorage = undefined;
+      vi.resetModules();
+
+      const mod = await import('../auditService');
+      mod.auditService.log('system_event', { action: 'test' });
+      expect(errorSpy).not.toHaveBeenCalled();
+    } finally {
+      (global as any).localStorage = original;
+      errorSpy.mockRestore();
+    }
   });
 
   describe('log', () => {

@@ -23,7 +23,15 @@ Fullspark (Iskra Space) — это AI-companion приложение новог�
 | **TypeScript покрытие** | 100% (0 ошибок) | ✅ |
 | **Канонические соответствие** | revK→revL (100%) | ✅ |
 | **Bundle size** | 515 KB (155 gzip) | ⚠️ |
-| **Security vulnerabilities** | 0 реальных | ✅ |
+| **Security vulnerabilities (npm audit)** | 5 moderate (dev-only), 0 high/critical | ⚠️ |
+
+### Addendum (2025-12-28) — факты “по текущему main”
+
+- **Unit tests (vitest run)**: 28 файлов / **595 passed** (зелёные), но есть **шум в stderr**:
+  - `AuditService`: `localStorage is not defined` в Node-окружении тестов (не роняет тесты, но сигнализирует о смешении browser-only кода и сервисного слоя)
+  - `GeminiService.getChatResponseStreamWithPolicy`: логирует ошибку про `Symbol(Symbol.asyncIterator)` (похоже на “undefined stream” путь в offline/политике)
+- **Build (vite build)**: `dist/assets/index-*.js` **520.87 kB** (gzip **157.04 kB**), warning про chunk > 500kB подтверждён.
+- **Фактические версии из сборки/прогона**: `vite v6.4.1`, `vitest v2.1.9` (установлено через `^`).
 
 ---
 

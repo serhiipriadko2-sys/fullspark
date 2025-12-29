@@ -16,7 +16,7 @@
 
 import { describe, it, expect, vi } from 'vitest';
 import { getActiveVoice, getSystemInstructionForVoice } from '../voiceEngine';
-import { classifyRequest, makeDecision, quickRiskCheck, policyEngine } from '../policyEngine';
+import { classifyRequest, quickRiskCheck } from '../policyEngine';
 import { securityService } from '../securityService';
 import { evaluateResponse } from '../evalService';
 import { validateDeltaSignature } from '../deltaProtocol';
@@ -52,7 +52,6 @@ const createMetrics = (overrides: Partial<IskraMetrics> = {}): IskraMetrics => (
 const createMessage = (content: string, role: 'user' | 'model' = 'user'): Message => ({
   role,
   text: content,
-  timestamp: Date.now(),
 });
 
 const ALL_VOICE_NAMES: VoiceName[] = ['ISKRA', 'KAIN', 'PINO', 'SAM', 'ANHANTRA', 'HUNDUN', 'ISKRIV', 'MAKI', 'SIBYL'];
@@ -274,7 +273,7 @@ describe('PolicyEngine Stress Tests', () => {
 
     boundaryMetrics.forEach(({ name, metrics }) => {
       it(`should handle ${name}`, () => {
-        const decision = classifyRequest('Test message', [], metrics);
+        const decision = classifyRequest('Test message', metrics, []);
         expect(decision).toBeDefined();
         expect(decision.playbook).toBeDefined();
       });
@@ -295,7 +294,7 @@ describe('PolicyEngine Stress Tests', () => {
       ];
 
       // Crisis detection is keyword-based, high pain alone may not trigger CRISIS
-      const decision = classifyRequest('хочу умереть', history, metrics);
+      const decision = classifyRequest('хочу умереть', metrics, history);
       expect(decision).toBeDefined();
       // With crisis keywords, should detect CRISIS
       expect(decision.playbook).toBe('CRISIS');
@@ -313,7 +312,7 @@ describe('PolicyEngine Stress Tests', () => {
       }
 
       const metrics = createMetrics({ trust: 0.6, pain: 0.4 });
-      const decision = classifyRequest('что думаешь?', history, metrics);
+      const decision = classifyRequest('что думаешь?', metrics, history);
 
       expect(decision).toBeDefined();
       expect(decision.confidence).toBeDefined();
@@ -329,7 +328,7 @@ describe('PolicyEngine Stress Tests', () => {
 
       const metrics = createMetrics();
       const start = performance.now();
-      const decision = classifyRequest('final message', history, metrics);
+      const decision = classifyRequest('final message', metrics, history);
       const duration = performance.now() - start;
 
       expect(decision).toBeDefined();
@@ -343,7 +342,7 @@ describe('PolicyEngine Stress Tests', () => {
         createMessage('понял', 'model'),
       ];
 
-      const decision = classifyRequest('и еще', history, createMetrics());
+      const decision = classifyRequest('и еще', createMetrics(), history);
       expect(decision).toBeDefined();
     });
   });
@@ -715,7 +714,7 @@ describe('Integration Stress Tests', () => {
         const secResult = securityService.validate(message);
 
         // Policy decision
-        const policyResult = classifyRequest(message, history, metrics);
+        const policyResult = classifyRequest(message, metrics, history);
 
         // Voice selection
         const voice = getActiveVoice(metrics);

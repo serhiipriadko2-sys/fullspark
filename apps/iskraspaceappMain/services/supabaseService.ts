@@ -6,6 +6,7 @@
  */
 
 import { supabase, getUserId, isSupabaseAvailable } from './supabaseClient';
+import { safeStorage } from './storageCompat';
 import type {
   Task,
   Habit,
@@ -83,7 +84,7 @@ export async function isOnboardingComplete(): Promise<boolean> {
     const user = await getOrCreateUser();
     return user.onboarding_complete;
   } catch {
-    return localStorage.getItem('iskra_onboarding_complete') === 'true';
+    return safeStorage.getItem('iskra_onboarding_complete') === 'true';
   }
 }
 

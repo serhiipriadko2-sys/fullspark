@@ -217,7 +217,7 @@ const LiveConversation: React.FC<LiveConversationProps> = ({ metrics }) => {
             scriptProcessorRef.current.onaudioprocess = (e) => {
               const inputData = e.inputBuffer.getChannelData(0);
               const pcmBlob = createBlob(inputData);
-              sessionPromise.then(session => session.sendRealtimeInput({ media: pcmBlob }));
+              sessionPromise.then((session: any) => session.sendRealtimeInput({ media: pcmBlob }));
             };
 
             sourceNodeRef.current.connect(scriptProcessorRef.current);
