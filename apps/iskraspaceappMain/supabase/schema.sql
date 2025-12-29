@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS memory_nodes (
     trust_level REAL DEFAULT 1.0,
     tags TEXT[] DEFAULT '{}',
     section TEXT,
-    facet TEXT CHECK (facet IN ('KAIN', 'PINO', 'SAM', 'ANHANTRA', 'HUYNDUN', 'ISKRIV', 'ISKRA', 'MAKI')),
+    facet TEXT CHECK (facet IN ('KAIN', 'PINO', 'SAM', 'ANHANTRA', 'HUNDUN', 'ISKRIV', 'ISKRA', 'MAKI')),
     evidence JSONB,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -130,7 +130,7 @@ CREATE INDEX idx_habits_user_id ON habits(user_id);
 CREATE TABLE IF NOT EXISTS voice_preferences (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    voice_name TEXT NOT NULL CHECK (voice_name IN ('KAIN', 'PINO', 'SAM', 'ANHANTRA', 'HUYNDUN', 'ISKRIV', 'ISKRA', 'MAKI')),
+    voice_name TEXT NOT NULL CHECK (voice_name IN ('KAIN', 'PINO', 'SAM', 'ANHANTRA', 'HUNDUN', 'ISKRIV', 'ISKRA', 'MAKI')),
     weight REAL DEFAULT 1.0,
     updated_at TIMESTAMPTZ DEFAULT NOW(),
     UNIQUE(user_id, voice_name)
@@ -146,7 +146,7 @@ CREATE TABLE IF NOT EXISTS chat_history (
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     role TEXT NOT NULL CHECK (role IN ('user', 'model')),
     text TEXT NOT NULL,
-    voice_name TEXT CHECK (voice_name IN ('KAIN', 'PINO', 'SAM', 'ANHANTRA', 'HUYNDUN', 'ISKRIV', 'ISKRA', 'MAKI')),
+    voice_name TEXT CHECK (voice_name IN ('KAIN', 'PINO', 'SAM', 'ANHANTRA', 'HUNDUN', 'ISKRIV', 'ISKRA', 'MAKI')),
     delta_signature JSONB,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );

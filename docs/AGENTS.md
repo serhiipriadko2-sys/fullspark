@@ -205,9 +205,8 @@ USER INPUT
 
 ## Известные inconsistencies
 
-1. **HUYNDUN vs HUNDUN** — `types.ts` использует HUYNDUN, но `validatorsService.ts` использует HUNDUN
-2. **SIBYL** — определён в типах, но не активен в voiceEngine
-3. **Council** — использует 7 голосов, хотя определено 9
+1. **SIBYL** — определён в типах, и теперь активен в voiceEngine (Trigger: high echo)
+2. **Council** — использует 7 голосов, хотя определено 9
 
 ---
 
