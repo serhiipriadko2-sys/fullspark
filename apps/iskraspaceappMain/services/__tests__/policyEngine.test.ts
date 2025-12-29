@@ -218,7 +218,7 @@ describe('PolicyEngine', () => {
 
     it('COUNCIL should have largest council size', () => {
       const config = getPlaybookConfig('COUNCIL');
-      expect(config.councilSize).toBe(5);
+      expect(config.councilSize).toBe(9);
     });
   });
 });
