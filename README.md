@@ -83,7 +83,8 @@ npm install
 
 # Настроить переменные окружения
 cp .env.example .env
-# Добавить VITE_GEMINI_API_KEY
+# Добавить VITE_SUPABASE_URL и VITE_SUPABASE_ANON_KEY (клиентские, безопасные).
+# GEMINI_API_KEY хранится только на сервере (Supabase Edge Function env), не в Vite env.
 ```
 
 ### Запуск

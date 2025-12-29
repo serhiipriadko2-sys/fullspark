@@ -121,7 +121,8 @@ class ValidatorsService {
     }
 
     // Check if date is valid (e.g., not Feb 30)
-    const date = new Date(`${year}-${month}-${day}`);
+    // Use local-time construction to avoid UTC parsing shifts (YYYY-MM-DD is parsed as UTC by Date()).
+    const date = new Date(yearNum, monthNum - 1, dayNum);
     if (
       date.getFullYear() !== yearNum ||
       date.getMonth() + 1 !== monthNum ||
@@ -423,7 +424,10 @@ class ValidatorsService {
     const validation = this.validateISODate(isoDate);
     if (!validation.valid || !validation.parsed) return false;
 
-    const targetDate = validation.parsed.date;
+    // Interpret ISO date as "deadline day" (end-of-day), not start-of-day.
+    // Otherwise, a same-day date becomes "in the past" after midnight and breaks <=24h checks.
+    const { year, month, day } = validation.parsed as { year: number; month: number; day: number };
+    const targetDate = new Date(year, month - 1, day, 23, 59, 59, 999);
     const now = new Date();
     const diffMs = targetDate.getTime() - now.getTime();
     const diffHours = diffMs / (1000 * 60 * 60);

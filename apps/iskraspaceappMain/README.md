@@ -17,7 +17,13 @@
 npm install
 
 # Configure environment
-cp .env.example .env.local  # Add your GEMINI_API_KEY
+cp .env.example .env.local  # Add VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY (client-safe)
+
+# Configure server-side Gemini key (Supabase Edge Function env)
+# - Set GEMINI_API_KEY in Supabase project (do NOT put it into Vite env)
+# - Deploy: supabase functions deploy gemini
+#
+# The frontend must never embed Gemini keys.
 
 # Start development server
 npm run dev

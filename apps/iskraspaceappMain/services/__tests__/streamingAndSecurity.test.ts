@@ -129,18 +129,11 @@ const createVoice = (name: 'ISKRA' | 'KAIN' | 'ANHANTRA' = 'ISKRA'): Voice => ({
 });
 
 const createHistory = (messages: Array<{ role: 'user' | 'model'; text: string }>): Message[] =>
-  messages.map((m, i) => ({
+  messages.map((m) => ({
     role: m.role,
     text: m.text,
-    timestamp: Date.now() + i * 1000,
+    // Message type intentionally does not store timestamps (UI concerns live elsewhere)
   }));
-
-// Helper to create async generator from array
-async function* createAsyncGenerator<T>(items: T[]): AsyncGenerator<T> {
-  for (const item of items) {
-    yield item;
-  }
-}
 
 // Helper to consume async generator
 async function consumeStream<T, R>(
@@ -302,6 +295,7 @@ describe('GeminiService Streaming Methods', () => {
         );
 
         expect(chunks.length).toBeGreaterThan(0);
+        expect(result).not.toBeUndefined();
       }
     });
 
@@ -343,6 +337,7 @@ describe('GeminiService Streaming Methods', () => {
     // Tests for policy-routed streaming (offline mode still applies policy)
 
     it('should work with policy routing in offline mode', async () => {
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       const history = createHistory([{ role: 'user', text: 'Обычный вопрос' }]);
 
       const { chunks, result } = await consumeStream(
@@ -352,9 +347,12 @@ describe('GeminiService Streaming Methods', () => {
       expect(chunks.length).toBeGreaterThan(0);
       // Policy decision should still be made even in offline
       expect(result.policy).toBeDefined();
+      expect(errorSpy).not.toHaveBeenCalled();
+      errorSpy.mockRestore();
     });
 
     it('should handle different message types', async () => {
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       const testCases = [
         { text: 'Обычный вопрос', expectedPlaybook: 'ROUTINE' },
         { text: 'Расскажи факты', expectedPlaybook: 'ROUTINE' },
@@ -370,18 +368,24 @@ describe('GeminiService Streaming Methods', () => {
         expect(chunks.length).toBeGreaterThan(0);
         expect(result.policy).toBeDefined();
       }
+      expect(errorSpy).not.toHaveBeenCalled();
+      errorSpy.mockRestore();
     });
 
     it('should handle empty history', async () => {
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       const { chunks, result } = await consumeStream(
         service.getChatResponseStreamWithPolicy([], createVoice(), createMetrics())
       );
 
       expect(chunks.length).toBeGreaterThan(0);
       expect(result.policy).toBeDefined();
+      expect(errorSpy).not.toHaveBeenCalled();
+      errorSpy.mockRestore();
     });
 
     it('should work with different voices', async () => {
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       const voices: Array<'ISKRA' | 'KAIN' | 'ANHANTRA'> = ['ISKRA', 'KAIN', 'ANHANTRA'];
 
       for (const voiceName of voices) {
@@ -398,9 +402,12 @@ describe('GeminiService Streaming Methods', () => {
         expect(chunks.length).toBeGreaterThan(0);
         expect(result.policy).toBeDefined();
       }
+      expect(errorSpy).not.toHaveBeenCalled();
+      errorSpy.mockRestore();
     });
 
     it('should handle extreme metrics', async () => {
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       const extremeMetrics = createMetrics({
         pain: 0.9,
         trust: 0.1,
@@ -420,6 +427,8 @@ describe('GeminiService Streaming Methods', () => {
 
       expect(chunks.length).toBeGreaterThan(0);
       expect(result.policy).toBeDefined();
+      expect(errorSpy).not.toHaveBeenCalled();
+      errorSpy.mockRestore();
     });
   });
 });
@@ -439,9 +448,9 @@ describe('SecurityService Expanded Patterns', () => {
       ];
 
       obfuscated.forEach(input => {
-        const findings = securityService.scanPII(input);
-        // At minimum, should not crash
         expect(() => securityService.scanPII(input)).not.toThrow();
+        const findings = securityService.scanPII(input);
+        expect(Array.isArray(findings)).toBe(true);
       });
     });
 

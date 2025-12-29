@@ -5,6 +5,7 @@
  */
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { safeStorage } from './storageCompat';
 
 // API credentials should be in environment variables
 // Create .env file with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY
@@ -31,10 +32,10 @@ export async function getUserId(): Promise<string> {
   }
 
   // For anonymous users, use a device-based ID stored in localStorage
-  let deviceId = localStorage.getItem('iskra_device_id');
+  let deviceId = safeStorage.getItem('iskra_device_id');
   if (!deviceId) {
     deviceId = crypto.randomUUID();
-    localStorage.setItem('iskra_device_id', deviceId);
+    safeStorage.setItem('iskra_device_id', deviceId);
   }
   return deviceId;
 }
