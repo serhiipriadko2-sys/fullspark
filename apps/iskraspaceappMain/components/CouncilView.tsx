@@ -7,7 +7,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { VoiceName } from '../types';
-import { executeCouncil, CouncilResponse, COUNCIL_ORDER } from '../services/ritualService';
+import { executeCouncil, CouncilResponse, COUNCIL_ORDER, RITUAL_INFO } from '../services/ritualService';
 import { SparkleIcon, UsersIcon } from './icons';
 
 interface CouncilViewProps {
@@ -81,7 +81,7 @@ const CouncilView: React.FC<CouncilViewProps> = ({ onClose }) => {
             </div>
             <div>
               <h1 className="font-serif text-3xl text-text">Совет Граней</h1>
-              <p className="text-text-muted text-sm">COUNCIL — все голоса дебатируют</p>
+              <p className="text-text-muted text-sm">{RITUAL_INFO['COUNCIL'].description}</p>
             </div>
           </div>
           {onClose && (

@@ -606,7 +606,7 @@ export const RITUAL_INFO: Record<RitualName, { name: string; symbol: string; des
   'COUNCIL': {
     name: 'Совет Граней',
     symbol: '⚖️',
-    description: 'Все 7 голосов обсуждают вопрос. Поиск мудрости в множественности.',
+    description: 'Все 9 голосов обсуждают вопрос. Поиск мудрости в множественности.',
     duration: '5-10 минут',
   },
   'RETUNE': {

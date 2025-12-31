@@ -104,7 +104,7 @@ const PLAYBOOK_CONFIGS: Record<PlaybookType, PlaybookConfig> = {
     optionalVoices: ['PINO', 'ISKRIV', 'ANHANTRA', 'HUNDUN', 'MAKI', 'SIBYL'],
     deltaRequired: true,
     siftDepth: 'standard',
-    councilSize: 5,
+    councilSize: 9,
     timeoutMs: 30000,
   },
   CRISIS: {
