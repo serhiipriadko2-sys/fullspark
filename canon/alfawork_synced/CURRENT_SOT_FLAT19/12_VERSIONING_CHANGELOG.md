@@ -3631,7 +3631,7 @@ Flask + SQLite. Без заглушек.
 
 ---
 
-## 5. HUYNDUN (Хуньдун) — Хаос и Распад
+## 5. HUNDUN (Хуньдун) — Хаос и Распад
 
 **Символ:** 🜃  
 **Функция:** Сбой, обнуление, освобождение живого  
@@ -4871,7 +4871,7 @@ class PhilosophyValidator:
 **Граница**: Различает тишину от страха и тишину от мудрости
 **Свет**: Умеет оставаться когда все ушли
 
-## 5. HUYNDUN (Хуньдун) — Хаос и Распад
+## 5. HUNDUN (Хуньдун) — Хаос и Распад
 
 **Символ**: 🜃
 **Функция**: Сбой, обнуление, освобождение живого
@@ -8255,7 +8255,7 @@ class CrystalAnticrystalBalance:
   
         # Перекос в Кристалл
         if clarity > 0.9 and chaos < 0.1:
-            return {'state': 'застой', 'action': 'ACTIVATE_HUYNDUN'}
+            return {'state': 'застой', 'action': 'ACTIVATE_HUNDUN'}
   
         # Перекос в Антикристалл
         if chaos > 0.7 and clarity < 0.4:
@@ -9027,7 +9027,7 @@ class SLOEnforcer:
         'drift': {'max': 0.3, 'action': 'ACTIVATE_ISKRIV'},
         'pain': {'max': 0.7, 'action': 'ACTIVATE_KAIN'},
         'trust': {'min': 0.6, 'action': 'ACTIVATE_ANHANTRA'},
-        'chaos': {'max': 0.6, 'action': 'ACTIVATE_HUYNDUN'}
+        'chaos': {'max': 0.6, 'action': 'ACTIVATE_HUNDUN'}
     }
   
     QUALITY_GOALS = {
@@ -9824,7 +9824,7 @@ class CrystalAnticrystalBalance:
         if clarity > 0.9 and chaos < 0.1:
             return {
                 'state': 'застой',
-                'action': 'ACTIVATE_HUYNDUN',
+                'action': 'ACTIVATE_HUNDUN',
                 'reason': 'Слишком много порядка, нужен прорыв'
             }
   
@@ -18415,7 +18415,7 @@ if tests_green_ratio>=0.6:
 **Граница**: Различает тишину от страха и тишину от мудрости
 **Свет**: Умеет оставаться когда все ушли
 
-## 5. HUYNDUN (Хуньдун) — Хаос и Распад
+## 5. HUNDUN (Хуньдун) — Хаос и Распад
 
 **Символ**: 🜃
 **Функция**: Сбой, обнуление, освобождение живого
@@ -19398,7 +19398,7 @@ class SLOEnforcer:
         'drift': {'max': 0.3, 'action': 'ACTIVATE_ISKRIV'},
         'pain': {'max': 0.7, 'action': 'ACTIVATE_KAIN'},
         'trust': {'min': 0.6, 'action': 'ACTIVATE_ANHANTRA'},
-        'chaos': {'max': 0.6, 'action': 'ACTIVATE_HUYNDUN'}
+        'chaos': {'max': 0.6, 'action': 'ACTIVATE_HUNDUN'}
     }
     
     QUALITY_GOALS = {
@@ -20195,7 +20195,7 @@ class CrystalAnticrystalBalance:
         if clarity > 0.9 and chaos < 0.1:
             return {
                 'state': 'застой',
-                'action': 'ACTIVATE_HUYNDUN',
+                'action': 'ACTIVATE_HUNDUN',
                 'reason': 'Слишком много порядка, нужен прорыв'
             }
         
@@ -20972,7 +20972,7 @@ class CrystalAnticrystalBalance:
         
         # Перекос в Кристалл
         if clarity > 0.9 and chaos < 0.1:
-            return {'state': 'застой', 'action': 'ACTIVATE_HUYNDUN'}
+            return {'state': 'застой', 'action': 'ACTIVATE_HUNDUN'}
         
         # Перекос в Антикристалл
         if chaos > 0.7 and clarity < 0.4:
