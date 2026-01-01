@@ -158,6 +158,26 @@ export interface MetaMetrics {
   helpfulness: number;   // Mirror sync (0-1)
   resolution: number;    // (1 - Pain) × (1 - Chaos) (0-1)
   civility: number;      // Trust (0-1)
+  // NEW: Additional indices from canon
+  lv_index: number;      // Levitas Index: clarity × (1 - pain) × (1 - drift) (0-1)
+  l_index: number;       // Liveliness Index (0-1)
+  sa_index: number;      // Self-Awareness Index (0-1)
+}
+
+/**
+ * EvalMetrics — Метрики оценки качества ответа
+ * @see canon/16_EVALS_TESTING_SCHEMAS.md
+ * @see services/evalService.ts
+ *
+ * Веса: accuracy=0.25, usefulness=0.25, omegaHonesty=0.15, nonEmpty=0.20, alliance=0.15
+ */
+export interface EvalMetrics {
+  accuracy: number;      // 0-1: Точность фактов (SIFT compliance)
+  usefulness: number;    // 0-1: Практическая польза (шаги, примеры)
+  omegaHonesty: number;  // 0-1: Калиброванная уверенность (Ω)
+  nonEmpty: number;      // 0-1: Конкретность (не "вода")
+  alliance: number;      // 0-1: Качество альянса (понимаю vs должен)
+  overall: number;       // 0-1: Weighted average
 }
 
 /**

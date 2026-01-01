@@ -74,6 +74,24 @@ class MetricsService {
     // CD-Index: average of all 5 components
     const cd_index = (groundedness + truthfulness + helpfulness + resolution + civility) / 5;
 
+    // LV-Index (Levitas): Способность держать лёгкость при честности
+    // @see canon/18_LIBER_IGNIS_APPENDIX_MAKI.md
+    const lv_index = m.clarity * (1 - m.pain) * (1 - m.drift);
+
+    // L-Index (Liveliness): Не-мёртвость текста, живость ответа
+    // @see canon/04_METRICS_INDICES.md
+    const succinctness = 1 - m.ctxSwitch; // Inverse of context switching
+    const coherence = (m.trust + m.clarity) / 2;
+    const l_index = 0.30 * resolution + 0.20 * succinctness + 0.15 * m.clarity
+                  + 0.15 * coherence + 0.10 * (1 - m.drift) + 0.10 * (1 - Math.abs(0.55 - m.pain));
+
+    // SA-Index (Self-Awareness): Осознанность системы
+    // @see canon/04_METRICS_INDICES.md
+    const trace_compliance = groundedness; // Approximation
+    const self_correction = m.mirror_sync * (1 - m.drift); // Ability to correct
+    const sa_index = 0.40 * trace_compliance + 0.25 * self_correction + 0.15 * m.clarity
+                   + 0.10 * (1 - m.drift) + 0.10 * coherence;
+
     return {
       a_index: parseFloat(a_index.toFixed(2)),
       cd_index: parseFloat(cd_index.toFixed(2)),
@@ -82,7 +100,10 @@ class MetricsService {
       truthfulness: parseFloat(truthfulness.toFixed(2)),
       helpfulness: parseFloat(helpfulness.toFixed(2)),
       resolution: parseFloat(resolution.toFixed(2)),
-      civility: parseFloat(civility.toFixed(2))
+      civility: parseFloat(civility.toFixed(2)),
+      lv_index: parseFloat(lv_index.toFixed(2)),
+      l_index: parseFloat(l_index.toFixed(2)),
+      sa_index: parseFloat(sa_index.toFixed(2))
     };
   }
 

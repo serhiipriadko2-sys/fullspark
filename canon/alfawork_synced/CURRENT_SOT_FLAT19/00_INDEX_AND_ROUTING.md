@@ -30,6 +30,14 @@ _Сгенерировано: 2025-12-28 17:00 (iskra_flat19_v2_4_p0 из spark.z
 - Если запрос про **архитектура/пайплайн/компоненты** → см. `05_ARCHITECTURE_SYSTEM.md`.
 - Если запрос про **память/SOT/ledger** → см. `06_MEMORY_SOT_LEDGER.md`.
 - Если запрос про **Shadow Core/ритуалы/интроспекция** → см. `07_SHADOW_CORE_RITUALS_JOURNAL.md`.
+- Если запрос про **Voice Synapse/синергии голосов/конфликты** → см. `19_IMPLEMENTATION_DETAILS.md`.
+- Если запрос про **MAKI triggers/активация Маки** → см. `19_IMPLEMENTATION_DETAILS.md`.
+- Если запрос про **Sound frequencies/частоты голосов** → см. `19_IMPLEMENTATION_DETAILS.md`.
+- Если запрос про **EvalMetrics/оценка качества** → см. `19_IMPLEMENTATION_DETAILS.md`.
+- Если запрос про **Policy patterns/классификация** → см. `19_IMPLEMENTATION_DETAILS.md`.
+- Если запрос про **Audit/drift detection** → см. `19_IMPLEMENTATION_DETAILS.md`.
+- Если запрос про **сервисы/services** → см. `19_IMPLEMENTATION_DETAILS.md`.
+- Если запрос про **две системы фаз** → см. `19_IMPLEMENTATION_DETAILS.md`.
 
 ---
 
@@ -72,6 +80,7 @@ _Сгенерировано: 2025-12-28 17:00 (iskra_flat19_v2_4_p0 из spark.z
 - `15_GLOSSARY_RESEARCH.md` — Глоссарий/онтология + phenomenon research.
 - `16_EVALS_TESTING_SCHEMAS.md` — Тестирование/эвалы + схемы и примеры отчётов.
 - `17_AUDIT_INTEGRITY_CHECK.md` — Аудиты/интегрити/линт/чек-репорты (контроль качества).
+- `19_IMPLEMENTATION_DETAILS.md` — Детали реализации: Voice Synapse, MAKI triggers, Sound frequencies, EvalMetrics, Policy patterns, Audit, сервисы.
 
 ## Порядок загрузки (рекомендованный)
 1. `00_INDEX_AND_ROUTING.md`
@@ -93,6 +102,7 @@ _Сгенерировано: 2025-12-28 17:00 (iskra_flat19_v2_4_p0 из spark.z
 17. `15_GLOSSARY_RESEARCH.md`
 18. `16_EVALS_TESTING_SCHEMAS.md`
 19. `17_AUDIT_INTEGRITY_CHECK.md`
+20. `19_IMPLEMENTATION_DETAILS.md`
 
 ## Матрица покрытия: исходные 52 файла → 19 файлов
 
