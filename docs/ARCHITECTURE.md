@@ -89,7 +89,7 @@ Fullspark — это AI-companion платформа с уникальной к�
 | PINO | 😏 | `1.5` | pain < 0.3, chaos < 0.4 |
 | SAM | ☉ | `(1-clarity) × 2.0` | clarity < 0.6 |
 | ANHANTRA | ≈ | `(1-trust) × 2.5 + silence × 2.0` | — |
-| HUYNDUN | 🜃 | `chaos × 3.0` | chaos >= 0.4 |
+| HUNDUN | 🜃 | `chaos × 3.0` | chaos >= 0.4 |
 | ISKRIV | 🪞 | `drift × 3.5` | drift >= 0.2 |
 | MAKI | 🌸 | `trust + pain` | trust > 0.8, pain > 0.3 |
 | SIBYL | 🔮 | — | (не активен) |

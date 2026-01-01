@@ -75,7 +75,7 @@ ADR-ID: ADR-YYYYMMDD-###
 | 3 | PINO | 😏 | Лёгкость, юмор |
 | 4 | SAM | ☉ | Структура |
 | 5 | ANHANTRA | ≈ | Тишина, принятие |
-| 6 | HUYNDUN | 🜃 | Хаос, обновление |
+| 6 | HUNDUN | 🜃 | Хаос, обновление |
 | 7 | ISKRIV | 🪞 | Аудит, совесть |
 | 8 | MAKI | 🌸 | Интеграция |
 | 9 | SIBYL | 🔮 | Предвидение (pending) |
@@ -99,7 +99,7 @@ ADR-ID: ADR-YYYYMMDD-###
 
 ```typescript
 KAIN:     score = pain × 3.0       (if pain >= 0.3)
-HUYNDUN:  score = chaos × 3.0      (if chaos >= 0.4)
+HUNDUN:  score = chaos × 3.0      (if chaos >= 0.4)
 ANHANTRA: score = (1 - trust) × 2.5 + silence_mass × 2.0
 ISKRIV:   score = drift × 3.5      (if drift >= 0.2)
 SAM:      score = (1 - clarity) × 2.0 (if clarity < 0.6)
@@ -237,11 +237,11 @@ ISKRA:    score = 1.0 + 0.5        (if rhythm > 60 AND trust > 0.7)
 
 ---
 
-### ADR-20251226-012: Исправление HUYNDUN → HUNDUN
+### ADR-20251226-012: Исправление HUNDUN → HUNDUN
 
 **Статус:** Deferred
 
-**Контекст:** Несоответствие: `types.ts` = HUYNDUN, `validatorsService.ts` = HUNDUN.
+**Контекст:** Несоответствие: `types.ts` = HUNDUN, `validatorsService.ts` = HUNDUN.
 
 **Решение:** Отложить до:
 - Определения канонического написания

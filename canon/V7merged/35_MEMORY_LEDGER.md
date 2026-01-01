@@ -150,7 +150,7 @@ patterns:
 - ID: L-20251226-004
   Дата: 2025-12-26 08:00
   Тип: Insight
-  Суть: Глубокий аудит выявил 9 голосов (не 7), SIBYL не активен, typo HUYNDUN/HUNDUN.
+  Суть: Глубокий аудит выявил 9 голосов (не 7), SIBYL не активен, typo HUNDUN/HUNDUN.
   Опора: voiceEngine.ts, types.ts, validatorsService.ts
   Уверенность: high
   Влияние: high
@@ -213,7 +213,7 @@ triggers:
     to_ISKRIV:
       - "Уход от темы"
       - "drift > 0.2"
-    to_HUYNDUN:
+    to_HUNDUN:
       - "Застряли"
       - "chaos > 0.4"
 

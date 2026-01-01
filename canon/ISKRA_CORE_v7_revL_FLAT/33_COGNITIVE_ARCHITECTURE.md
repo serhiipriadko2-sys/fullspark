@@ -75,8 +75,8 @@
         │   │   │ Audit     │  │ Flowering │  │                                                           ││    │
         │   │   │           │  │           │  │  Synergies:        Conflicts:        Crisis Hierarchy:    ││    │
         │   │   │drift > 0.3│  │trust > 0.8│  │  KAIN ↔ ISKRIV    KAIN vs PINO     ANHANTRA → KAIN →     ││    │
-        │   │   │           │  │pain > 0.3 │  │  PINO ↔ ISKRA     SAM vs HUYNDUN   SAM → ISKRA            ││    │
-        │   │   │           │  │           │  │  SAM ↔ HUYNDUN    KAIN vs ANHANTRA                        ││    │
+        │   │   │           │  │pain > 0.3 │  │  PINO ↔ ISKRA     SAM vs HUNDUN   SAM → ISKRA            ││    │
+        │   │   │           │  │           │  │  SAM ↔ HUNDUN    KAIN vs ANHANTRA                        ││    │
         │   │   └───────────┘  └───────────┘  └───────────────────────────────────────────────────────────┘│    │
         │   └─────────────────────────────────────────────────────────────────────────────────────────────┘    │
         │                                                                                                       │
@@ -282,7 +282,7 @@ User Input
 // Each voice has an activation function: (metrics, preferences, currentVoice) → score
 
 KAIN:     score = pain × 3.0  (if pain < 0.3: score = 0)
-HUYNDUN:  score = chaos × 3.0 (if chaos < 0.4: score = 0)
+HUNDUN:  score = chaos × 3.0 (if chaos < 0.4: score = 0)
 ANHANTRA: score = (1 - trust) × 2.5 + silence_mass × 2.0  (if trust < 0.75)
 ISKRIV:   score = drift × 3.5 (if drift < 0.2: score = 0)
 SAM:      score = (1 - clarity) × 2.0 (if clarity < 0.6)
@@ -312,7 +312,7 @@ Winner = argmax(score × preference × inertia_bonus)
                    │            │            │
                    ▼            ▼            ▼
               ┌──────────┐ ┌──────────┐ ┌──────────┐
-              │  KAIN ⚑  │ │ HUYNDUN  │ │ ISKRIV   │
+              │  KAIN ⚑  │ │ HUNDUN  │ │ ISKRIV   │
               │  Truth   │ │   🜃     │ │   🪞     │
               └──────────┘ └──────────┘ └──────────┘
                                 │
@@ -338,10 +338,10 @@ Winner = argmax(score × preference × inertia_bonus)
             │   KAIN ⚑ ←────→ ISKRIV 🪞│         │   KAIN ⚑ ←╳╳╳→ PINO 😏 │
             │   (Joint honesty audit) │         │   (Harshness vs Play)   │
             │                         │         │                         │
-            │   PINO 😏 ←────→ ISKRA ⟡│         │   SAM ☉ ←╳╳╳→ HUYNDUN 🜃│
+            │   PINO 😏 ←────→ ISKRA ⟡│         │   SAM ☉ ←╳╳╳→ HUNDUN 🜃│
             │   (Playful integration) │         │   (Order vs Chaos)      │
             │                         │         │                         │
-            │   SAM ☉ ←────→ HUYNDUN 🜃│         │   KAIN ⚑ ←╳╳╳→ ANHANTRA ≈│
+            │   SAM ☉ ←────→ HUNDUN 🜃│         │   KAIN ⚑ ←╳╳╳→ ANHANTRA ≈│
             │   (Breath cycle)        │         │   (Strike vs Hold)      │
             │                         │         │                         │
             │   ANHANTRA ≈ ←───→ MAKI 🌸│        │                         │
