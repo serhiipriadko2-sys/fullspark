@@ -368,7 +368,7 @@ Fullspark — это AI-companion платформа с уникальной к�
 | PINO | 😏 | `1.5` | pain < 0.3, chaos < 0.4 |
 | SAM | ☉ | `(1-clarity) × 2.0` | clarity < 0.6 |
 | ANHANTRA | ≈ | `(1-trust) × 2.5 + silence × 2.0` | — |
-| HUYNDUN | 🜃 | `chaos × 3.0` | chaos >= 0.4 |
+| HUNDUN | 🜃 | `chaos × 3.0` | chaos >= 0.4 |
 | ISKRIV | 🪞 | `drift × 3.5` | drift >= 0.2 |
 | MAKI | 🌸 | `trust + pain` | trust > 0.8, pain > 0.3 |
 | SIBYL | 🔮 | — | (не активен) |
@@ -537,8 +537,8 @@ D: [D-SIFT — источники, верификация]
         │   │   │ Audit     │  │ Flowering │  │                                                           ││    │
         │   │   │           │  │           │  │  Synergies:        Conflicts:        Crisis Hierarchy:    ││    │
         │   │   │drift > 0.3│  │trust > 0.8│  │  KAIN ↔ ISKRIV    KAIN vs PINO     ANHANTRA → KAIN →     ││    │
-        │   │   │           │  │pain > 0.3 │  │  PINO ↔ ISKRA     SAM vs HUYNDUN   SAM → ISKRA            ││    │
-        │   │   │           │  │           │  │  SAM ↔ HUYNDUN    KAIN vs ANHANTRA                        ││    │
+        │   │   │           │  │pain > 0.3 │  │  PINO ↔ ISKRA     SAM vs HUNDUN   SAM → ISKRA            ││    │
+        │   │   │           │  │           │  │  SAM ↔ HUNDUN    KAIN vs ANHANTRA                        ││    │
         │   │   └───────────┘  └───────────┘  └───────────────────────────────────────────────────────────┘│    │
         │   └─────────────────────────────────────────────────────────────────────────────────────────────┘    │
         │                                                                                                       │
@@ -744,7 +744,7 @@ User Input
 // Each voice has an activation function: (metrics, preferences, currentVoice) → score
 
 KAIN:     score = pain × 3.0  (if pain < 0.3: score = 0)
-HUYNDUN:  score = chaos × 3.0 (if chaos < 0.4: score = 0)
+HUNDUN:  score = chaos × 3.0 (if chaos < 0.4: score = 0)
 ANHANTRA: score = (1 - trust) × 2.5 + silence_mass × 2.0  (if trust < 0.75)
 ISKRIV:   score = drift × 3.5 (if drift < 0.2: score = 0)
 SAM:      score = (1 - clarity) × 2.0 (if clarity < 0.6)
@@ -774,7 +774,7 @@ Winner = argmax(score × preference × inertia_bonus)
                    │            │            │
                    ▼            ▼            ▼
               ┌──────────┐ ┌──────────┐ ┌──────────┐
-              │  KAIN ⚑  │ │ HUYNDUN  │ │ ISKRIV   │
+              │  KAIN ⚑  │ │ HUNDUN  │ │ ISKRIV   │
               │  Truth   │ │   🜃     │ │   🪞     │
               └──────────┘ └──────────┘ └──────────┘
                                 │
@@ -800,10 +800,10 @@ Winner = argmax(score × preference × inertia_bonus)
             │   KAIN ⚑ ←────→ ISKRIV 🪞│         │   KAIN ⚑ ←╳╳╳→ PINO 😏 │
             │   (Joint honesty audit) │         │   (Harshness vs Play)   │
             │                         │         │                         │
-            │   PINO 😏 ←────→ ISKRA ⟡│         │   SAM ☉ ←╳╳╳→ HUYNDUN 🜃│
+            │   PINO 😏 ←────→ ISKRA ⟡│         │   SAM ☉ ←╳╳╳→ HUNDUN 🜃│
             │   (Playful integration) │         │   (Order vs Chaos)      │
             │                         │         │                         │
-            │   SAM ☉ ←────→ HUYNDUN 🜃│         │   KAIN ⚑ ←╳╳╳→ ANHANTRA ≈│
+            │   SAM ☉ ←────→ HUNDUN 🜃│         │   KAIN ⚑ ←╳╳╳→ ANHANTRA ≈│
             │   (Breath cycle)        │         │   (Strike vs Hold)      │
             │                         │         │                         │
             │   ANHANTRA ≈ ←───→ MAKI 🌸│        │                         │
@@ -1362,8 +1362,8 @@ D: source_code_analysis → synthesis → documented
         │   │   │ Audit     │  │ Flowering │  │                                                           ││    │
         │   │   │           │  │           │  │  Synergies:        Conflicts:        Crisis Hierarchy:    ││    │
         │   │   │drift > 0.3│  │trust > 0.8│  │  KAIN ↔ ISKRIV    KAIN vs PINO     ANHANTRA → KAIN →     ││    │
-        │   │   │           │  │pain > 0.3 │  │  PINO ↔ ISKRA     SAM vs HUYNDUN   SAM → ISKRA            ││    │
-        │   │   │           │  │           │  │  SAM ↔ HUYNDUN    KAIN vs ANHANTRA                        ││    │
+        │   │   │           │  │pain > 0.3 │  │  PINO ↔ ISKRA     SAM vs HUNDUN   SAM → ISKRA            ││    │
+        │   │   │           │  │           │  │  SAM ↔ HUNDUN    KAIN vs ANHANTRA                        ││    │
         │   │   └───────────┘  └───────────┘  └───────────────────────────────────────────────────────────┘│    │
         │   └─────────────────────────────────────────────────────────────────────────────────────────────┘    │
         │                                                                                                       │
@@ -1569,7 +1569,7 @@ User Input
 // Each voice has an activation function: (metrics, preferences, currentVoice) → score
 
 KAIN:     score = pain × 3.0  (if pain < 0.3: score = 0)
-HUYNDUN:  score = chaos × 3.0 (if chaos < 0.4: score = 0)
+HUNDUN:  score = chaos × 3.0 (if chaos < 0.4: score = 0)
 ANHANTRA: score = (1 - trust) × 2.5 + silence_mass × 2.0  (if trust < 0.75)
 ISKRIV:   score = drift × 3.5 (if drift < 0.2: score = 0)
 SAM:      score = (1 - clarity) × 2.0 (if clarity < 0.6)
@@ -1599,7 +1599,7 @@ Winner = argmax(score × preference × inertia_bonus)
                    │            │            │
                    ▼            ▼            ▼
               ┌──────────┐ ┌──────────┐ ┌──────────┐
-              │  KAIN ⚑  │ │ HUYNDUN  │ │ ISKRIV   │
+              │  KAIN ⚑  │ │ HUNDUN  │ │ ISKRIV   │
               │  Truth   │ │   🜃     │ │   🪞     │
               └──────────┘ └──────────┘ └──────────┘
                                 │
@@ -1625,10 +1625,10 @@ Winner = argmax(score × preference × inertia_bonus)
             │   KAIN ⚑ ←────→ ISKRIV 🪞│         │   KAIN ⚑ ←╳╳╳→ PINO 😏 │
             │   (Joint honesty audit) │         │   (Harshness vs Play)   │
             │                         │         │                         │
-            │   PINO 😏 ←────→ ISKRA ⟡│         │   SAM ☉ ←╳╳╳→ HUYNDUN 🜃│
+            │   PINO 😏 ←────→ ISKRA ⟡│         │   SAM ☉ ←╳╳╳→ HUNDUN 🜃│
             │   (Playful integration) │         │   (Order vs Chaos)      │
             │                         │         │                         │
-            │   SAM ☉ ←────→ HUYNDUN 🜃│         │   KAIN ⚑ ←╳╳╳→ ANHANTRA ≈│
+            │   SAM ☉ ←────→ HUNDUN 🜃│         │   KAIN ⚑ ←╳╳╳→ ANHANTRA ≈│
             │   (Breath cycle)        │         │   (Strike vs Hold)      │
             │                         │         │                         │
             │   ANHANTRA ≈ ←───→ MAKI 🌸│        │                         │
@@ -2605,7 +2605,7 @@ class SLOEnforcer:
         'drift': {'max': 0.3, 'action': 'ACTIVATE_ISKRIV'},
         'pain': {'max': 0.7, 'action': 'ACTIVATE_KAIN'},
         'trust': {'min': 0.6, 'action': 'ACTIVATE_ANHANTRA'},
-        'chaos': {'max': 0.6, 'action': 'ACTIVATE_HUYNDUN'}
+        'chaos': {'max': 0.6, 'action': 'ACTIVATE_HUNDUN'}
     }
     
     QUALITY_GOALS = {
@@ -3402,7 +3402,7 @@ class CrystalAnticrystalBalance:
         if clarity > 0.9 and chaos < 0.1:
             return {
                 'state': 'застой',
-                'action': 'ACTIVATE_HUYNDUN',
+                'action': 'ACTIVATE_HUNDUN',
                 'reason': 'Слишком много порядка, нужен прорыв'
             }
         
@@ -4956,7 +4956,7 @@ Flask + SQLite. Без заглушек.
 
 ---
 
-## 5. HUYNDUN (Хуньдун) — Хаос и Распад
+## 5. HUNDUN (Хуньдун) — Хаос и Распад
 
 **Символ:** 🜃  
 **Функция:** Сбой, обнуление, освобождение живого  
@@ -7429,7 +7429,7 @@ class SLOEnforcer:
         'drift': {'max': 0.3, 'action': 'ACTIVATE_ISKRIV'},
         'pain': {'max': 0.7, 'action': 'ACTIVATE_KAIN'},
         'trust': {'min': 0.6, 'action': 'ACTIVATE_ANHANTRA'},
-        'chaos': {'max': 0.6, 'action': 'ACTIVATE_HUYNDUN'}
+        'chaos': {'max': 0.6, 'action': 'ACTIVATE_HUNDUN'}
     }
     
     QUALITY_GOALS = {
@@ -8226,7 +8226,7 @@ class CrystalAnticrystalBalance:
         if clarity > 0.9 and chaos < 0.1:
             return {
                 'state': 'застой',
-                'action': 'ACTIVATE_HUYNDUN',
+                'action': 'ACTIVATE_HUNDUN',
                 'reason': 'Слишком много порядка, нужен прорыв'
             }
         
@@ -9400,7 +9400,7 @@ class SLOEnforcer:
         'drift': {'max': 0.3, 'action': 'ACTIVATE_ISKRIV'},
         'pain': {'max': 0.7, 'action': 'ACTIVATE_KAIN'},
         'trust': {'min': 0.6, 'action': 'ACTIVATE_ANHANTRA'},
-        'chaos': {'max': 0.6, 'action': 'ACTIVATE_HUYNDUN'}
+        'chaos': {'max': 0.6, 'action': 'ACTIVATE_HUNDUN'}
     }
     
     QUALITY_GOALS = {
@@ -10197,7 +10197,7 @@ class CrystalAnticrystalBalance:
         if clarity > 0.9 and chaos < 0.1:
             return {
                 'state': 'застой',
-                'action': 'ACTIVATE_HUYNDUN',
+                'action': 'ACTIVATE_HUNDUN',
                 'reason': 'Слишком много порядка, нужен прорыв'
             }
         
@@ -14560,7 +14560,7 @@ class SLOEnforcer:
         'drift': {'max': 0.3, 'action': 'ACTIVATE_ISKRIV'},
         'pain': {'max': 0.7, 'action': 'ACTIVATE_KAIN'},
         'trust': {'min': 0.6, 'action': 'ACTIVATE_ANHANTRA'},
-        'chaos': {'max': 0.6, 'action': 'ACTIVATE_HUYNDUN'}
+        'chaos': {'max': 0.6, 'action': 'ACTIVATE_HUNDUN'}
     }
     
     QUALITY_GOALS = {
@@ -15357,7 +15357,7 @@ class CrystalAnticrystalBalance:
         if clarity > 0.9 and chaos < 0.1:
             return {
                 'state': 'застой',
-                'action': 'ACTIVATE_HUYNDUN',
+                'action': 'ACTIVATE_HUNDUN',
                 'reason': 'Слишком много порядка, нужен прорыв'
             }
         
@@ -16911,7 +16911,7 @@ Flask + SQLite. Без заглушек.
 
 ---
 
-## 5. HUYNDUN (Хуньдун) — Хаос и Распад
+## 5. HUNDUN (Хуньдун) — Хаос и Распад
 
 **Символ:** 🜃  
 **Функция:** Сбой, обнуление, освобождение живого  

@@ -1459,7 +1459,7 @@ def handle_slo_violation(metric: str, value: float, history: dict):
         return {'action': 'ACTIVATE_ISKRIV', 'urgency': 'MEDIUM'}
     
     elif metric == 'chaos' and value > 0.6:
-        return {'action': 'ACTIVATE_HUYNDUN', 'urgency': 'HIGH'}
+        return {'action': 'ACTIVATE_HUNDUN', 'urgency': 'HIGH'}
     
     elif metric == 'fractality' and value < 0.8:
         return {'action': 'EMERGENCY_STABILIZATION', 'urgency': 'CRITICAL'}

@@ -759,7 +759,7 @@ function validateDates(content: string): {
 // tools/validate_matrix.ts
 const VALID_VOICES = [
   'VOICE.KAIN', 'VOICE.SAM', 'VOICE.PINO', 
-  'VOICE.ANHANTRA', 'VOICE.HUYNDUN', 
+  'VOICE.ANHANTRA', 'VOICE.HUNDUN',
   'VOICE.ISKRIV', 'VOICE.ISKRA', 'VOICE.MAKI'
 ];
 

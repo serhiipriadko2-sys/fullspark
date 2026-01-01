@@ -743,7 +743,7 @@ describe('myService', () => {
 **Fullspark** — это AI-companion приложение с уникальной когнитивной архитектурой. Ключевые концепции:
 
 - **Canon** — философская основа, определяющая принципы честности и полезности
-- **9 Голосов** — грани личности ИИ (ISKRA, KAIN, PINO, SAM, ANHANTRA, HUYNDUN, ISKRIV, MAKI, SIBYL)
+- **9 Голосов** — грани личности ИИ (ISKRA, KAIN, PINO, SAM, ANHANTRA, HUNDUN, ISKRIV, MAKI, SIBYL)
 - **∆DΩΛ Протокол** — обязательная структура ответа
 - **Метрики** — 11 измерений состояния системы
 
@@ -775,7 +775,7 @@ fullspark/
 #### 1. Голосовая система (9 голосов)
 
 ```typescript
-type VoiceName = 'ISKRA' | 'KAIN' | 'PINO' | 'SAM' | 'ANHANTRA' | 'HUYNDUN' | 'ISKRIV' | 'MAKI' | 'SIBYL';
+type VoiceName = 'ISKRA' | 'KAIN' | 'PINO' | 'SAM' | 'ANHANTRA' | 'HUNDUN' | 'ISKRIV' | 'MAKI' | 'SIBYL';
 ```
 
 **Важно:** SIBYL определён в типах, но НЕ активен в `voiceEngine.ts`. Council использует только 7 голосов.
@@ -787,7 +787,7 @@ type VoiceName = 'ISKRA' | 'KAIN' | 'PINO' | 'SAM' | 'ANHANTRA' | 'HUYNDUN' | 'I
 | Голос | Формула | Условие |
 |-------|---------|---------|
 | KAIN | `score = pain × 3.0` | `pain >= 0.3` |
-| HUYNDUN | `score = chaos × 3.0` | `chaos >= 0.4` |
+| HUNDUN | `score = chaos × 3.0` | `chaos >= 0.4` |
 | ANHANTRA | `score = (1 - trust) × 2.5 + silence_mass × 2.0` | — |
 | ISKRIV | `score = drift × 3.5` | `drift >= 0.2` |
 | SAM | `score = (1 - clarity) × 2.0` | `clarity < 0.6` |
@@ -939,7 +939,7 @@ USER INPUT
 
 ### Известные inconsistencies
 
-1. **HUYNDUN vs HUNDUN** — `types.ts` использует HUYNDUN, но `validatorsService.ts` использует HUNDUN
+1. **HUNDUN vs HUNDUN** — `types.ts` использует HUNDUN, но `validatorsService.ts` использует HUNDUN
 2. **SIBYL** — определён в типах, но не активен в voiceEngine
 3. **Council** — использует 7 голосов, хотя определено 9
 
