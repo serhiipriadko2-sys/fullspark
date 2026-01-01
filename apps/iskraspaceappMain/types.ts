@@ -202,7 +202,7 @@ export type VoiceID =
   | 'VOICE.ANHANTRA'   // ≈ Silence/slowdown
   | 'VOICE.SAM'        // ☉ Engineering/structure
   | 'VOICE.MAKI'       // 🌸 Progress consolidation
-  | 'VOICE.SIBYL';     // ✴️ Threshold/transition
+  | 'VOICE.SIBYL';     // 🔮 Threshold/transition
 
 export interface LambdaCondition {
   action?: string;         // Optional: specific action to take
