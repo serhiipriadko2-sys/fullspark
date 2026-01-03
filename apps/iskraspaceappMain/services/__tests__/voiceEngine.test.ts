@@ -131,6 +131,25 @@ describe('voiceEngine', () => {
       expect(voice.symbol).toBe('🌸');
     });
 
+    it('should return SIBYL for threshold moments (transformation)', () => {
+      // SIBYL activates when pain > 0.5 AND trust > 0.6 (score += 1.5)
+      // or ctxSwitch > 0.5 (score += 1.0) or interrupt > 0.6 (score += 0.8)
+      // Hard cutoff: score must be >= 1.0
+      const metrics = createMetrics({
+        pain: 0.6,    // Triggers threshold condition 1
+        trust: 0.7,   // Triggers threshold condition 1 (1.5 score)
+        chaos: 0.3,   // Not enough for HUYNDUN (needs >= 0.4)
+        clarity: 0.7, // Not low enough for SAM
+        drift: 0.15,  // Not enough for ISKRIV (needs >= 0.2)
+        ctxSwitch: 0.6, // Additional threshold trigger (+1.0)
+        rhythm: 50,   // Suppresses ISKRA bonus
+      });
+      const voice = getActiveVoice(metrics);
+
+      expect(voice.name).toBe('SIBYL');
+      expect(voice.symbol).toBe('✴️');
+    });
+
     it('should return ISKRA for balanced state', () => {
       // ISKRA base: 1.0, bonus +0.5 if rhythm > 60 && trust > 0.7 = 1.5
       // PINO base: 1.5 if pain < 0.3 && chaos < 0.4
@@ -267,6 +286,15 @@ describe('voiceEngine', () => {
       expect(instruction).toContain('МАКИ 🌸');
       expect(instruction).toContain('Свет Сквозь Тень');
       expect(instruction).toContain('после бури');
+    });
+
+    it('should return SIBYL prompt for SIBYL voice', () => {
+      const voice = { name: 'SIBYL' as const, symbol: '✴️', description: '', activation: () => 0 };
+      const instruction = getSystemInstructionForVoice(voice);
+
+      expect(instruction).toContain('СИБИЛЛА ✴️');
+      expect(instruction).toContain('Порог и Переход');
+      expect(instruction).toContain('Λ‑пересмотр');
     });
 
     it('should default to ISKRA prompt for unknown voice', () => {

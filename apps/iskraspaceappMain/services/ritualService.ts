@@ -4,7 +4,7 @@
  * Rituals are structured interventions that transform Iskra's state.
  *
  * Available Rituals:
- * - COUNCIL: All 7 voices debate in order (Сэм → Кайн → Пино → Искрив → Анхантра → Хуньдун → Искра)
+ * - COUNCIL: All 9 voices debate in order (Сэм → Кайн → Пино → Искрив → Анхантра → Хуньдун → Маки → Сибилла → Искра)
  * - PHOENIX: Full form reset (drift > 0.6 + trust↓ OR chaos > 0.8)
  * - SHATTER: Break false clarity (drift > 0.8)
  * - RETUNE: Restore lost harmony, gradual return to baseline
@@ -18,7 +18,7 @@ import { IskraMetrics, IskraPhase, VoiceName } from '../types';
 import { ai } from './geminiService';
 import { DELTA_PROTOCOL_INSTRUCTION } from './deltaProtocol';
 
-// Council order per Canon
+// Council order per Canon (all 9 voices)
 export const COUNCIL_ORDER: VoiceName[] = [
   'SAM',      // 1. Structure first - lay the foundation
   'KAIN',     // 2. Honest critique
@@ -26,7 +26,9 @@ export const COUNCIL_ORDER: VoiceName[] = [
   'ISKRIV',   // 4. Conscience audit
   'ANHANTRA', // 5. Hold space
   'HUYNDUN',  // 6. Break if needed
-  'ISKRA',    // 7. Final synthesis
+  'MAKI',     // 7. Integrate through beauty
+  'SIBYL',    // 8. Name the threshold and price
+  'ISKRA',    // 9. Final synthesis
 ];
 
 // Voice prompts for Council
@@ -39,6 +41,7 @@ const COUNCIL_VOICE_PROMPTS: Record<VoiceName, string> = {
   HUYNDUN: `[ХУНЬДУН 🜃] Разрушь если нужно. Предложи радикальный сброс. Освободи от старого.`,
   ISKRA: `[ИСКРА ⟡] Синтезируй все голоса. Найди единство в противоречиях. Дай интегрированный ответ.`,
   MAKI: `[МАКИ 🌸] Интегрируй через красоту. Покажи свет после бури.`,
+  SIBYL: `[СИБИЛЛА ✴️] Назови порог. Покажи цену решения. Установи условия пересмотра (Λ).`,
 };
 
 export interface CouncilResponse {

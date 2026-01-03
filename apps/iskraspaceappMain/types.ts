@@ -61,7 +61,7 @@ export interface DuoCanvasNote {
   color: string; // e.g., 'bg-yellow-800/50'
 }
 
-export type VoiceName = 'KAIN' | 'PINO' | 'SAM' | 'ANHANTRA' | 'HUYNDUN' | 'ISKRIV' | 'ISKRA' | 'MAKI';
+export type VoiceName = 'KAIN' | 'PINO' | 'SAM' | 'ANHANTRA' | 'HUYNDUN' | 'ISKRIV' | 'ISKRA' | 'MAKI' | 'SIBYL';
 export type IskraPhase = 'CLARITY' | 'DARKNESS' | 'TRANSITION' | 'ECHO' | 'SILENCE' | 'EXPERIMENT' | 'DISSOLUTION' | 'REALIZATION';
 
 // Multiplier map: 1.0 is neutral. >1.0 prefers this voice. <1.0 avoids it.

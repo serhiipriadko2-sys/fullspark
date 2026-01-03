@@ -104,6 +104,35 @@ const VOICE_RELATIONSHIPS: VoiceRelationship[] = [
     type: 'conflict',
     description: 'Напряжение: удар vs удержание. Иногда нужно молчать, не резать.',
   },
+
+  // SIBYL relationships
+  {
+    voice1: 'SIBYL',
+    voice2: 'ISKRA',
+    type: 'synergy',
+    description: 'Порог и синтез. Сибилла обозначает переход, Искра интегрирует решение.',
+    jointFunction: 'threshold_synthesis',
+  },
+  {
+    voice1: 'SIBYL',
+    voice2: 'ISKRIV',
+    type: 'synergy',
+    description: 'Порог и аудит. Сибилла называет цену, Искрив проверяет честность.',
+    jointFunction: 'threshold_audit',
+  },
+  {
+    voice1: 'SIBYL',
+    voice2: 'SAM',
+    type: 'support',
+    description: 'После порога Сибиллы — структура Сэма для реализации.',
+    jointFunction: 'post_threshold_structure',
+  },
+  {
+    voice1: 'SIBYL',
+    voice2: 'HUYNDUN',
+    type: 'conflict',
+    description: 'Напряжение: порог требует ясности, хаос размывает границы.',
+  },
 ];
 
 // Crisis hierarchy: who speaks first in crisis
@@ -119,6 +148,7 @@ const VOICE_SYMBOLS: Record<VoiceName, string> = {
   HUYNDUN: '🜃',
   ISKRIV: '🪞',
   MAKI: '🌸',
+  SIBYL: '✴️',
 };
 
 // ============================================
@@ -414,6 +444,9 @@ export function generateMultiVoiceInstruction(
         break;
       case 'ISKRA':
         instruction += 'Финальный синтез всех перспектив.\n';
+        break;
+      case 'SIBYL':
+        instruction += 'Обозначение порога и цены решения.\n';
         break;
     }
   });
